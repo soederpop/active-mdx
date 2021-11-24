@@ -1,0 +1,34 @@
+{
+  "name": "active-md",
+  "version": "0.0.1",
+  "description": "models for markdown documents",
+  "main": "./dist/index.cjs",
+  "scripts": {
+    "console": "node scripts/console.mjs",
+    "preconsole": "npm run build",
+    "build": "npm run build:node",
+    "build:node": "esbuild src/index.js --bundle --format=cjs --outfile=dist/index.cjs --platform=node"
+  },
+  "author": "Jon Soeder <jon@chicago.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@mdx-js/mdx": "^1.6.22",
+    "@mdx-js/mdxast": "^1.1.1",
+    "@skypager/cli": "^1.4.2",
+    "@skypager/node": "^1.4.2",
+    "esbuild": "^0.13.15",
+    "gray-matter": "^4.0.3",
+    "mdast-util-to-string": "^3.1.0",
+    "remark": "^14.0.2",
+    "remark-frontmatter": "^4.0.1",
+    "remark-mdx": "^1.6.22",
+    "remark-parse": "^10.0.1",
+    "remark-stringify": "^10.0.2",
+    "unified": "^10.1.1",
+    "unist-util-find-after": "^4.0.0",
+    "unist-util-find-all-before": "^4.0.0",
+    "unist-util-find-before": "^3.0.0",
+    "unist-util-select": "^4.0.1",
+    "unist-util-visit": "^4.1.0"
+  }
+}
