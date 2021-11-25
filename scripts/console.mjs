@@ -3,7 +3,7 @@ import pkg from "../dist/index.cjs"
 const { Document, Collection } = pkg
 
 async function main() {
-  const c = new Collection({ rootPath: runtime.resolve("test/fixtures/sdlc") })
+  const c = new Collection({ rootPath: runtime.resolve("examples/sdlc") })
 
   await c.load()
 

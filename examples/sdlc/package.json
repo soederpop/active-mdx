@@ -1,11 +1,8 @@
 {
-  "name": "@active-md/examples-sdlc",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
+  "name": "@active-md/sdlc-example",
   "type": "module",
-  "author": "Jon Soeder <jon@chicago.com>",
-  "scripts": {
-    "postinstall": "ln -s .. ./node_modules/active-md"
+  "dependencies": {
+    "esm": "^3.2.25",
+    "mocha": "^9.1.3"
   }
 }

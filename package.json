@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "models for markdown documents",
   "main": "./dist/index.cjs",
+  "type": "module",
   "scripts": {
+    "link:local": "ln -sf $PWD ./node_modules/active-md",
     "console": "node scripts/console.mjs",
     "preconsole": "npm run build",
     "build": "npm run build:node",
@@ -30,5 +32,11 @@
     "unist-util-find-before": "^3.0.0",
     "unist-util-select": "^4.0.1",
     "unist-util-visit": "^4.1.0"
+  },
+  "dependencies": {
+    "esm": "^3.2.25",
+    "mdx-stringify": "^0.0.5",
+    "mocha": "^9.1.3",
+    "rehype-stringify": "^9.0.2"
   }
 }

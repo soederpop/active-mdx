@@ -3,6 +3,7 @@ import { findAfter } from "unist-util-find-after"
 import { findAllBefore } from "unist-util-find-all-before"
 import { visit } from "unist-util-visit"
 import { selectAll, select } from "unist-util-select"
+import { toString } from "mdast-util-to-string"
 
 export default class AstQuery {
   constructor(ast) {
@@ -10,15 +11,15 @@ export default class AstQuery {
   }
 
   findAllBefore(node, selector) {
-    findAllBefore(this.ast, node, selector)
+    return findAllBefore(this.ast, node, selector)
   }
 
   findBefore(node, selector) {
-    findBefore(this.ast, node, selector)
+    return findBefore(this.ast, node, selector)
   }
 
   findAfter(node, selector) {
-    findAfter(this.ast, node, selector)
+    return findAfter(this.ast, node, selector)
   }
 
   findBetween(headingOne, headingTwo) {
@@ -32,14 +33,32 @@ export default class AstQuery {
   }
 
   select(selector) {
-    select(selector, this.ast)
+    return select(selector, this.ast)
   }
 
   selectAll(selector) {
-    selectAll(selector, this.ast)
+    return selectAll(selector, this.ast)
   }
 
   visit(visitor) {
-    visit(this.ast, visitor)
+    return visit(this.ast, visitor)
+  }
+
+  atLine(lineNumber) {
+    return this.ast.children.find(
+      ({ position = {} }) => position.start.line === lineNumber
+    )
+  }
+
+  findHeadingByText(text = "", exact = true) {
+    return this.selectAll("heading").find((heading) => {
+      const headingText = toString(heading).toLowerCase()
+
+      if (exact) {
+        return headingText === text.toLowerCase()
+      }
+
+      return headingText.includes(text.toLowerCase())
+    })
   }
 }

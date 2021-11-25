@@ -1,7 +1,7 @@
 const privates = new WeakMap()
 
 export default class Model {
-  constructor(document) {
+  constructor(document, options = {}) {
     privates.set(this, { document })
   }
 
@@ -9,7 +9,15 @@ export default class Model {
    * Returns true if the document can be used by this model
    */
   static is(document) {
-    return true
+    return !!document.ast?.children
+  }
+
+  static from(document, options = {}) {
+    if (!this.is(document)) {
+      throw new Error(`The document is not valid for this model.`)
+    }
+
+    new Model(document, options)
   }
 
   get document() {

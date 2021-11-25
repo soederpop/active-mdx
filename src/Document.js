@@ -1,8 +1,9 @@
 import lodash from "lodash"
 import { toString } from "mdast-util-to-string"
 import { createMdxAstCompiler } from "@mdx-js/mdx"
-import AstQuery from "./AstQuery"
-import NodeShortcuts from "./NodeShortcuts"
+import AstQuery from "./AstQuery.js"
+import NodeShortcuts from "./NodeShortcuts.js"
+import stringify from "mdx-stringify"
 
 const { omit } = lodash
 
@@ -21,6 +22,16 @@ export default class Document {
 
   get id() {
     return privates.get(this).id
+  }
+
+  get title() {
+    const headingNode = this.astQuery.select("heading[depth=1]")
+
+    if (headingNode) {
+      return this.utils.toString(headingNode)
+    } else {
+      return this.id
+    }
   }
 
   /**
@@ -44,7 +55,8 @@ export default class Document {
 
   get utils() {
     return {
-      toString
+      toString,
+      extractSection: (startHeading) => extractSection(this, startHeading)
     }
   }
 
@@ -54,6 +66,15 @@ export default class Document {
 
   get content() {
     return privates.get(this).content
+  }
+
+  stringify(ast = this.ast) {
+    return createMdxAstCompiler({
+      remarkPlugins: [],
+      rehypePlugins: []
+    })
+      .use(stringify)
+      .stringify(ast)
   }
 
   get processor() {
@@ -84,4 +105,14 @@ export default class Document {
       .filter(({ url }) => available.indexOf(url) !== -1)
       .map(({ url }) => this.collection.document(url))
   }
+}
+
+function extractSection(doc, startHeading) {
+  const endHeading = doc.nodes.nextSiblingHeadingOf(startHeading)
+
+  const sectionNodes = endHeading
+    ? doc.astQuery.findBetween(startHeading, endHeading)
+    : doc.astQuery.findAllAfter(startHeading)
+
+  return [startHeading, ...sectionNodes]
 }
