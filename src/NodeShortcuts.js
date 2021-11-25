@@ -16,20 +16,15 @@ export default class NodeShortcuts {
     return this.astQuery.selectAll("heading")
   }
 
+  get headingsByDepth() {
+    return this.headings.reduce((memo, heading) => {
+      memo[heading.depth] = memo[heading.depth] || []
+      memo[heading.depth].push(heading)
+      return memo
+    }, {})
+  }
+
   get links() {
     return this.astQuery.selectAll("link")
-  }
-
-  nextSiblingHeadingOf(headingNode) {
-    const startLine = headingNode.position.end.line
-    return this.headings.find(
-      (heading) =>
-        heading.depth === headingNode.depth &&
-        heading.position.start.line > startLine
-    )
-  }
-
-  headingsAtDepth(depth) {
-    return this.astQuery.selectAll(`heading[depth=${depth}]`)
   }
 }

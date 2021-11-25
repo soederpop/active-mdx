@@ -9,6 +9,11 @@ const { omit } = lodash
 
 const privates = new WeakMap()
 
+/**
+ * The Document class represents an mdx file.  An instance of a document provides
+ * access to the mdx ast and provides methods for querying and manipulating the ast,
+ * and convert it back to mdx code.
+ */
 export default class Document {
   constructor({ meta, content, path, id, collection } = {}) {
     privates.set(this, {
@@ -43,11 +48,19 @@ export default class Document {
     return { meta, ast, content, id }
   }
 
+  /**
+   * Returns an instance of AstQuery which provides helpers
+   * for querying the AST nodes in this document.
+   */
   get astQuery() {
     const { ast } = this
     return new AstQuery(ast)
   }
 
+  /**
+   * Returns an instance of NodeShortcuts which provides getters
+   * for common queries for our nodes.
+   */
   get nodes() {
     const { astQuery } = this
     return new NodeShortcuts(astQuery)
@@ -56,7 +69,11 @@ export default class Document {
   get utils() {
     return {
       toString,
-      extractSection: (startHeading) => extractSection(this, startHeading)
+      extractSection: (startHeading) => extractSection(this, startHeading),
+      createNewAst: (children = []) => ({
+        type: "root",
+        children
+      })
     }
   }
 
@@ -68,6 +85,9 @@ export default class Document {
     return privates.get(this).content
   }
 
+  /**
+   * Converts the current
+   */
   stringify(ast = this.ast) {
     return createMdxAstCompiler({
       remarkPlugins: [],
@@ -85,8 +105,16 @@ export default class Document {
   }
 
   get ast() {
+    if (privates.get(this).ast) {
+      return privates.get(this).ast
+    }
+
     const { content } = this.attributes
-    return this.processor.parse(content)
+    const ast = this.processor.parse(content)
+
+    privates.get(this).ast = ast
+
+    return ast
   }
 
   get attributes() {
@@ -108,7 +136,7 @@ export default class Document {
 }
 
 function extractSection(doc, startHeading) {
-  const endHeading = doc.nodes.nextSiblingHeadingOf(startHeading)
+  const endHeading = doc.astQuery.findNextSiblingHeadingTo(startHeading)
 
   const sectionNodes = endHeading
     ? doc.astQuery.findBetween(startHeading, endHeading)
