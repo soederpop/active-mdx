@@ -13,6 +13,10 @@ export default class Collection {
     this.rootPath = path.resolve(rootPath)
   }
 
+  static resolve(...args) {
+    return path.resolve(process.cwd(), ...args)
+  }
+
   model(modelName, ModelClass, options = {}) {
     if (typeof ModelClass === "undefined") {
       if (!this.models.has(modelName)) {
@@ -47,11 +51,15 @@ export default class Collection {
     }
 
     const { content, meta, path } = this.items.get(pathId)
-    doc = new Document({ id: pathId, content, meta, path, collection: this })
+    doc = this.createDocument({ id: pathId, content, meta })
 
     this.documents.set(pathId, doc)
 
     return doc
+  }
+
+  createDocument(params = {}) {
+    return new Document({ ...params, collection: this })
   }
 
   toJSON() {

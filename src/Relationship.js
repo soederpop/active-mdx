@@ -60,7 +60,7 @@ export class HasManyRelationship extends Relationship {
             title: utils.toString(heading),
             startNode: heading,
             section,
-            newAst: utils.normalizeHeadings(utils.createNewAst(section)),
+            ast: utils.normalizeHeadings(utils.createNewAst(section)),
             id: options.id
               ? options.id(utils.toString(heading))
               : this.id(utils.toString(heading))
@@ -69,7 +69,26 @@ export class HasManyRelationship extends Relationship {
     }
   }
 
-  fetch() {}
+  fetchAll(options = {}) {
+    const { TargetModelClass } = this
+    const { collection } = this.parent.document
+
+    const nodes = this.nodes()
+
+    return nodes.map(({ id, ast }) => {
+      if (collection.items.has(id)) {
+        return TargetModelClass.from(collection.document(id))
+      } else {
+        return TargetModelClass.from(
+          collection.createDocument({
+            collection,
+            id,
+            ast
+          })
+        )
+      }
+    })
+  }
 }
 
 export class HasOneRelationship extends Relationship {

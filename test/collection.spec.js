@@ -1,15 +1,22 @@
 import { Collection } from "../src/index.js"
-import path from "path"
 
 describe("The Collection Class", function () {
   let collection
-  beforeEach(function () {
+
+  beforeEach(async function () {
     collection = new Collection({
-      rootPath: path.resolve(process.cwd(), "examples", "sldc")
+      rootPath: Collection.resolve("examples", "sdlc")
     })
+
+    await collection.load()
   })
 
   it("has available documents", async function () {
-    console.log(collection.available)
+    collection.available.should.include("index", "epics/authentication")
+  })
+
+  it("creates documents", async function () {
+    const doc = collection.document("index")
+    doc.should.have.property("title", "SDLC Demo")
   })
 })

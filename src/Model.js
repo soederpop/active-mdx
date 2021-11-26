@@ -4,7 +4,7 @@ import {
   HasManyRelationship,
   BelongsToRelationship,
   HasOneRelationship
-} from "./Relationship"
+} from "./Relationship.js"
 
 const { kebabCase, camelCase, upperFirst } = lodash
 
@@ -49,6 +49,14 @@ export default class Model {
       plural: inflections.pluralize(name),
       className: upperFirst(camelCase(kebabCase(name)))
     }
+  }
+
+  get id() {
+    return this.document.id
+  }
+
+  get collection() {
+    return this.document.collection
   }
 
   get inflections() {
