@@ -39,6 +39,10 @@ export default class Collection {
     })
   }
 
+  get modelClasses() {
+    return Array.from(this.models.values()).map(({ ModelClass }) => ModelClass)
+  }
+
   get available() {
     return Array.from(this.items.keys())
   }
@@ -98,6 +102,7 @@ export default class Collection {
 
   async load() {
     const paths = await readDirectory(this.rootPath)
+
     await Promise.all(
       paths.map((path) => {
         const pathId = this.getPathId(path)
@@ -123,7 +128,7 @@ export default class Collection {
   }
 }
 
-async function readDirectory(dirPath) {
+async function readDirectory(dirPath, match = /\.mdx?$/i) {
   var paths = []
   var files = await fs.readdir(dirPath)
   for (var i = 0; i < files.length; i++) {
@@ -132,7 +137,9 @@ async function readDirectory(dirPath) {
     if (stat.isDirectory()) {
       paths = paths.concat(await readDirectory(filePath))
     } else {
-      paths.push(filePath)
+      if (match.test(filePath)) {
+        paths.push(filePath)
+      }
     }
   }
   return paths

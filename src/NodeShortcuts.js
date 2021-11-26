@@ -16,6 +16,32 @@ export default class NodeShortcuts {
     return this.astQuery.selectAll("heading")
   }
 
+  get firstHeading() {
+    return this.headings[0]
+  }
+
+  get secondHeading() {
+    return this.headings[1]
+  }
+
+  get lastHeading() {
+    return this.headings[this.headings.length - 1]
+  }
+
+  get leadingElementsAfterTitle() {
+    const { firstHeading, secondHeading } = this
+
+    if (secondHeading) {
+      return this.astQuery.findBetween(firstHeading, secondHeading)
+    } else {
+      return this.astQuery.findAllAfter(firstHeading)
+    }
+  }
+
+  get imports() {
+    return this.astQuery.selectAll("import")
+  }
+
   get headingsByDepth() {
     return this.headings.reduce((memo, heading) => {
       memo[heading.depth] = memo[heading.depth] || []

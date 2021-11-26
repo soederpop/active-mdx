@@ -40,12 +40,39 @@ export default class Document {
       return this.content
     } else {
       const frontmatter = yaml.dump(meta)
-      return ["---", frontmatter, "---\n", this.content].join("\n")
+      return ["---", `${frontmatter}---`, this.content].join("\n")
     }
   }
 
   get id() {
     return privates.get(this).id
+  }
+
+  toModel(options = {}) {
+    const { model } = options
+
+    if (model) {
+      return model.from(this)
+    }
+
+    let ModelClass
+
+    if (this.meta.type) {
+      ModelClass = this.collection.modelClasses.find(
+        (modelClass) =>
+          Object.values(modelClass.inflections).indexOf(type) !== -1
+      )
+    } else {
+      ModelClass = this.collection.modelClasses.find((modelClass) =>
+        this.id.startsWith(modelClass.prefix)
+      )
+    }
+
+    if (!ModelClass) {
+      throw new Error(`No model class found for document id: ${this.id}`)
+    }
+
+    return ModelClass.from(this)
   }
 
   get title() {
