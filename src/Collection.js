@@ -70,10 +70,23 @@ export default class Collection {
     }, {})
   }
 
-  async saveItem(pathId, { content } = {}) {
-    const { path } = this.items.get(pathId)
-    await fs.writeFile(path, content, "utf8")
+  async saveItem(pathId, { content, extension = ".mdx" } = {}) {
+    if (!this.items.has(pathId)) {
+      const filePath = Collection.resolve(
+        this.rootPath,
+        `${pathId}${extension}`
+      )
+      this.updateItem(pathId, { path: filePath, content })
+    }
+
+    const { path: filePath } = this.items.get(pathId)
+
+    await fs.mkdir(path.parse(filePath).dir, { recursive: true })
+
+    await fs.writeFile(filePath, content, "utf8")
+
     this.updateItem(pathId, { content })
+
     return this.items.get(pathId)
   }
 

@@ -55,6 +55,10 @@ export default class Model {
     return this.document.id
   }
 
+  get meta() {
+    return this.document.meta
+  }
+
   get collection() {
     return this.document.collection
   }
@@ -65,6 +69,10 @@ export default class Model {
 
   get prefix() {
     return this.constructor.prefix
+  }
+
+  async save(options = {}) {
+    return this.document.save(options)
   }
 
   get document() {

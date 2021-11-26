@@ -23,6 +23,27 @@ export class BelongsToRelationship extends Relationship {
   get type() {
     return "belongsTo"
   }
+
+  fetchAll(options = {}) {
+    return this.fetch(options)
+  }
+
+  fetch(options = {}) {
+    const relatedId = [
+      this.TargetModelClass.prefix,
+      this.options.id(this.parent)
+    ].join("/")
+
+    if (!this.parent.collection.items.has(relatedId)) {
+      throw new Error(
+        `Could not find ${this.TargetModelClass.name} with id ${relatedId}`
+      )
+    }
+
+    return this.TargetModelClass.from(
+      this.parent.collection.document(relatedId)
+    )
+  }
 }
 
 export class HasManyRelationship extends Relationship {
@@ -69,6 +90,10 @@ export class HasManyRelationship extends Relationship {
     }
   }
 
+  fetch(options = {}) {
+    return this.fetchAll(options)
+  }
+
   fetchAll(options = {}) {
     const { TargetModelClass } = this
     const { collection } = this.parent.document
@@ -77,13 +102,19 @@ export class HasManyRelationship extends Relationship {
 
     return nodes.map(({ id, ast }) => {
       if (collection.items.has(id)) {
-        return TargetModelClass.from(collection.document(id))
+        const instance = TargetModelClass.from(collection.document(id))
+
+        return instance
       } else {
         return TargetModelClass.from(
           collection.createDocument({
             collection,
             id,
-            ast
+            ast,
+            meta: {
+              ...(this.options.meta ? this.options.meta() : {}),
+              ...(options.meta || {})
+            }
           })
         )
       }

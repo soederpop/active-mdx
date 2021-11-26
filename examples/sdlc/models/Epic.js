@@ -4,7 +4,8 @@ import Story from "./Story.js"
 export default class Epic extends Model {
   stories() {
     return this.hasMany(Story, {
-      heading: "stories"
+      heading: "stories",
+      meta: () => ({ epic: this.title.toLowerCase() })
     })
   }
 

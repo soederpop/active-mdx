@@ -15,7 +15,8 @@ async function main() {
     Epic,
     Story,
     auth: collection.document("epics/authentication"),
-    epic: Epic.from(collection.document("epics/authentication"))
+    epic: Epic.from(collection.document("epics/authentication")),
+    search: Epic.from(collection.document("epics/search"))
   })
 }
 
