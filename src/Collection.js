@@ -62,6 +62,13 @@ export default class Collection {
     }, {})
   }
 
+  async saveItem(pathId, { content } = {}) {
+    const { path } = this.items.get(pathId)
+    await fs.writeFile(path, content, "utf8")
+    this.updateItem(pathId, { content })
+    return this.items.get(pathId)
+  }
+
   updateItem(pathId, patch = {}) {
     const item = this.items.get(pathId) || {}
     this.items.set(pathId, { ...item, ...patch })

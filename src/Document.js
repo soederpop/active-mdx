@@ -4,8 +4,9 @@ import { createMdxAstCompiler } from "@mdx-js/mdx"
 import AstQuery from "./AstQuery.js"
 import NodeShortcuts from "./NodeShortcuts.js"
 import stringify from "mdx-stringify"
+import yaml from "js-yaml"
 
-const { omit, minBy } = lodash
+const { isEmpty, omit, minBy } = lodash
 
 const privates = new WeakMap()
 
@@ -15,7 +16,7 @@ const privates = new WeakMap()
  * and convert it back to mdx code.
  */
 export default class Document {
-  constructor({ meta, content, path, id, collection, ast } = {}) {
+  constructor({ meta = {}, content, path, id, collection, ast } = {}) {
     privates.set(this, {
       content,
       path,
@@ -24,6 +25,23 @@ export default class Document {
       collection,
       ast
     })
+  }
+
+  async save(options = {}) {
+    const { collection } = this
+    await collection.saveItem(this.id, { content: this.rawContent, ...options })
+    return this
+  }
+
+  get rawContent() {
+    const { meta } = this
+
+    if (isEmpty(meta)) {
+      return this.content
+    } else {
+      const frontmatter = yaml.dump(meta)
+      return ["---", frontmatter, "---\n", this.content].join("\n")
+    }
   }
 
   get id() {
