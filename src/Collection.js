@@ -2,13 +2,37 @@ import fs from "fs/promises"
 import path from "path"
 import matter from "gray-matter"
 import Document from "./Document.js"
+import * as inflections from "inflect"
 
 export default class Collection {
   constructor({ rootPath, extensions = ["mdx", "md"] }) {
     this.extensions = extensions
     this.items = new Map()
     this.documents = new Map()
+    this.models = new Map()
     this.rootPath = path.resolve(rootPath)
+  }
+
+  model(modelName, ModelClass, options = {}) {
+    if (typeof ModelClass === "undefined") {
+      if (!this.models.has(modelName)) {
+        throw new Error(`Model ${modelName} not found`)
+      }
+
+      return this.models.get(modelName).ModelClass
+    }
+
+    if (this.models.has(modelName)) {
+      throw new Error(`Model ${modelName} already exists`)
+    }
+
+    this.models.set(modelName, {
+      ModelClass,
+      options: {
+        prefix: inflections.pluralize(modelName.toLowerCase()),
+        ...options
+      }
+    })
   }
 
   get available() {

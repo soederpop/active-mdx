@@ -5,7 +5,7 @@ import AstQuery from "./AstQuery.js"
 import NodeShortcuts from "./NodeShortcuts.js"
 import stringify from "mdx-stringify"
 
-const { omit } = lodash
+const { omit, minBy } = lodash
 
 const privates = new WeakMap()
 
@@ -15,13 +15,14 @@ const privates = new WeakMap()
  * and convert it back to mdx code.
  */
 export default class Document {
-  constructor({ meta, content, path, id, collection } = {}) {
+  constructor({ meta, content, path, id, collection, ast } = {}) {
     privates.set(this, {
       content,
       path,
       meta,
       id,
-      collection
+      collection,
+      ast
     })
   }
 
@@ -57,6 +58,10 @@ export default class Document {
     return new AstQuery(ast)
   }
 
+  query(ast = this.ast) {
+    return new AstQuery(ast)
+  }
+
   /**
    * Returns an instance of NodeShortcuts which provides getters
    * for common queries for our nodes.
@@ -69,11 +74,13 @@ export default class Document {
   get utils() {
     return {
       toString,
+      stringifyAst,
       extractSection: (startHeading) => extractSection(this, startHeading),
       createNewAst: (children = []) => ({
         type: "root",
         children
-      })
+      }),
+      normalizeHeadings: (ast) => normalizeHeadings(ast)
     }
   }
 
@@ -82,19 +89,23 @@ export default class Document {
   }
 
   get content() {
-    return privates.get(this).content
+    if (privates.get(this).content) {
+      return privates.get(this).content
+    }
+
+    const { ast } = this
+    const content = stringifyAst(ast)
+
+    privates.get(this).content = content
+
+    return content
   }
 
   /**
    * Converts the current
    */
   stringify(ast = this.ast) {
-    return createMdxAstCompiler({
-      remarkPlugins: [],
-      rehypePlugins: []
-    })
-      .use(stringify)
-      .stringify(ast)
+    return stringifyAst(ast)
   }
 
   get processor() {
@@ -135,7 +146,7 @@ export default class Document {
   }
 }
 
-function extractSection(doc, startHeading) {
+export function extractSection(doc, startHeading) {
   const endHeading = doc.astQuery.findNextSiblingHeadingTo(startHeading)
 
   const sectionNodes = endHeading
@@ -143,4 +154,23 @@ function extractSection(doc, startHeading) {
     : doc.astQuery.findAllAfter(startHeading)
 
   return [startHeading, ...sectionNodes]
+}
+
+export function stringifyAst(ast) {
+  return createMdxAstCompiler({
+    remarkPlugins: [],
+    rehypePlugins: []
+  })
+    .use(stringify)
+    .stringify(ast)
+}
+
+export function normalizeHeadings(ast) {
+  const query = new AstQuery(ast)
+  const headings = query.selectAll("heading")
+  const minDepth = minBy(headings, "depth").depth
+  const diff = 1 - minDepth
+  headings.forEach((heading) => (heading.depth = heading.depth + diff))
+
+  return ast
 }

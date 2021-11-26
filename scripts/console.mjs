@@ -1,20 +1,21 @@
 import runtime from "@skypager/node"
 import pkg from "../dist/index.cjs"
-const { Document, Collection } = pkg
+const { Model, Document, Collection } = pkg
+import { collection, Epic, Story } from "../examples/sdlc/index.js"
 
 async function main() {
-  const c = new Collection({ rootPath: runtime.resolve("examples/sdlc") })
-
-  await c.load()
-
-  const d = c.document("index")
+  await collection.load()
 
   await runtime.repl("interactive").launch({
     runtime,
     Document,
     Collection,
-    c,
-    d
+    Model,
+    collection,
+    Epic,
+    Story,
+    auth: collection.document("epics/authentication"),
+    epic: Epic.from(collection.document("epics/authentication"))
   })
 }
 

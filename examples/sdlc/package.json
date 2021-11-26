@@ -1,8 +1,0 @@
-{
-  "name": "@active-md/sdlc-example",
-  "type": "module",
-  "dependencies": {
-    "esm": "^3.2.25",
-    "mocha": "^9.1.3"
-  }
-}

@@ -1,18 +1,14 @@
-import { Collection } from "active-md"
-import Epic from "./models/epic.js"
+import { Collection } from "../../dist/index.cjs"
+import Epic from "./models/Epic.js"
+import Story from "./models/Story.js"
 
-async function main() {
-  const collection = new Collection({
-    rootPath: process.cwd()
-  })
+import path from "path"
 
-  await collection.load()
+const rootPath = path.parse(import.meta.url.replace("file://", "")).dir
 
-  const auth = collection.document("epics/authentication")
+export const collection = new Collection({ rootPath })
 
-  const epic = new Epic(auth)
+collection.model("Epic", Epic)
+collection.model("Story", Story)
 
-  console.log(epic)
-}
-
-main()
+export { Epic, Story }
