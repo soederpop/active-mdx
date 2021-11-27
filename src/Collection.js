@@ -76,11 +76,20 @@ export default class Collection {
   }
 
   toJSON() {
-    return Array.from(this.items.entries()).reduce((memo, entry) => {
-      const [pathId, item] = entry
-      memo[pathId] = item
-      return memo
-    }, {})
+    const models = Array.from(this.models.values()).map(({ ModelClass }) => {
+      const inflections = ModelClass.inflections
+
+      return {
+        name: ModelClass.name,
+        prefix: ModelClass.prefix,
+        inflections
+      }
+    })
+
+    return {
+      models,
+      itemIds: Array.from(this.items.keys())
+    }
   }
 
   async saveItem(pathId, { content, extension = ".mdx" } = {}) {

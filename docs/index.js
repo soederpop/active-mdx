@@ -1,0 +1,10 @@
+import { Collection } from "../index.js"
+import ApiDoc from "./models/ApiDoc.js"
+
+import path from "path"
+
+const rootPath = path.parse(import.meta.url.replace("file://", "")).dir
+
+export const collection = new Collection({ rootPath })
+
+export { ApiDoc }

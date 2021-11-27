@@ -6,6 +6,10 @@ import { visit } from "unist-util-visit"
 import { selectAll, select } from "unist-util-select"
 import { toString } from "mdast-util-to-string"
 
+/**
+ * The ASTQuery takes a MDAST tree and provides methods for querying that tree to find specific nodes.
+ *
+ */
 export default class AstQuery {
   constructor(ast) {
     this.ast = ast
