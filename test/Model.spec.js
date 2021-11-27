@@ -51,6 +51,20 @@ describe("The Model Class", function () {
           "stories/authentication/a-user-should-be-able-to-register"
         )
     })
+
+    it("can serialize the related models", function () {
+      const epic = Epic.from(collection.document("epics/authentication"))
+      const stories = epic.stories().fetchAll()
+
+      const json = epic.toJSON({ related: ["stories"] })
+
+      json.should.have.property("id")
+      json.should.have.property("meta")
+      json.should.have.property("stories").that.is.an("array").that.is.not.empty
+      json.stories
+        .map((story) => story.id)
+        .should.equal(stories.map((story) => story.id))
+    })
   })
 
   describe("Inflections", function () {

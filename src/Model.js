@@ -6,7 +6,7 @@ import {
   HasOneRelationship
 } from "./Relationship.js"
 
-const { kebabCase, camelCase, upperFirst } = lodash
+const { castArray, kebabCase, camelCase, upperFirst } = lodash
 
 const privates = new WeakMap()
 
@@ -57,6 +57,24 @@ export default class Model {
 
   get meta() {
     return this.document.meta
+  }
+
+  toJSON(options = {}) {
+    const json = {
+      id: this.id,
+      meta: this.meta
+    }
+
+    const related = castArray(options.related).filter(Boolean)
+
+    for (rel of related) {
+      const relationship = this[rel]()
+      const items = relationship.fetchAll()
+
+      json[rel] = items.map((item) => item.toJSON(options))
+    }
+
+    return json
   }
 
   get collection() {
