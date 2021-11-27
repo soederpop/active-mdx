@@ -16,6 +16,7 @@ export default class Collection {
     this.rootPath = path.resolve(rootPath)
 
     models.forEach((ModelClass) => {
+      console.log("Registering Model", ModelClass.name)
       this.model(ModelClass.name, ModelClass)
     })
   }

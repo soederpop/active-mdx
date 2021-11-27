@@ -70,12 +70,12 @@ export class HasManyRelationship extends Relationship {
 
     if (childType === "heading") {
       const parentHeading = astQuery.findHeadingByText(heading)
-      const nodes = utils.extractSection(parentHeading).slice(1)
+      const nodes = this.document.extractSection(parentHeading).slice(1)
 
       return nodes
         .filter(({ type }) => type === "heading")
         .map((heading) => {
-          const section = utils.extractSection(heading)
+          const section = this.document.extractSection(heading)
 
           return {
             title: utils.toString(heading),

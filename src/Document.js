@@ -58,10 +58,13 @@ export default class Document {
     let ModelClass
 
     if (this.meta.type) {
-      ModelClass = this.collection.modelClasses.find(
-        (modelClass) =>
-          Object.values(modelClass.inflections).indexOf(type) !== -1
-      )
+      ModelClass =
+        this.collection.models.get(this.meta.type)?.ModelClass ||
+        this.collection.modelClasses.find(
+          (modelClass) =>
+            modelClass.prefix === type ||
+            Object.values(modelClass.inflections).indexOf(type) !== -1
+        )
     } else {
       ModelClass = this.collection.modelClasses.find((modelClass) =>
         this.id.startsWith(modelClass.prefix)
@@ -97,12 +100,17 @@ export default class Document {
   /**
    * Returns an instance of AstQuery which provides helpers
    * for querying the AST nodes in this document.
+   *
+   * @returns {AstQuery}
    */
   get astQuery() {
     const { ast } = this
     return new AstQuery(ast)
   }
 
+  /**
+   * @returns {AstQuery}
+   */
   query(ast = this.ast) {
     return new AstQuery(ast)
   }
@@ -110,10 +118,16 @@ export default class Document {
   /**
    * Returns an instance of NodeShortcuts which provides getters
    * for common queries for our nodes.
+   *
+   * @returns {NodeShortcuts}
    */
   get nodes() {
     const { astQuery } = this
     return new NodeShortcuts(astQuery)
+  }
+
+  extractSection(startHeading) {
+    return extractSection(this, startHeading)
   }
 
   get utils() {
