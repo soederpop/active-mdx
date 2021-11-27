@@ -5,12 +5,19 @@ import Document from "./Document.js"
 import * as inflections from "inflect"
 
 export default class Collection {
-  constructor({ rootPath = process.cwd(), extensions = ["mdx", "md"] }) {
+  constructor(
+    { rootPath = process.cwd(), extensions = ["mdx", "md"] },
+    models = []
+  ) {
     this.extensions = extensions
     this.items = new Map()
     this.documents = new Map()
     this.models = new Map()
     this.rootPath = path.resolve(rootPath)
+
+    models.forEach((ModelClass) => {
+      this.model(ModelClass.name, ModelClass)
+    })
   }
 
   static resolve(...args) {
@@ -37,6 +44,8 @@ export default class Collection {
         ...options
       }
     })
+
+    return this
   }
 
   get modelClasses() {

@@ -4,6 +4,49 @@
 
 With ActiveMDX you can treat collections of MDX files as a database, and even provide an API for your content so that a computer can interact with it. The word Active in MDX is a reference to the [Active Record Pattern](https://en.wikipedia.org/wiki/Active_record_pattern) or [ActiveRecord](https://guides.rubyonrails.org/active_record_basics.html) in Rails.
 
+## Requirements
+
+- Node.js 14.15.0 or later.
+
+## Installation
+
+```shell
+$ npm install active-mdx
+```
+
+## Usage
+
+ActiveMDX works on the server, in Node.js. Use later versions of node which support esm modules natively.
+
+It works best with a project like [Next.js](https://nextjs.org)
+
+```js
+// content.js
+import { Collection, Model } from "active-mdx"
+
+// say you had a subfolder content/stories with .e.g content/stories/authentication/registration.mdx
+class Story extends Model {
+  epic() {
+    return this.belongsTo(Epic)
+  }
+}
+
+// say you had a subfolder content/epics with e.g. content/epics/authentication.mdx
+class Epic extends Model {
+  stories() {
+    return this.hasMany(Story)
+  }
+}
+
+// assumes all your mdx files live in a folder called content
+const collection = new Collection({
+  rootPath: Collection.resolve("content"),
+  models: [Story, Epic]
+})
+
+export default collection
+```
+
 ## Inspiration
 
 Most of the writing I do is about software. If I write about software in a very structured way, then it is possible to let a computer understand what I am writing, and the context in which I am writing, and actually do things with what I've written. Whether I am writing requirements for software that somebody else will develop, or documentation about software I've written, or an API that I've made available, if the only value that writing is providing is to the people reading it, there is a lot of value being wasted.
@@ -102,3 +145,7 @@ await Promise.all(stories.map((story) => story.save()))
 ```
 
 This means you can start from a single file in epics, and eventually expand that into separate files when the content is ready.
+
+## Example Projects
+
+- [Example Next.js Blog](https://github.com/soederpop/active-mdx-nextjs-blog)
