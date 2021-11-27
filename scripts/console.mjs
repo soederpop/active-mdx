@@ -1,5 +1,5 @@
 import runtime from "@skypager/node"
-import pkg from "../dist/index.cjs"
+import pkg from "../src/index.js"
 const { Model, Document, Collection } = pkg
 import { collection, Epic, Story } from "../examples/sdlc/index.js"
 

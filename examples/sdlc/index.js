@@ -1,4 +1,4 @@
-import { Collection } from "../../dist/index.cjs"
+import { Collection } from "../../src/index.js"
 import Epic from "./models/Epic.js"
 import Story from "./models/Story.js"
 

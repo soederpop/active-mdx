@@ -1,4 +1,4 @@
-import { Model } from "../../../dist/index.cjs"
+import { Model } from "../../../src/index.js"
 import Story from "./Story.js"
 
 export default class Epic extends Model {

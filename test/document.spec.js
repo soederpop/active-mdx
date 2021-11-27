@@ -1,4 +1,5 @@
-import { Collection, Model } from "../src/index.js"
+import { Collection } from "../src/index.js"
+import Epic from "../examples/sdlc/models/Epic.js"
 
 describe("The Document Class", function () {
   let collection
@@ -7,8 +8,6 @@ describe("The Document Class", function () {
     collection = new Collection({
       rootPath: Collection.resolve("examples", "sdlc")
     })
-
-    class Epic extends Model {}
 
     collection.model("Epic", Epic)
 

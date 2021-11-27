@@ -55,6 +55,10 @@ export default class Model {
     return this.document.id
   }
 
+  get modelName() {
+    return this.constructor.name
+  }
+
   get meta() {
     return this.document.meta
   }
@@ -62,16 +66,26 @@ export default class Model {
   toJSON(options = {}) {
     const json = {
       id: this.id,
-      meta: this.meta
+      meta: this.meta,
+      title: this.title
     }
 
     const related = castArray(options.related).filter(Boolean)
 
-    for (rel of related) {
+    for (const rel of related) {
+      // TODO: Support nested relationships stories.components should pass related: ["components"] when serializing stories.
+      const [baseRel, ...childRelations] = rel.split(".")
+
+      if (typeof this[baseRel] !== "function") {
+        throw new Error(
+          `The relationship ${baseRel} is not defined on the ${this.modelName} model.`
+        )
+      }
+
       const relationship = this[rel]()
       const items = relationship.fetchAll()
 
-      json[rel] = items.map((item) => item.toJSON(options))
+      json[rel] = items.map((item) => item.toJSON())
     }
 
     return json

@@ -1,5 +1,6 @@
 import { Model, Collection } from "../src/index.js"
 import Epic from "../examples/sdlc/models/Epic.js"
+import Story from "../examples/sdlc/models/Story.js"
 
 describe("The Model Class", function () {
   let collection
@@ -9,11 +10,13 @@ describe("The Model Class", function () {
       rootPath: Collection.resolve("examples", "sdlc")
     })
 
+    collection.model("Epic", Epic)
+    collection.model("Story", Story)
+
     await collection.load()
   })
 
   it("can be registered with the collection", function () {
-    collection.model("Epic", Epic)
     collection.model("Epic").should.equal(Epic)
   })
 
@@ -52,18 +55,25 @@ describe("The Model Class", function () {
         )
     })
 
-    it("can serialize the related models", function () {
+    it("can serialize the models", function () {
       const epic = Epic.from(collection.document("epics/authentication"))
-      const stories = epic.stories().fetchAll()
-
-      const json = epic.toJSON({ related: ["stories"] })
-
+      const json = epic.toJSON()
       json.should.have.property("id")
       json.should.have.property("meta")
+    })
+
+    it("can serialize the models and their relationships", function () {
+      const epic = Epic.from(collection.document("epics/authentication"))
+      const json = epic.toJSON({
+        related: ["stories"]
+      })
+
       json.should.have.property("stories").that.is.an("array").that.is.not.empty
       json.stories
         .map((story) => story.id)
-        .should.equal(stories.map((story) => story.id))
+        .should.include(
+          "stories/authentication/a-user-should-be-able-to-register"
+        )
     })
   })
 
