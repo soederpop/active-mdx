@@ -12,7 +12,7 @@
     "build:node": "esbuild index.js --bundle --format=cjs --outfile=dist/index.cjs --platform=node",
     "test": "mocha --require test/test.js test/*.spec.js",
     "prerelease": "npm run test",
-    "release": "npm version patch && npm publish",
+    "release": "npm version patch",
     "prepack": "npm run build"
   },
   "author": "Jon Soeder <jon@chicago.com>",
