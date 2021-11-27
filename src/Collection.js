@@ -5,7 +5,7 @@ import Document from "./Document.js"
 import * as inflections from "inflect"
 
 export default class Collection {
-  constructor({ rootPath, extensions = ["mdx", "md"] }) {
+  constructor({ rootPath = process.cwd(), extensions = ["mdx", "md"] }) {
     this.extensions = extensions
     this.items = new Map()
     this.documents = new Map()
