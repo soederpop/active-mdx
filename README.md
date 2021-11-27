@@ -47,7 +47,7 @@ const collection = new Collection({
 export default collection
 ```
 
-## Inspiration
+## Why does this exist? 
 
 Most of the writing I do is about software. If I write about software in a very structured way, then it is possible to let a computer understand what I am writing, and the context in which I am writing, and actually do things with what I've written. Whether I am writing requirements for software that somebody else will develop, or documentation about software I've written, or an API that I've made available, if the only value that writing is providing is to the people reading it, there is a lot of value being wasted.
 
@@ -149,3 +149,9 @@ This means you can start from a single file in epics, and eventually expand that
 ## Example Projects
 
 - [Example Next.js Blog](https://github.com/soederpop/active-mdx-nextjs-blog)
+
+## Inspiration
+
+- I tried to do this back in the day with Ruby, and ran a successful software consultancy using markdown as a primary tool for communicating with clients and developers.  That project was called [Brief](https://github.com/datapimp/brief) 
+- I discovered the work of [Titus Wormer](https://github.com/wooorm) who has developed hundreds of modules in JavaScript for a system called [Unified](https://unifiedjs.com/) which provides a system for working with ASTs for all kinds of structured writing. 
+- [MDX](https://mdxjs.com) let us combine Markdown with React and develop interactive UI for working with writing besides just the HTML normal markdown gave us.
