@@ -1,6 +1,6 @@
 {
   "name": "active-mdx",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "models for markdown documents",
   "main": "./index.js",
   "type": "module",
