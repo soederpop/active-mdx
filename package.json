@@ -10,7 +10,10 @@
     "preconsole": "npm run build",
     "build": "npm run build:node",
     "build:node": "esbuild src/index.js --bundle --format=cjs --outfile=dist/index.cjs --platform=node",
-    "test": "mocha --require test/test.js test/*.spec.js"
+    "test": "mocha --require test/test.js test/*.spec.js",
+    "prerelease": "npm run test",
+    "release": "npm version patch && npm publish",
+    "prepack": "npm run build"
   },
   "author": "Jon Soeder <jon@chicago.com>",
   "license": "MIT",

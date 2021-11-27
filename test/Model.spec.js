@@ -1,4 +1,4 @@
-import { Model, Collection } from "../src/index.js"
+import { Model, Collection } from "../index.js"
 import Epic from "../examples/sdlc/models/Epic.js"
 import Story from "../examples/sdlc/models/Story.js"
 

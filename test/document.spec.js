@@ -1,4 +1,4 @@
-import { Collection } from "../src/index.js"
+import { Collection } from "../index.js"
 import Epic from "../examples/sdlc/models/Epic.js"
 
 describe("The Document Class", function () {

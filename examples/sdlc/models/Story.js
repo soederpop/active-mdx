@@ -1,4 +1,4 @@
-import { Model } from "../../../src/index.js"
+import { Model } from "../../../index.js"
 
 import Epic from "./Epic.js"
 

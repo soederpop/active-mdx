@@ -1,4 +1,4 @@
-import { Collection } from "../src/index.js"
+import { Collection } from "../index.js"
 
 describe("The Collection Class", function () {
   let collection
