@@ -40,6 +40,11 @@ export default class AstQuery {
 
   /**
    * Find the next node after the given node which matches the given elector
+   *
+   * @param {AstNode} node a node in the AST to start searching from
+   * @param {Function} selector a function which returns true if the node matches
+   *
+   * @returns {AstNode} the first node to match the selector
    */
   findAfter(node, selector) {
     return findAfter(this.ast, node, selector)

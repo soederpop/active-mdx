@@ -1,7 +1,7 @@
-import { parseAsync } from "@babel/core"
+import { parseSync } from "@babel/core"
 
-export default async function parseJavaScript(content) {
-  const ast = await parseAsync(content, {
+export default function parseJavaScript(content) {
+  const ast = parseSync(content, {
     sourceType: "module"
   })
 

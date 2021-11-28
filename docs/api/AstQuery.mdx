@@ -4,3 +4,97 @@ path: src/AstQuery.js
 ---
 
 # AstQuery Class
+
+The AstQuery class is a wrapper around The [MDAST AST Tree](https://github.com/syntax-tree/mdast)
+
+It provides methods for querying nodes in the document.
+
+## Examples
+
+### Accessing the astQuery instance for a document
+
+```js
+const doc = collection.document("epics/authentication")
+const { astQuery } = doc
+// equivalent to doc.astQuery but can be used against any AST
+const query = doc.queryAst(document.ast)
+const other = new AstQuery(doc.ast)
+```
+
+### Selecting all nodes that match a selector
+
+You can use any of the selectors documented in [unist-util-select](https://www.npmjs.com/package/unist-util-select)
+
+- [x] `*` (universal selector)
+- [x] `,` (multiple selector)
+- [x] `paragraph` (type selector)
+- [x] `blockquote paragraph` (combinator: descendant selector)
+- [x] `blockquote > paragraph` (combinator: child selector)
+- [x] `code + paragraph` (combinator: adjacent sibling selector)
+- [x] `code ~ paragraph` (combinator: general sibling selector)
+- [x] `[attr]` (attribute existence, checks that the value on the tree is not
+      nullish)
+- [x] `[attr=value]` (attribute equality, this stringifies values on the tree)
+- [x] `[attr^=value]` (attribute begins with, only works on strings)
+- [x] `[attr$=value]` (attribute ends with, only works on strings)
+- [x] `[attr*=value]` (attribute contains, only works on strings)
+- [x] `[attr~=value]` (attribute contains, checks if `value` is in the array,
+      if there’s an array on the tree, otherwise same as attribute equality)
+- [x] `:any()` (functional pseudo-class, use `:matches` instead)
+- [x] `:has()` (functional pseudo-class)
+      Relative selectors (`:has(> img)`) are not supported, but `:scope` is
+- [x] `:matches()` (functional pseudo-class)
+- [x] `:not()` (functional pseudo-class)
+- [x] `:blank` (pseudo-class, blank and empty are the same: a parent without
+      children, or a node without value)
+- [x] `:empty` (pseudo-class, blank and empty are the same: a parent without
+      children, or a node without value)
+- [x] `:root` (pseudo-class, matches the given node)
+- [x] `:scope` (pseudo-class, matches the given node)
+- [x] \* `:first-child` (pseudo-class)
+- [x] \* `:first-of-type` (pseudo-class)
+- [x] \* `:last-child` (pseudo-class)
+- [x] \* `:last-of-type` (pseudo-class)
+- [x] \* `:only-child` (pseudo-class)
+- [x] \* `:only-of-type` (pseudo-class)
+- [x] \* `:nth-child()` (functional pseudo-class)
+- [x] \* `:nth-last-child()` (functional pseudo-class)
+- [x] \* `:nth-last-of-type()` (functional pseudo-class)
+- [x] \* `:nth-of-type()` (functional pseudo-class)
+
+```js
+const h1 = astQuery.selectAll("heading[depth=1]")
+const h2 = astQuery.selectAll("heading[depth=2]")
+const codeBlocks = astQuery.selectAll("code")
+```
+
+There is also `astQuery.select` which will only return one node instead of an array of nodes.
+
+### Finding all nodes between two headings
+
+```js
+const nodes = astQuery.findBetweenHeadings(
+  astQuery.select("heading")[0],
+  astQuery.select("heading")[1]
+)
+```
+
+### Finding all nodes after another node
+
+```js
+const afterNodes = astQuery.findAllAfter(astQuery.select("heading")[0])
+```
+
+There is also `astQuery.findAfter` which just finds a single node.
+
+### Finding all nodes before another node
+
+```js
+const beforeNodes = astQuery.findAllBefore(astQuery.select("heading")[0])
+```
+
+There is also `astQuery.findBefore` which just finds a single node.
+
+## API
+
+### Instance Methods

@@ -15,10 +15,12 @@ async function main() {
     collection,
     Epic,
     Story,
-    auth: collection.document("epics/authentication"),
+    authDoc: collection.document("epics/authentication"),
     epic: Epic.from(collection.document("epics/authentication")),
     search: Epic.from(collection.document("epics/search")),
-    docs
+    docs,
+    astQueryDoc: docs.document("api/AstQuery"),
+    astQuery: docs.document("api/AstQuery").toModel()
   })
 }
 

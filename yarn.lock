@@ -2543,6 +2543,13 @@ diff@5.0.0, diff@^5.0.0:
   resolved "https://registry.yarnpkg.com/diff/-/diff-5.0.0.tgz#7ed6ad76d859d030787ec35855f5b1daf31d852b"
   integrity sha512-/VTCrvm5Z0JGty/BWHljh+BAiw3IK+2j87NGMu8Nwc/f48WoDAC395uomO9ZD117ZOBaHmkX1oyLvkVM/aIT3w==
 
+docblock-parser@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/docblock-parser/-/docblock-parser-1.0.0.tgz#6e682a14a8c05711b647c2305d7795889f0ea32b"
+  integrity sha1-bmgqFKjAVxG2R8IwXXeViJ8Ooys=
+  dependencies:
+    lodash.assign "^3.2.0"
+
 dont-sniff-mimetype@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/dont-sniff-mimetype/-/dont-sniff-mimetype-1.1.0.tgz#c7d0427f8bcb095762751252af59d148b0a623b2"
@@ -4280,6 +4287,15 @@ lodash._isiterateecall@^3.0.0:
   version "3.0.9"
   resolved "https://registry.yarnpkg.com/lodash._isiterateecall/-/lodash._isiterateecall-3.0.9.tgz#5203ad7ba425fae842460e696db9cf3e6aac057c"
   integrity sha1-UgOte6Ql+uhCRg5pbbnPPmqsBXw=
+
+lodash.assign@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.assign/-/lodash.assign-3.2.0.tgz#3ce9f0234b4b2223e296b8fa0ac1fee8ebca64fa"
+  integrity sha1-POnwI0tLIiPilrj6CsH+6OvKZPo=
+  dependencies:
+    lodash._baseassign "^3.0.0"
+    lodash._createassigner "^3.0.0"
+    lodash.keys "^3.0.0"
 
 lodash.clonedeep@^3.0.2:
   version "3.0.2"
