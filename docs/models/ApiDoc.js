@@ -5,7 +5,7 @@ import lodash from "lodash"
 import traverse from "@babel/traverse"
 import docBlockParser from "docblock-parser"
 
-const { mapValues, isFunction } = lodash
+const { flatten, isEmpty, isNull, get, mapValues, isFunction } = lodash
 
 const privates = new WeakMap()
 
@@ -75,36 +75,87 @@ export default class ApiDoc extends Model {
     return matches
   }
 
-  /**
-   * Returns a parsed docblock for each of the static methods, getters, and properties
-   */
-  get staticDocBlocks() {
-    return mapValues(
-      Object.fromEntries(
-        [
-          ...this.staticInstanceMethods,
-          ...this.staticGetters,
-          ...this.staticProperties
-        ].map((node) => {
-          return [
-            node.node?.key?.name,
-            node.node?.leadingComments?.map((v) => v.value).join("\n") ||
-              "/** */"
-          ]
-        })
-      ),
-      (v = "") => this.utils.parseDocBlock(v)
-    )
+  get body() {
+    return this.sourceAst?.program?.body || []
   }
 
-  get instanceDocBlocks() {
+  get exportDeclarations() {
+    return this.body
+      .map((node, index) =>
+        node.type === "ExportDeclaration" ||
+        node.type === "ExportDefaultDeclaration" ||
+        node.type === "ExportNamedDeclaration"
+          ? { node, index }
+          : undefined
+      )
+      .filter(Boolean)
+  }
+
+  get exportNames() {
+    return this.exportData.map((i) => i.name)
+  }
+
+  get exportData() {
+    const { exportDeclarations = [] } = this
+
+    const names = exportDeclarations.map((item, i) => {
+      const { node, index } = item
+      switch (node.type) {
+        case "ExportDefaultDeclaration":
+          return {
+            name: "default",
+            index,
+            exportName: get(node, "declaration.id.name"),
+            start: get(node, "declaration.loc.start.line"),
+            end: get(node, "declaration.loc.end.line")
+          }
+        case "ExportNamedDeclaration":
+          if (isNull(node.declaration) && !isEmpty(node.specifiers)) {
+            return node.specifiers
+              .filter((specifier) => specifier.type === "ExportSpecifier")
+              .map((specifier) => ({
+                index,
+                name: get(specifier, "exported.name"),
+                start: get(specifier, "loc.start.line"),
+                end: get(specifier, "loc.end.line")
+              }))
+          } else if (
+            !isNull(node.declaration) &&
+            !isEmpty(node.declaration.declarations)
+          ) {
+            const entry = {
+              name: get(node, "declaration.declarations[0].id.name"),
+              start: get(node, "loc.start.line"),
+              end: get(node, "loc.end.line"),
+              index
+            }
+
+            return entry
+          } else if (
+            !isNull(node.declaration) &&
+            node.declaration.type === "FunctionDeclaration"
+          ) {
+            return {
+              name: get(node, "declaration.id.name"),
+              start: get(node, "declaration.loc.start.line"),
+              end: get(node, "declaration.loc.end.line"),
+              index
+            }
+          } else {
+            return { index, node }
+          }
+        default:
+          return undefined
+      }
+    })
+
+    return flatten(names).filter(Boolean)
+  }
+
+  getDocBlocks(propertyType) {
     return mapValues(
       Object.fromEntries(
-        [
-          ...this.classInstanceMethods,
-          ...this.classGetters,
-          ...this.classProperties
-        ].map((node) => {
+        this[propertyType].map((node) => {
           return [
             node.node?.key?.name,
             node.node?.leadingComments?.map((v) => v.value).join("\n") ||
@@ -207,3 +258,7 @@ export default class ApiDoc extends Model {
     return ast
   }
 }
+
+ApiDoc.action("sync-with-code", async function generateOutline(apiDocModel) {
+  console.log(`Syncing with Code ${apiDocModel.id}`)
+})

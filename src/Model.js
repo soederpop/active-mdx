@@ -1,3 +1,4 @@
+import { mixedTypeAnnotation } from "@babel/types"
 import * as inflections from "inflect"
 import lodash from "lodash"
 import {
@@ -6,9 +7,10 @@ import {
   HasOneRelationship
 } from "./Relationship.js"
 
-const { castArray, kebabCase, camelCase, upperFirst } = lodash
+const { result, castArray, kebabCase, camelCase, upperFirst } = lodash
 
 const privates = new WeakMap()
+const classPrivates = new WeakMap()
 
 /**
  * The Model class is intended to be subclassed, and is intended to represent
@@ -51,8 +53,58 @@ export default class Model {
     }
   }
 
+  static get actions() {
+    let mine = classPrivates.get(this)
+
+    if (!mine) {
+      classPrivates.set(this, {})
+      mine = classPrivates.get(this)
+    }
+
+    return (mine.actions = mine.actions || new Map())
+  }
+
+  /**
+   * Register an action function with this model class.  An action is an asynchronous function
+   * that will run, being passed the model instance as the first argument.
+   */
+  static action(name, fn, options = {}) {
+    if (typeof fn === "undefined") {
+      if (!this.actions.has(name)) {
+        throw new Error(`No action by name ${name} found on this model`)
+      }
+      return this.actions.get(name)
+    }
+
+    this.actions.set(name, { fn, options })
+
+    return this
+  }
+
+  static get availableActions() {
+    return Array.from(this.actions.keys())
+  }
+
   get id() {
     return this.document.id
+  }
+
+  get availableActions() {
+    return this.constructor.availableActions
+  }
+
+  async runAction(actionName, options = {}) {
+    if (this.availableActions.indexOf(actionName) === -1) {
+      throw new Error(
+        `Action ${actionName} is not available on model ${this.modelName}`
+      )
+    }
+
+    const actionFn = this.constructor.actions.get(actionName).fn
+
+    const result = await actionFn(this, options)
+
+    return result
   }
 
   get modelName() {
@@ -61,6 +113,10 @@ export default class Model {
 
   get meta() {
     return this.document.meta
+  }
+
+  get availableActions() {
+    return this.constructor.availableActions
   }
 
   toJSON(options = {}) {
@@ -86,6 +142,12 @@ export default class Model {
       const items = relationship.fetchAll()
 
       json[rel] = items.map((item) => item.toJSON())
+    }
+
+    const attributes = castArray(options.attributes).filter(Boolean)
+
+    for (let attr of attributes) {
+      json[attr] = result(this, attr)
     }
 
     return json

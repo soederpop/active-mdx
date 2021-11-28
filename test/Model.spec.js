@@ -29,6 +29,22 @@ describe("The Model Class", function () {
     epic.should.have.property("title", "Authentication")
   })
 
+  describe("Model Actions", function () {
+    it("can register actions on the model", function () {
+      Epic.action("testAction", function (epic, options = {}) {
+        return 1 + options.count
+      })
+
+      Epic.availableActions.should.include("testAction")
+    })
+
+    it("can run actions on the model", async function () {
+      const epic = Epic.from(collection.document("epics/authentication"))
+      const result = await epic.runAction("testAction", { count: 2 })
+      result.should.equal(3)
+    })
+  })
+
   describe("Relationships", function () {
     it("supports different styles of relationships", function () {
       const epic = Epic.from(collection.document("epics/authentication"))

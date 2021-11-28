@@ -231,7 +231,7 @@ export default class Collection {
    *
    * @returns {Collection} this
    */
-  async load() {
+  async load(options = {}) {
     const paths = await readDirectory(this.rootPath)
 
     await Promise.all(
@@ -248,6 +248,16 @@ export default class Collection {
           })
       })
     )
+
+    if (options.models) {
+      const modelsFolder = this.resolve(options.modelsFolder || "models")
+      const modelPaths = await readDirectory(modelsFolder, /\.m?js$/, false)
+
+      for (let modelPath of modelPaths) {
+        const ModelClass = await import(modelPath).then((mod) => mod.default)
+        this.model(ModelClass.name, ModelClass)
+      }
+    }
 
     return this
   }
@@ -267,14 +277,14 @@ export default class Collection {
   }
 }
 
-async function readDirectory(dirPath, match = /\.mdx?$/i) {
+async function readDirectory(dirPath, match = /\.mdx?$/i, recursive = true) {
   var paths = []
   var files = await fs.readdir(dirPath)
   for (var i = 0; i < files.length; i++) {
     var filePath = path.join(dirPath, files[i])
     var stat = await fs.stat(filePath)
-    if (stat.isDirectory()) {
-      paths = paths.concat(await readDirectory(filePath))
+    if (stat.isDirectory() && recursive) {
+      paths = paths.concat(await readDirectory(filePath, match, recursive))
     } else {
       if (match.test(filePath)) {
         paths.push(filePath)
