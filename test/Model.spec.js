@@ -29,6 +29,16 @@ describe("The Model Class", function () {
     epic.should.have.property("title", "Authentication")
   })
 
+  describe("Model Queries", function () {
+    it("can register queries on the model", function () {
+      Epic.registerQuery("testQuery", async function (options = {}) {
+        return []
+      })
+
+      Epic.availableQueries.should.include("testQuery")
+    })
+  })
+
   describe("Model Actions", function () {
     it("can register actions on the model", function () {
       Epic.action("testAction", function (epic, options = {}) {

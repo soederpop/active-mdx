@@ -1,4 +1,3 @@
-import { mixedTypeAnnotation } from "@babel/types"
 import * as inflections from "inflect"
 import lodash from "lodash"
 import {
@@ -10,7 +9,6 @@ import {
 const { result, castArray, kebabCase, camelCase, upperFirst } = lodash
 
 const privates = new WeakMap()
-const classPrivates = new WeakMap()
 
 /**
  * The Model class is intended to be subclassed, and is intended to represent
@@ -53,6 +51,47 @@ export default class Model {
     }
   }
 
+  static get queries() {
+    let mine = classPrivates.get(this)
+
+    if (!mine) {
+      classPrivates.set(this, {})
+      mine = classPrivates.get(this)
+    }
+
+    mine.queries = mine.queries || new Map()
+
+    Array.from(Queries.entries()).forEach(([name, data]) => {
+      if (mine.queries.has(name)) {
+        return
+      }
+      mine.queries.set(name, data)
+    })
+
+    return mine.queries
+  }
+
+  /**
+   * Register an action function with this model class.  An action is an asynchronous function
+   * that will run, being passed the model instance as the first argument.
+   */
+  static registerQuery(name, fn, options = {}) {
+    if (typeof fn === "undefined") {
+      if (!this.queries.has(name)) {
+        throw new Error(`No action by name ${name} found on this model`)
+      }
+      return this.queries.get(name)
+    }
+
+    this.queries.set(name, { fn, options })
+
+    return this
+  }
+
+  static get availableQueries() {
+    return Array.from(this.queries.keys())
+  }
+
   static get actions() {
     let mine = classPrivates.get(this)
 
@@ -61,7 +100,16 @@ export default class Model {
       mine = classPrivates.get(this)
     }
 
-    return (mine.actions = mine.actions || new Map())
+    mine.actions = mine.actions || new Map()
+
+    Array.from(Actions.entries()).forEach(([name, data]) => {
+      if (mine.actions.has(name)) {
+        return
+      }
+      mine.actions.set(name, data)
+    })
+
+    return mine.actions
   }
 
   /**
@@ -193,3 +241,17 @@ export default class Model {
     return new BelongsToRelationship(this, modelNameOrModelClass, options)
   }
 }
+
+const classPrivates = new WeakMap([
+  [
+    Model,
+    {
+      actions: new Map(),
+      queries: new Map(),
+      collections: new Map()
+    }
+  ]
+])
+
+export const Actions = classPrivates.get(Model).actions
+export const Queries = classPrivates.get(Model).queries
