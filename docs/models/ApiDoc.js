@@ -157,7 +157,7 @@ export default class ApiDoc extends Model {
     const { text = "", tags = {} } = docBlock
     const { param = [] } = tags
 
-    const header = [`#### ${title}`, text]
+    const header = [`\n#### ${title}\n`, text]
 
     const body = castArray(param)
       .filter(Boolean)
@@ -167,16 +167,14 @@ export default class ApiDoc extends Model {
       })
 
     if (tags.return || tags.returns) {
-      body.push(`Returns \`${tags.return || tags.returns}\``)
+      body.push(`\nReturns \`${tags.return || tags.returns}\``)
     } else if (tags.type) {
-      body.push(`Type \`${tags.type}\``)
+      body.push(`\nType \`${tags.type}\``)
     }
 
     return header
       .concat(body)
-      .map((v) => v.trim())
       .filter((i) => i && i.length)
-      .map((v) => (v.match(/\n$/) ? v : `${v}\n`))
       .join("\n")
       .trim()
   }
@@ -194,7 +192,7 @@ export default class ApiDoc extends Model {
       ),
       (v, k) => ({
         ...this.utils.parseDocBlock(v),
-        markdown: this.convertDocBlock(k, this.utils.parseDocBlock(v))
+        markdown: this.convertDocBlock(k, this.utils.parseDocBlock(v)) + "\n"
       })
     )
   }
@@ -297,46 +295,50 @@ ApiDoc.action("sync-with-code", async function generateOutline(model) {
   const staticMethods = model.staticClassMethods
   const staticGetters = model.staticClassGetters
 
-  const body = ["## API"]
+  const body = ["## API\n"]
 
   if (!isEmpty(classMethods)) {
-    body.push("### Instance Methods")
+    body.push("### Instance Methods\n\n")
     body.push(
       ...Object.values(model.getDocBlocks("classInstanceMethods")).map(
         (m) => m.markdown
       )
     )
+    body.push("\n")
   }
 
   if (!isEmpty(classGetters)) {
-    body.push("### Instance Properties")
+    body.push("### Instance Properties\n\n")
     body.push(
       ...Object.values(model.getDocBlocks("classGetters")).map(
         (m) => m.markdown
       )
     )
+    body.push("\n")
   }
 
   if (!isEmpty(staticMethods)) {
-    body.push("### Static / Class Methods")
+    body.push("### Static / Class Methods\n\n")
     body.push(
       ...Object.values(model.getDocBlocks("staticClassMethods")).map(
         (m) => m.markdown
       )
     )
+    body.push("\n")
   }
 
   if (!isEmpty(staticGetters)) {
-    body.push("### Static / Class Properties")
+    body.push("### Static / Class Properties\n\n")
     body.push(
       ...Object.values(model.getDocBlocks("staticClassGetters")).map(
         (m) => m.markdown
       )
     )
+    body.push("\n")
   }
 
   const apiDocsContent = body.join("\n")
 
-  model.document.appendContent(apiDocsContent)
+  model.document.appendContent(`\n${apiDocsContent}`)
   await model.save()
 })

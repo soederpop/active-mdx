@@ -4,3 +4,131 @@ path: src/Document.js
 ---
 
 # Document Class
+
+## API
+
+### Instance Methods
+
+
+#### save
+
+Tells the collection this document belongs to to save its content to disk.  It will use Document#rawContent which will serialize the yaml frontmatter and prepend it to the MDX code from the current AST.
+- `{Object} options` options to pass to Collection#saveItem
+
+#### toModel
+
+Convert this document to a Model.  You can either pass the model class as an option,
+or we will attempt to determine the model class by using the Model.prefix and matching it
+against the beginning of the document's id.
+- `{Object} options` 
+- `{Model} options.model` the model class to use
+
+Returns `{Model} an instance of the model class for this document`
+
+#### toJSON
+
+Serialize this document as JSON.
+
+Returns `{Object}`
+
+#### query
+
+Creates a new instance of the ASTQuery class for a given AST.
+- `{MDAst} ast` the ast, defaults to this document's AST
+
+Returns `{AstQuery}`
+
+#### extractSection
+
+Extract a section of the document, starting with a heading.  This will return all of the nodes
+which are underneath a given heading.  It will stop searching when it encounters another heading
+of the same depth, or the end of the document.
+- `{ASTNode} startHeading` the heading to start the section with
+
+Returns `{Array[ASTNode]}`
+
+#### replaceContent
+
+#### appendContent
+
+#### stringify
+
+Converts an AST into MDX code.
+- `{MDAst} [ast=this.ast]` the AST to convert
+
+
+
+### Instance Properties
+
+
+#### rawContent
+
+Returns the raw content of the document, including yaml frontmatter.
+
+#### id
+
+Returns the document's id.  The ID will be the relative path to collection.rootPath, minus the file extension.
+
+#### title
+
+Returns the document title.  The title will be the string contents of the first heading in the document,
+otherwise it will be the id of the document.
+
+#### astQuery
+
+Returns an instance of AstQuery which provides helpers
+for querying the AST nodes in this document.
+
+Returns `{AstQuery}`
+
+#### nodes
+
+Returns an instance of NodeShortcuts which provides getters
+for common queries for our nodes.
+
+Returns `{NodeShortcuts}`
+
+#### utils
+
+Provides access to common utility functions for working with ASTs and nodes.
+
+Type `{Object}`
+
+#### meta
+
+Gets the YAML frontmatter of this document as a JavaScript object.
+
+Type `{Object}`
+
+#### content
+
+Gets the MDX code content of this document, either by using the file's contents that was passed
+from the collection, or by stringifying the AST in its current state.
+
+#### processor
+
+Provides access to the MDX AST compiler
+
+#### ast
+
+Gets the MDAST for this document.  If the document was created with one,
+it will use that. Otherwise it will use Document#processor to compile the MDX code into
+a crawlable AST.
+
+Type `{MDAst}`
+
+#### attributes
+
+Provides access to the unique parts of this document.
+
+#### collection
+
+Returns the collection this document belongs to.
+
+Type `{Collection}`
+
+#### linkedDocuments
+
+Returns any documents which are in the collection, and linked via an href attribute.
+
+
