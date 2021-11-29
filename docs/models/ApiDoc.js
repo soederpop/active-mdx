@@ -5,7 +5,8 @@ import lodash from "lodash"
 import traverse from "@babel/traverse"
 import docBlockParser from "docblock-parser"
 
-const { flatten, isEmpty, isNull, get, mapValues, isFunction } = lodash
+const { flatten, isEmpty, isNull, get, mapValues, isFunction, castArray } =
+  lodash
 
 const privates = new WeakMap()
 
@@ -152,6 +153,34 @@ export default class ApiDoc extends Model {
     return flatten(names).filter(Boolean)
   }
 
+  convertDocBlock(title, docBlock = {}, options = {}) {
+    const { text = "", tags = {} } = docBlock
+    const { param = [] } = tags
+
+    const header = [`#### ${title}`, text]
+
+    const body = castArray(param)
+      .filter(Boolean)
+      .map((param) => {
+        const [name, type, ...description] = param.trim().split(" ")
+        return `- \`${name} ${type}\` ${description.join(" ")}`
+      })
+
+    if (tags.return || tags.returns) {
+      body.push(`Returns \`${tags.return || tags.returns}\``)
+    } else if (tags.type) {
+      body.push(`Type \`${tags.type}\``)
+    }
+
+    return header
+      .concat(body)
+      .map((v) => v.trim())
+      .filter((i) => i && i.length)
+      .map((v) => (v.match(/\n$/) ? v : `${v}\n`))
+      .join("\n")
+      .trim()
+  }
+
   getDocBlocks(propertyType) {
     return mapValues(
       Object.fromEntries(
@@ -163,7 +192,10 @@ export default class ApiDoc extends Model {
           ]
         })
       ),
-      (v = "") => this.utils.parseDocBlock(v)
+      (v, k) => ({
+        ...this.utils.parseDocBlock(v),
+        markdown: this.convertDocBlock(k, this.utils.parseDocBlock(v))
+      })
     )
   }
 
@@ -259,6 +291,52 @@ export default class ApiDoc extends Model {
   }
 }
 
-ApiDoc.action("sync-with-code", async function generateOutline(apiDocModel) {
-  console.log(`Syncing with Code ${apiDocModel.id}`)
+ApiDoc.action("sync-with-code", async function generateOutline(model) {
+  const classMethods = model.classInstanceMethods
+  const classGetters = model.classGetters
+  const staticMethods = model.staticClassMethods
+  const staticGetters = model.staticClassGetters
+
+  const body = ["## API"]
+
+  if (!isEmpty(classMethods)) {
+    body.push("### Instance Methods")
+    body.push(
+      ...Object.values(model.getDocBlocks("classInstanceMethods")).map(
+        (m) => m.markdown
+      )
+    )
+  }
+
+  if (!isEmpty(classGetters)) {
+    body.push("### Instance Properties")
+    body.push(
+      ...Object.values(model.getDocBlocks("classGetters")).map(
+        (m) => m.markdown
+      )
+    )
+  }
+
+  if (!isEmpty(staticMethods)) {
+    body.push("### Static / Class Methods")
+    body.push(
+      ...Object.values(model.getDocBlocks("staticClassMethods")).map(
+        (m) => m.markdown
+      )
+    )
+  }
+
+  if (!isEmpty(staticGetters)) {
+    body.push("### Static / Class Properties")
+    body.push(
+      ...Object.values(model.getDocBlocks("staticClassGetters")).map(
+        (m) => m.markdown
+      )
+    )
+  }
+
+  const apiDocsContent = body.join("\n")
+
+  model.document.appendContent(apiDocsContent)
+  await model.save()
 })

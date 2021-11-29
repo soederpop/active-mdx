@@ -235,6 +235,15 @@ export default class Document {
     return content
   }
 
+  replaceContent(content) {
+    privates.get(this).content = content
+  }
+
+  appendContent(content) {
+    privates.get(this).content += content
+    return this.content
+  }
+
   /**
    * Converts an AST into MDX code.
    *

@@ -74,8 +74,7 @@ export default class Model {
    * For example, you could have a query named "all" that would return all of the instances,
    * or a query named "published" which would return all instances which have meta.status == 'published'
    *
-   * @readonly
-   * @returns {Map}
+   * @type {Map}
    */
   static get queries() {
     let mine = classPrivates.get(this)
@@ -100,6 +99,9 @@ export default class Model {
   /**
    * Register an query function with this model class.
    *
+   * @param {String} name the name of the query
+   * @param {Function} fn a function which returns models matching the query
+   * @param {Object} options
    */
   static registerQuery(name, fn, options = {}) {
     if (typeof fn === "undefined") {
@@ -115,6 +117,9 @@ export default class Model {
   }
 
   /**
+   * Run a query against the model.  Can either pass the name of a query that has already been registered
+   * or a function that will be used to build the query and return results.
+   *
    * @returns {CollectionQuery}
    */
   static query(...args) {
@@ -157,7 +162,9 @@ export default class Model {
   }
 
   /**
-   * @returns {Array[String]} the names of the queries that have been registered with this model.
+   * Gets a list of named queries registered with this model
+   *
+   * @type{Array[String]}
    */
   static get availableQueries() {
     return Array.from(this.queries.keys())
@@ -165,7 +172,6 @@ export default class Model {
 
   /**
    * Provides access to a registry of action functions which can be run on this model.
-   * @readonly
    * @type {Map}
    */
   static get actions() {
@@ -210,10 +216,8 @@ export default class Model {
   }
 
   /**
-   * @type {Array[String]} the names of the actions that have been registered with this model.
-   * @readonly
-   * @static
-   * @memberof Model
+   * the names of the actions that have been registered with this model.
+   * @type {Array[String]}
    */
   static get availableActions() {
     return Array.from(this.actions.keys())
@@ -229,6 +233,7 @@ export default class Model {
 
   /**
    * Gets any collections this Model can be associated with.
+   * @type {Map}
    */
   static get collections() {
     return classPrivates.get(Model).collections
@@ -236,6 +241,7 @@ export default class Model {
 
   /**
    * Returns the ID of the underlying document
+   * @type {String}
    */
   get id() {
     return this.document.id
@@ -243,6 +249,7 @@ export default class Model {
 
   /**
    * Returns an array of action names that can be run with this model.
+   * @type {Array[String]}
    */
   get availableActions() {
     return this.constructor.availableActions
@@ -250,6 +257,8 @@ export default class Model {
 
   /**
    * Runs a registered action by its name.
+   * @param {String} actionName
+   * @param {Object} options options to be passed to the action function
    */
   async runAction(actionName, options = {}) {
     if (this.availableActions.indexOf(actionName) === -1) {
@@ -267,6 +276,7 @@ export default class Model {
 
   /**
    * Get the name of this class
+   * @type {String}
    */
   get modelName() {
     return this.constructor.name
@@ -274,6 +284,8 @@ export default class Model {
 
   /**
    * Returns the underlying document's meta data, pulled from the frontmatter.
+   *
+   * @type {Object}
    */
   get meta() {
     return this.document.meta
@@ -339,6 +351,7 @@ export default class Model {
 
   /**
    * The prefix of the model
+   * @type {String}
    */
   get prefix() {
     return this.constructor.prefix
