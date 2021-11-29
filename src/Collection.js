@@ -159,9 +159,12 @@ export default class Collection {
 
   /**
    * Creates a new Document tied to this collection.
+   *
+   * @param {Object} attributes
+   * @param {String}
    */
-  createDocument(params = {}) {
-    return new Document({ ...params, collection: this })
+  createDocument(attributes = {}) {
+    return new Document({ ...attributes, collection: this })
   }
 
   /**
@@ -239,6 +242,9 @@ export default class Collection {
    *
    * It will parse each file, and treat YAML frontmatter and content separately.
    *
+   * @param {Object} options
+   * @param {Boolean} [options.models=false] whether to automatically find and require model classes from the models subfolder in the collection
+   * @param {String} [options.modelsFolder="models"] which subfolder the models will live in.  Only applies if options.models is true
    * @returns {Collection} this
    */
   async load(options = {}) {

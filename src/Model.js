@@ -23,12 +23,21 @@ export default class Model {
   }
 
   /**
-   * Returns true if the document can be used by this model
+   * Returns true if the document can be used by this model.
+   *
+   * When defining your own Model class, you should override this method with your own logic.
    */
   static is(document) {
     return !!document.ast?.children
   }
 
+  /**
+   * Creates an instance of this Model class from a given Document.
+   *
+   * @param {Document} document
+   * @param {Object} options
+   *
+   */
   static from(document, options = {}) {
     if (!this.is(document)) {
       throw new Error(`The document is not valid for this model.`)
@@ -37,10 +46,17 @@ export default class Model {
     return new this(document, options)
   }
 
+  /**
+   * When defining your own Model class, you can override this method with your own prefix.  By default
+   * it will use the lowercase, pluralized name of the model.  E.g. Book -> books
+   */
   static get prefix() {
     return this.inflections.plural.toLowerCase()
   }
 
+  /**
+   * Provides different variations of the model name, plural, singular, class name style, as well as the actual name of the class.
+   */
   static get inflections() {
     const name = this.name.toLowerCase()
 
@@ -52,6 +68,15 @@ export default class Model {
     }
   }
 
+  /**
+   * Provides access to any named queries that have been registered with this model.
+   *
+   * For example, you could have a query named "all" that would return all of the instances,
+   * or a query named "published" which would return all instances which have meta.status == 'published'
+   *
+   * @readonly
+   * @returns {Map}
+   */
   static get queries() {
     let mine = classPrivates.get(this)
 
@@ -73,8 +98,8 @@ export default class Model {
   }
 
   /**
-   * Register an action function with this model class.  An action is an asynchronous function
-   * that will run, being passed the model instance as the first argument.
+   * Register an query function with this model class.
+   *
    */
   static registerQuery(name, fn, options = {}) {
     if (typeof fn === "undefined") {
@@ -89,6 +114,9 @@ export default class Model {
     return this
   }
 
+  /**
+   * @returns {CollectionQuery}
+   */
   static query(...args) {
     if (typeof args[0] === "string") {
       const registeredQuery = this.queries.get(args[0])
@@ -128,10 +156,18 @@ export default class Model {
     }
   }
 
+  /**
+   * @returns {Array[String]} the names of the queries that have been registered with this model.
+   */
   static get availableQueries() {
     return Array.from(this.queries.keys())
   }
 
+  /**
+   * Provides access to a registry of action functions which can be run on this model.
+   * @readonly
+   * @type {Map}
+   */
   static get actions() {
     let mine = classPrivates.get(this)
 
@@ -154,7 +190,11 @@ export default class Model {
 
   /**
    * Register an action function with this model class.  An action is an asynchronous function
-   * that will run, being passed the model instance as the first argument.
+   * that will run being passed the model instance as the first argument.
+   *
+   * @param {String} name
+   * @param {Function} fn
+   * @param {Object} options
    */
   static action(name, fn, options = {}) {
     if (typeof fn === "undefined") {
@@ -169,26 +209,48 @@ export default class Model {
     return this
   }
 
+  /**
+   * @type {Array[String]} the names of the actions that have been registered with this model.
+   * @readonly
+   * @static
+   * @memberof Model
+   */
   static get availableActions() {
     return Array.from(this.actions.keys())
   }
 
+  /**
+   * Gets the default collection, which will be used for any queries.
+   * @type {Collection}
+   */
   static get defaultCollection() {
     return classPrivates.get(Model).collections.get("default")
   }
 
+  /**
+   * Gets any collections this Model can be associated with.
+   */
   static get collections() {
     return classPrivates.get(Model).collections
   }
 
+  /**
+   * Returns the ID of the underlying document
+   */
   get id() {
     return this.document.id
   }
 
+  /**
+   * Returns an array of action names that can be run with this model.
+   */
   get availableActions() {
     return this.constructor.availableActions
   }
 
+  /**
+   * Runs a registered action by its name.
+   */
   async runAction(actionName, options = {}) {
     if (this.availableActions.indexOf(actionName) === -1) {
       throw new Error(
@@ -203,18 +265,28 @@ export default class Model {
     return result
   }
 
+  /**
+   * Get the name of this class
+   */
   get modelName() {
     return this.constructor.name
   }
 
+  /**
+   * Returns the underlying document's meta data, pulled from the frontmatter.
+   */
   get meta() {
     return this.document.meta
   }
 
-  get availableActions() {
-    return this.constructor.availableActions
-  }
-
+  /**
+   * Represent this model as a pure JavaScript object.
+   *
+   * @param {Object} options
+   * @param {Array[String]} options.related - include any defined relations of the mdoel.  It will return any related models and call toJSON on those as well.
+   * @param {Array[String]} options.attributes - include any defined attributes of the model.
+   * @returns {Object}
+   */
   toJSON(options = {}) {
     const json = {
       id: this.id,
@@ -249,26 +321,48 @@ export default class Model {
     return json
   }
 
+  /**
+   * Provide access to the underlying document's parent collection
+   *
+   * @type {Collection}
+   */
   get collection() {
     return this.document.collection
   }
 
+  /**
+   * A shortcut to the inflections of this model name
+   */
   get inflections() {
     return this.constructor.inflections
   }
 
+  /**
+   * The prefix of the model
+   */
   get prefix() {
     return this.constructor.prefix
   }
 
+  /**
+   * Save the underlying document
+   */
   async save(options = {}) {
     return this.document.save(options)
   }
 
+  /**
+   * The underlying document for this model.
+   * @type {Document}
+   */
   get document() {
     return privates.get(this).document
   }
 
+  /**
+   * The title of the underlying document
+   * @type {String}
+   */
   get title() {
     return this.document.title
   }
@@ -277,14 +371,40 @@ export default class Model {
     return privates.get(this).relationships
   }
 
+  /**
+   * Returns a HasManyRelationship instance for this model.  You can call fetchAll on this to get
+   * instances of the related model.
+   *
+   * @param {String|Model} modelNameOrModelClass
+   * @param {Object} options
+   * @param {String} options.heading - the parent heading the child relations will be found under.
+   *
+   * @returns {HasManyRelationship}
+   */
   hasMany(modelNameOrModelClass, options = {}) {
     return new HasManyRelationship(this, modelNameOrModelClass, options)
   }
 
+  /**
+   * Returns a HasOneRelationship instance for this model.  You can call fetch on this to get
+   * an array containing the one instance of the related model.
+   * @param {String|Model} modelNameOrModelClass
+   * @param {Object} options
+   * @param {String} options.heading - the parent heading the child relations will be found under.
+   *
+   * @returns {HasOneRelationship}
+   */
   hasOne(modelNameOrModelClass, options = {}) {
     return new HasOneRelationship(this, modelNameOrModelClass, options)
   }
 
+  /**
+   * Returns a BelongsToRelationship instance for this model.  You can call fetch on this to get the instance of the parent Model.
+   *
+   * @param {String|Model} modelNameOrModelClass
+   * @param {Object} options
+   * @param {Function} options.id a function which will be passed this models underlying document, and should return the id of the parent model this belongs to
+   */
   belongsTo(modelNameOrModelClass, options = {}) {
     return new BelongsToRelationship(this, modelNameOrModelClass, options)
   }

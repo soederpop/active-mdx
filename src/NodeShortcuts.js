@@ -1,3 +1,10 @@
+import { parseTable } from "./Document.js"
+/**
+ * The NodeShortcuts class is a helper class for the Document class,
+ * it will take the AST of a given document and provide getters for common queries for nodes.
+ *
+ * For example, the first or last node, all ehadings, the first heading, second heading, code blocks, links, etc.
+ */
 export default class NodeShortcuts {
   constructor(astQuery) {
     this.ast = astQuery.ast
@@ -52,5 +59,13 @@ export default class NodeShortcuts {
 
   get links() {
     return this.astQuery.selectAll("link")
+  }
+
+  get tables() {
+    return this.astQuery.selectAll("table")
+  }
+
+  get tablesAsData() {
+    return this.tables.map(parseTable)
   }
 }
