@@ -29,6 +29,11 @@ describe("The Model Class", function () {
     epic.should.have.property("title", "Authentication")
   })
 
+  it("should have a default collection", function () {
+    Model.should.have.property("defaultCollection")
+    Model.defaultCollection.should.have.property("rootPath")
+  })
+
   describe("Model Queries", function () {
     it("can register queries on the model", function () {
       Epic.registerQuery("testQuery", async function (options = {}) {

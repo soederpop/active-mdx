@@ -2,6 +2,7 @@ import fs from "fs/promises"
 import path from "path"
 import matter from "gray-matter"
 import Document from "./Document.js"
+import Model from "./Model.js"
 import * as inflections from "inflect"
 
 /**
@@ -10,8 +11,17 @@ import * as inflections from "inflect"
 export default class Collection {
   constructor(
     { rootPath = process.cwd(), extensions = ["mdx", "md"] },
-    models = []
+    models = [],
+    name = path.parse(rootPath).base
   ) {
+    if (!Model.defaultCollection) {
+      Model.collections.set("default", this)
+    }
+
+    if (!Model.collections.has(name)) {
+      Model.collections.set(name, this)
+    }
+
     this.extensions = extensions
     this.items = new Map()
     this.documents = new Map()

@@ -1,5 +1,6 @@
 import * as inflections from "inflect"
 import lodash from "lodash"
+import CollectionQuery from "./CollectionQuery.js"
 import {
   HasManyRelationship,
   BelongsToRelationship,
@@ -88,6 +89,45 @@ export default class Model {
     return this
   }
 
+  static query(...args) {
+    if (typeof args[0] === "string") {
+      const registeredQuery = this.queries.get(args[0])
+      const options = args[1] || {}
+      const { collection = "default" } = options
+
+      return new CollectionQuery({
+        collection: this.collections.get(collection),
+        fn: registeredQuery.fn,
+        options,
+        model: this
+      })
+    }
+
+    if (typeof args[0] === "function") {
+      const fn = args[0]
+      const options = args[1] || {}
+      const { collection = "default" } = options
+
+      return new CollectionQuery({
+        collection: this.collections.get(collection),
+        fn,
+        options,
+        model: this
+      })
+    }
+
+    if (typeof args[0] === "object" || args.length === 0) {
+      const options = args[0] || {}
+      const { collection = "default" } = options
+      return new CollectionQuery({
+        collection: this.collections.get(collection),
+        options,
+        model: this,
+        fn: () => true
+      })
+    }
+  }
+
   static get availableQueries() {
     return Array.from(this.queries.keys())
   }
@@ -131,6 +171,14 @@ export default class Model {
 
   static get availableActions() {
     return Array.from(this.actions.keys())
+  }
+
+  static get defaultCollection() {
+    return classPrivates.get(Model).collections.get("default")
+  }
+
+  static get collections() {
+    return classPrivates.get(Model).collections
   }
 
   get id() {
