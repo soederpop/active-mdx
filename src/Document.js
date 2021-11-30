@@ -239,6 +239,10 @@ export default class Document {
    * Removes the nodes under the given heading from the AST.
    */
   removeSection(startHeading) {
+    if (typeof startHeading === "string") {
+      startHeading = this.astQuery.findHeadingByText(startHeading)
+    }
+
     const sectionNodes = this.extractSection(startHeading)
 
     this.ast.children = this.ast.children.filter((node) => {
@@ -248,13 +252,87 @@ export default class Document {
     return sectionNodes
   }
 
+  replaceSectionContent(startHeading, nodesOrMarkdown = []) {
+    if (typeof startHeading === "string") {
+      startHeading = this.astQuery.findHeadingByText(startHeading)
+    }
+
+    if (typeof nodesOrMarkdown === "string") {
+      nodesOrMarkdown = this.processor.parse(nodesOrMarkdown).children
+    }
+
+    const sectionNodes = this.extractSection(startHeading).slice(1)
+    const headingIndex = this.ast.children.indexOf(startHeading)
+
+    this.ast.children.splice(
+      headingIndex + 1,
+      sectionNodes.length,
+      ...nodesOrMarkdown
+    )
+
+    return this
+  }
+
+  insertBefore(node, nodesOrMarkdown = []) {
+    if (typeof nodesOrMarkdown === "string") {
+      nodesOrMarkdown = this.processor.parse(nodesOrMarkdown).children
+    }
+    const index = this.ast.children.indexOf(node)
+    this.ast.children.splice(index, 0, ...nodesOrMarkdown)
+    return this
+  }
+
+  insertAfter(node, nodesOrMarkdown = []) {
+    if (typeof nodesOrMarkdown === "string") {
+      nodesOrMarkdown = this.processor.parse(nodesOrMarkdown).children
+    }
+    const index = this.ast.children.indexOf(node)
+    this.ast.children.splice(index + 1, 0, ...nodesOrMarkdown)
+    return this
+  }
+
+  appendToSection(startHeading, nodesOrMarkdown = []) {
+    if (typeof startHeading === "string") {
+      startHeading = this.astQuery.findHeadingByText(startHeading)
+    }
+
+    if (typeof nodesOrMarkdown === "string") {
+      nodesOrMarkdown = this.processor.parse(nodesOrMarkdown).children
+    }
+
+    const sectionNodes = this.extractSection(startHeading)
+
+    const lastIndex = this.ast.children.indexOf(
+      sectionNodes[sectionNodes.length - 1]
+    )
+    this.ast.children.splice(lastIndex + 1, 0, ...nodesOrMarkdown)
+
+    return this
+  }
+
   replaceContent(content) {
-    return (privates.get(this).content = content)
+    privates.get(this).content = content
+    privates.get(this).ast = this.processor.parse(content)
+    return this
   }
 
   appendContent(content) {
     privates.get(this).content += content
-    return this.content
+    privates.get(this).ast = this.processor.parse(content)
+    return this
+  }
+
+  rerenderAST(newContent = this.content) {
+    privates.get(this).ast = this.processor.parse(newContent)
+    return this
+  }
+
+  reloadFromAST(newAst = this.ast) {
+    const code = stringifyAst(newAst)
+    privates.get(this).content = code
+    privates.get(this).ast = newAst
+
+    return this
   }
 
   /**
@@ -305,7 +383,10 @@ export default class Document {
    * @memberof Document
    */
   get attributes() {
-    return omit(privates.get(this), "ast", "collection")
+    return {
+      ...omit(privates.get(this), "ast", "collection", "meta"),
+      collectionName: this.collection.name
+    }
   }
 
   /**
