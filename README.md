@@ -5,7 +5,7 @@
 
 ActiveMDX works in Node.js and provides a structured content modeling API on top of [Collections](docs/api/Collection.mdx) of MDX files in a folder and its subfolders. This lets you work with the collection of documents as if it was a database, an individual document being a record, and the structure of the content ( and YAML frontmatter ) determining its attributes.  When you combine the custom presentation of MDX and React, with data derived from the content itself, it opens up powerful possibilities.
 
-Active MDX is a Content Modeling library which lets you develop `Model`s for the different types of MDX documents in your project.  A `Model` assumes that a document follows a known heading and sub-heading structure.  For example, A `Recipe` will have an `## Ingredients` section and a `## Steps` section.  Active MDX Models allow you to turn any MDX Document into a JSON object by providing helpers for working with the document in [AST form](https://mdxjs.com).  What goes into the JSON object will depend entirely on what you are writing inside of this predicable structure.  Active MDX Models are backed by a [Document](./docs/api/Document.mdx) class which provides you with many utilities for turning the content being written about into structured data.
+Active MDX is a Content Modeling library which lets you develop [Models](./docs/api/Model.mdx) for the different types of MDX documents in your project.  A [Model](./docs/api/Model.mdx) assumes that a document follows a known heading and sub-heading structure.  For example, A `Recipe` will have an `## Ingredients` section and a `## Steps` section.  Active MDX Models allow you to turn any MDX Document into a JSON object by providing helpers for working with the document in [AST form](https://github.com/syntax-tree/mdast).  What goes into the JSON object will depend entirely on what you are writing inside of this predicable structure.  Active MDX Models are backed by a [Document](./docs/api/Document.mdx) class which provides you with many utilities for turning the content being written about into structured data.
 
 The data Active MDX makes available based on what is being written about can be used to power all sorts of applications. If you are building a website which which is a cookbook that has a dozen recipes, Active MDX can give you a database of all of the ingredients and quantities and you could render a button to place the order let users find a recipe based on what ingredients they had.  
 
@@ -141,6 +141,7 @@ $ amdx --help
 ## Guides and Documentation
 
 - [Introduction](./docs/guides/introduction.mdx)
+- [Example Project](./examples/sdlc)
 - [Usage with NextJS](./docs/guides/usage/with-nextjs.mdx)
 - [Models](./docs/guides/models)
 
