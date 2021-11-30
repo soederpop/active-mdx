@@ -47,10 +47,22 @@ This folder is represented by an instance of the Active MDX [Collection](./docs/
 // index.js
 import { Collection } from "active-mdx"
 
-export default async () => new Collection({ rootPath: "./content" }).load()
+// load({ models: true }) will automatically register ./models/*.js as model classes
+export default new Collection({ rootPath: "./content" })
 ```
 
-The mdx files inside of the `epics` folder are represented by a [Model](./docs/api/Model.mdx) that we defined in [./models/Epic.js](./examples/sdlc/models/Epic.js)
+You can use this anywhere
+
+```js
+import collection from './index.js'
+
+collection.load({ models: true }).then(async (collection) => {
+  const Epic = collection.model('Epic')
+  const epics = Epic.query(qb => qb.where("status", "completed")).fetchAll()
+})
+```
+
+The mdx files inside of the `epics` folder are represented by a [Model](./docs/api/Model.mdx) that we defined in [./models/Epic.js](./examples/sdlc/models/Epic.js).  A Model defines how this document relates to other documents in the project, and how information from the content of the document can be represented as data.
 
 ```javascript
 // ./models/Epic.js
@@ -130,6 +142,15 @@ console.log(authEpic.toJSON({ related: ["stories"], attributes: ["isComplete"] }
 */
 ```
 
+Every model has access to an underlying [Document](./docs/api/Document.mdx) class, which provides methods for [Querying the AST](./docs/api/AstQuery.mdx) and [Shortcuts to AST Nodes](./docs/api/NodeShortcuts.mdx) which can be used to extract data from the writing content.
+
+[The Document class API](./docs/api/Document.mdx) also provides methods for manipulating the content of the documents programatically such as 
+- `replaceSectionContent("Section Title", "- new\n - markdown\n - list\n")` 
+- `appendToSection("Section Title", "[Link](www.google.com)")`
+
+For a full list of what is available in the API [See The API Documentation](./docs/api)
+
+
 ## CLI
 
 The package ships with a bin `amdx` which can be used to initialize a new project, and work with the documents and models.
@@ -140,10 +161,10 @@ $ amdx --help
 
 ## Guides and Documentation
 
-- [Introduction](./docs/guides/introduction.mdx)
-- [Example Project](./examples/sdlc)
+- [Introduction](./docs/guides/README.md)
+- [Example Project](./examples/sdlc/README.md)
 - [Usage with NextJS](./docs/guides/usage/with-nextjs.mdx)
-- [Models](./docs/guides/models)
+- [Models](./docs/guides/models/README.md)
 
 ## Example Projects
 
