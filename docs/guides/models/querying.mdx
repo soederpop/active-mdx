@@ -1,1 +1,13 @@
 # ActiveMDX Model Queries
+
+Models can be queried to return matching instances of that model
+
+```javascript
+const epics = await Epic.query((qb) => {
+  qb.where("meta.status", "created").whereIn("meta.priority", [
+    "low",
+    "medium",
+    "high"
+  ])
+}).fetchAll()
+```
