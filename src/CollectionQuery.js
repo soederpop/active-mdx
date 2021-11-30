@@ -1,3 +1,8 @@
+import QueryBuilder from "./QueryBuilder.js"
+import lodash from "lodash"
+
+const { isEqual, get } = lodash
+
 export default class CollectionQuery {
   constructor(opts = {}) {
     const { collection, model, options = {}, fn } = opts
@@ -21,6 +26,37 @@ export default class CollectionQuery {
     const { collection } = this
     await (collection.available.length || collection.load())
 
-    return []
+    const qb = new QueryBuilder()
+
+    this.fn(qb)
+
+    collection.available.forEach((id) => collection.document(id))
+
+    return applyFilter(
+      qb,
+      Array.from(collection.documents.values()).map(
+        (doc) => doc.modelClass === this.model && doc.toModel()
+      )
+    )
   }
+}
+
+const operators = {
+  eq: isEqual,
+  neq: (a, b) => !isEqual(a, b),
+  in: (a, b) => b?.includes(a)
+}
+
+function applyFilter(queryBuilder, records) {
+  return records.filter((record) => {
+    const { conditions } = queryBuilder
+
+    return (
+      record &&
+      Object.entries(conditions).every(([column, { operator, value }]) => {
+        const actual = get(record, column)
+        return operators[operator](actual, value)
+      })
+    )
+  })
 }

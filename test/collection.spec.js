@@ -25,7 +25,7 @@ describe("The Collection Class", function () {
       rootPath: Collection.resolve("docs")
     })
 
-    docs.modelClasses.should.be.empty
+    docs.modelClasses.should.have.property("length", 1)
 
     await docs.load({ models: true })
 

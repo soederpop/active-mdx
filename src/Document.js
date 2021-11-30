@@ -2,6 +2,7 @@ import lodash from "lodash"
 import { toString } from "mdast-util-to-string"
 import { createMdxAstCompiler, sync } from "@mdx-js/mdx"
 import AstQuery from "./AstQuery.js"
+import Model from "./Model.js"
 import NodeShortcuts from "./NodeShortcuts.js"
 import stringify from "mdx-stringify"
 import yaml from "js-yaml"
@@ -75,22 +76,7 @@ export default class Document {
     return privates.get(this).id
   }
 
-  /**
-   * Convert this document to a Model.  You can either pass the model class as an option,
-   * or we will attempt to determine the model class by using the Model.prefix and matching it
-   * against the beginning of the document's id.
-   *
-   * @param {Object} options
-   * @param {Model} options.model the model class to use
-   * @returns {Model} an instance of the model class for this document
-   */
-  toModel(options = {}) {
-    const { model } = options
-
-    if (model) {
-      return model.from(this)
-    }
-
+  get modelClass() {
     let ModelClass
 
     if (this.meta.type) {
@@ -108,10 +94,24 @@ export default class Document {
     }
 
     if (!ModelClass) {
-      throw new Error(`No model class found for document id: ${this.id}`)
+      ModelClass = Model
     }
 
-    return ModelClass.from(this)
+    return ModelClass
+  }
+
+  /**
+   * Convert this document to a Model.  You can either pass the model class as an option,
+   * or we will attempt to determine the model class by using the Model.prefix and matching it
+   * against the beginning of the document's id.
+   *
+   * @param {Object} options
+   * @param {Model} options.model the model class to use
+   * @returns {Model} an instance of the model class for this document
+   */
+  toModel(options = {}) {
+    const { modelClass = this.modelClass } = options
+    return modelClass.from(this, options)
   }
 
   /**

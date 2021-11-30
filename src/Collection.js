@@ -25,7 +25,10 @@ export default class Collection {
     this.extensions = extensions
     this.items = new Map()
     this.documents = new Map()
-    this.models = new Map()
+    this.models = new Map([
+      ["Model", { ModelClass: Model, options: { prefix: "" } }]
+    ])
+
     this.rootPath = path.resolve(this.constructor.resolve(rootPath))
 
     models.forEach((ModelClass) => {
@@ -45,6 +48,11 @@ export default class Collection {
    */
   resolve(...args) {
     return this.constructor.resolve(this.rootPath, ...args)
+  }
+
+  query(model, ...args) {
+    const Model = typeof model === "string" ? this.model(model) : model
+    return Model.query(...args)
   }
 
   /**
