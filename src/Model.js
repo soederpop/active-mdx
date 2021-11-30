@@ -7,7 +7,8 @@ import {
   HasOneRelationship
 } from "./Relationship.js"
 
-const { result, castArray, kebabCase, camelCase, upperFirst } = lodash
+const { defaultsDeep, result, castArray, kebabCase, camelCase, upperFirst } =
+  lodash
 
 const privates = new WeakMap()
 
@@ -288,7 +289,16 @@ export default class Model {
    * @type {Object}
    */
   get meta() {
-    return this.document.meta
+    return defaultsDeep({}, this.document.meta, this.defaults?.meta || {})
+  }
+
+  /**
+   * You can override this to return default data to be used when creating data for serialization purposes.
+   * For example you can return { meta: { defaultValue: 1 } } to ensure all instances of this model have that
+   * as their metadata.
+   */
+  get defaults() {
+    return {}
   }
 
   /**

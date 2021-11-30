@@ -86,6 +86,19 @@ describe("The Model Class", function () {
         )
     })
 
+    it("lets you specify defaults", function () {
+      const epic = Epic.from(collection.document("epics/authentication"))
+      epic.defaults.should.have
+        .property("meta")
+        .that.is.an("object")
+        .that.has.property("status", "created")
+      epic
+        .toJSON()
+        .should.have.property("meta")
+        .that.is.an("object")
+        .that.has.property("status", "created")
+    })
+
     it("can serialize the models", function () {
       const epic = Epic.from(collection.document("epics/authentication"))
       const json = epic.toJSON()

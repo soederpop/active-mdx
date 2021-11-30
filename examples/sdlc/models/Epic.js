@@ -2,6 +2,14 @@ import { Model } from "../../../index.js"
 import Story from "./Story.js"
 
 export default class Epic extends Model {
+  get defaults() {
+    return {
+      meta: {
+        status: "created"
+      }
+    }
+  }
+
   get isComplete() {
     return this.stories()
       .fetchAll()
