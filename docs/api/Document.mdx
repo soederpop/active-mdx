@@ -50,14 +50,28 @@ Returns `{Array[ASTNode]}`
 
 Removes the nodes under the given heading from the AST.
 
+#### replaceSectionContent
+
+#### insertBefore
+
+#### insertAfter
+
+#### appendToSection
+
 #### replaceContent
 
 #### appendContent
+
+#### rerenderAST
+
+#### reloadFromAST
 
 #### stringify
 
 Converts an AST into MDX code.
 - `{MDAst} [ast=this.ast]` the AST to convert
+
+#### compile
 
 
 
@@ -71,6 +85,8 @@ Returns the raw content of the document, including yaml frontmatter.
 #### id
 
 Returns the document's id.  The ID will be the relative path to collection.rootPath, minus the file extension.
+
+#### modelClass
 
 #### title
 
