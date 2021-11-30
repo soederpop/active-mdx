@@ -1,6 +1,6 @@
 import lodash from "lodash"
 import { toString } from "mdast-util-to-string"
-import { createMdxAstCompiler } from "@mdx-js/mdx"
+import { createMdxAstCompiler, sync } from "@mdx-js/mdx"
 import AstQuery from "./AstQuery.js"
 import NodeShortcuts from "./NodeShortcuts.js"
 import stringify from "mdx-stringify"
@@ -342,6 +342,12 @@ export default class Document {
    */
   stringify(ast = this.ast) {
     return stringifyAst(ast)
+  }
+
+  compile() {
+    return sync(this.content, {
+      remarkPlugins: [gfm]
+    })
   }
 
   /**
