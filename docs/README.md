@@ -4,7 +4,9 @@
 
 This section contains guides for getting started with and using ActiveMDX.
 
-- [Introduction](./guides/introduction.mdx)
+- [Introduction](./guides/README.md)
+- [Models](./guides/models/README.md)
+- [Usage with Next.js](./guides/usage/with-nextjs.mdx)
 
 ## API Docs
 
