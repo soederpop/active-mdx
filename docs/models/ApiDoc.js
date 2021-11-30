@@ -297,6 +297,14 @@ ApiDoc.action("sync-with-code", async function generateOutline(model) {
 
   const body = ["## API\n"]
 
+  const apiHeading = model.document.astQuery.findHeadingByText("api")
+
+  if (apiHeading) {
+    model.document.removeSection(apiHeading)
+    model.document.replaceContent(model.document.stringify())
+    await model.save()
+  }
+
   if (!isEmpty(classMethods)) {
     body.push("### Instance Methods\n\n")
     body.push(

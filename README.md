@@ -1,8 +1,13 @@
 # Active MDX
+> Content Modeling for MDX
 
-[MDX](https://mdxjs.com) is a great tool, it lets you combine Markdown and React to create beautiful and interactive presentations for your writing.
+[MDX](https://mdxjs.com) lets you combine Markdown and React to interactive presentations for your writing.  Where regular markdown provides you with static html, MDX provides you with a dynamic, react based output which you can customize and make interactive. 
 
-With ActiveMDX you can treat collections of MDX files as a database, and even provide an API for your content so that a computer can interact with it. The word Active in MDX is a reference to the [Active Record Pattern](https://en.wikipedia.org/wiki/Active_record_pattern) or [ActiveRecord](https://guides.rubyonrails.org/active_record_basics.html) in Rails.
+ActiveMDX works in Node.js and provides a structured content modeling API on top of [Collections](docs/api/Collection.mdx) of MDX files in a folder and its subfolders. This lets you work with the collection of documents as if it was a database, an individual document being a record, and the structure of the content ( and YAML frontmatter ) determining its attributes.
+
+Active MDX is a Content Modeling library which lets you develop `Model`s for the different types of MDX documents in your project.  A `Model` assumes that a document follows a known heading and sub-heading structure.  For example, A `Recipe` will have an `Ingredients` section and a `Steps` section.  Active MDX Models allow you to turn any MDX Document into a JSON object by providing helpers for working with the document in [AST form](https://mdxjs.com).  What goes into the JSON object will depend entirely on what you are writing inside of this predicable structure.  Active MDX Models are backed by a [Document](./docs/api/Document.mdx) class which provides you with many utilities for turning the content being written about into structured data.
+
+The data Active MDX makes available based on what is being written about can be used to power all sorts of applications. If you are building a website which which is a cookbook that has a dozen recipes, Active MDX can give you a database of all of the ingredients and quantities and you could render a button to place the order let users find a recipe based on what ingredients they had.  
 
 ## Requirements
 
@@ -18,49 +23,9 @@ $ npm install active-mdx
 
 ActiveMDX works on the server, in Node.js. Use later versions of node which support esm modules natively.
 
-It works best with a project like [Next.js](https://nextjs.org)
-
-```js
-// content.js
-import { Collection, Model } from "active-mdx"
-
-// say you had a subfolder content/stories with .e.g content/stories/authentication/registration.mdx
-class Story extends Model {
-  epic() {
-    return this.belongsTo(Epic)
-  }
-}
-
-// say you had a subfolder content/epics with e.g. content/epics/authentication.mdx
-class Epic extends Model {
-  stories() {
-    return this.hasMany(Story)
-  }
-}
-
-// assumes all your mdx files live in a folder called content
-const collection = new Collection({
-  rootPath: Collection.resolve("content"),
-  models: [Story, Epic]
-})
-
-export default collection
-```
-
-## Why does this exist?
-
-Most of the writing I do is about software. If I write about software in a very structured way, then it is possible to let a computer understand what I am writing, and the context in which I am writing, and actually do things with what I've written. Whether I am writing requirements for software that somebody else will develop, or documentation about software I've written, or an API that I've made available, if the only value that writing is providing is to the people reading it, there is a lot of value being wasted.
-
-Github Copilot can take a sentence I type in english and suggest really good code to use, but Github Copilot is trained with supercomputers on billions of lines of code over decades. If you are writing in Markdown, it is already possible to turn that writing into an AST. Since we can do that, we can leverage the patterns of structured writing to treat english itself as a form of code and data and use it to automate applications I haven't even thought of yet.
-
-ActiveMDX helps you do that, by defining model classes to represent different types of markdown documents. (Think about Github issue or Pull Request templates). These models let you describe the meaning of your writing.
-
-## Introduction
-
-Say you had a folder structure like the one in [examples/sdlc](examples/sdlc)
+To start with, you have a folder that contains mdx files.  
 
 ```
-examples/sdlc
 ├── epics
 │   ├── authentication.mdx
 │   └── search.mdx
@@ -76,13 +41,19 @@ examples/sdlc
         └── searching-for-a-product-by-category.mdx
 ```
 
-The file [epics/authentication.mdx](examples/sdlc/epics/authentication.mdx) can be represented as a [Model](src/Model.js) which you would subclass, e.g. [Epic](examples/sdlc/models/Epic.js). The file [stories/authentication/a-user-should-be-able-to-register.mdx](examples/sdlc/stories/authentication/a-user-should-be-able-to-register.mdx) can be represented by another class [Story](examples/sdlc/models/Story.js).
+This folder is represented by an instance of the Active MDX [Collection](./docs/api/Collection.mdx)
 
-You can say an `Epic.hasMany("Stories")` and now the system knows these files are related.
+```js
+// index.js
+import { Collection } from "active-mdx"
 
-ActiveMDX will automatially treat files in the subfolder `stories` as instances of the `Story` class, and all files in the subfolder `epics` as instances of the `Epic` class.
+export default async () => new Collection({ rootPath: "./content" }).load()
+```
+
+The mdx files inside of the `epics` folder are represented by a [Model](./docs/api/Model.mdx) that we defined in [./models/Epic.js](./examples/sdlc/models/Epic.js)
 
 ```javascript
+// ./models/Epic.js
 import { Model } from "active-mdx"
 import Story from "./Story.js"
 
@@ -94,13 +65,17 @@ export default class Epic extends Model {
     })
   }
 
+  get isComplete() {
+    return this.stories().fetchAll().every((story) => story.meta.status === 'completed')
+  }
+
   static is(document) {
     return document.id.startsWith("epic")
   }
 }
 ```
 
-This will take content like
+This will take mdx content such as [epics/authentication.mdx](./examples/sdlc/epics/authentication.mdx)
 
 ```md
 ---
@@ -122,42 +97,53 @@ As a User I would like to register so that I can use the application.
 As a User I would like to login so that I can use the application.
 ```
 
-And let you work with it as an object
+In addition to displaying the Epic in MDX form, we can also work with it as data and reference the things contained in the writing itself.
 
 ```javascript
-import { Collection, Model } from "active-mdx"
-
-async function main() {
-  // Assumes your mdx content lives in a subfolder called content
-  const collection = new Collection({ rootPath: Collection.resolve("content") })
-  const doc = collection.document("epics/authentication")
-  const epic = doc.toModel()
-  const stories = epic.stories().fetchAll()
+const authEpic = collection.getModel("epics/authentication")
+console.log(authEpic.toJSON({ related: ["stories"], attributes: ["isComplete"] }))
+/*
+{
+  "id": "epics/authentication",
+  "meta": {
+    "status": "proposed"
+  },
+  "title": "Authentication",
+  "stories": [
+    {
+      "id": "stories/authentication/a-user-should-be-able-to-register",
+      "meta": {
+        "epic": "authentication"
+      },
+      "title": "A User Should be able to Register"
+    },
+    {
+      "id": "stories/authentication/a-user-should-be-able-to-login",
+      "meta": {
+        "epic": "authentication"
+      },
+      "title": "A User should be able to login"
+    }, ...
+  ],
+  "isComplete": false
 }
-
-main()
+*/
 ```
 
-In the example above, stories will each have an `.mdx` file backing it. If those files don't exist, you can create them when you save them.
+## CLI
 
-```javascript
-await Promise.all(stories.map((story) => story.save()))
+The package ships with a bin `amdx` which can be used to initialize a new project, and work with the documents and models.
+
+```shell
+$ amdx --help
 ```
 
-This means you can start from a single file in epics, and eventually expand that into separate files when the content is ready.
+## Guides and Documentation
 
-What can you do with Epics and Stories by treating them as objects? Besides just displaying these documents on a web page since they're MDX.
-
-I could automatically publish them to Github Issues or Jira. I could export them to a google spreadsheet, and get my team to estimate them, and then generate a project proposal for a client to review and agree to.
-
-The possibilities are endless.
+- [Introduction](./docs/guides/introduction.mdx)
+- [Usage with NextJS](./docs/guides/usage/with-nextjs.mdx)
+- [Models](./docs/guides/models)
 
 ## Example Projects
 
 - [Example Next.js Blog](https://github.com/soederpop/active-mdx-nextjs-blog)
-
-## Inspiration
-
-- I tried to do this back in the day with Ruby, and ran a successful software consultancy using markdown as a primary tool for communicating with clients and developers. That project was called [Brief](https://github.com/datapimp/brief)
-- I discovered the work of [Titus Wormer](https://github.com/wooorm) who has developed hundreds of modules in JavaScript for a system called [Unified](https://unifiedjs.com/) which provides a system for working with ASTs for all kinds of structured writing.
-- [MDX](https://mdxjs.com) let us combine Markdown with React and develop interactive UI for working with writing besides just the HTML normal markdown gave us.

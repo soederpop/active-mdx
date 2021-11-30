@@ -235,8 +235,21 @@ export default class Document {
     return content
   }
 
+  /**
+   * Removes the nodes under the given heading from the AST.
+   */
+  removeSection(startHeading) {
+    const sectionNodes = this.extractSection(startHeading)
+
+    this.ast.children = this.ast.children.filter((node) => {
+      return !sectionNodes.includes(node)
+    })
+
+    return sectionNodes
+  }
+
   replaceContent(content) {
-    privates.get(this).content = content
+    return (privates.get(this).content = content)
   }
 
   appendContent(content) {

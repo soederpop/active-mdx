@@ -4,3 +4,85 @@ path: src/NodeShortcuts.js
 ---
 
 # NodeShortcuts Class
+
+You can access the NodeShortcuts for a given document by `document.nodes`
+
+```js
+const doc = collection.document("index")
+
+doc.nodes.constructor.name // => 'NodeShortcuts'
+```
+
+## API
+
+### Instance Properties
+
+#### first
+
+Returns the first node in the document's ast
+
+Type `{AstNode}`
+
+#### last
+
+Returns the last node in the document's ast
+
+Type `{AstNode}`
+
+#### headings
+
+Returns all the heading nodes in the document's ast
+
+Type `{Array[AstNode]}`
+
+#### firstHeading
+
+Returns the first heading node in the document's ast
+
+Type `{AstNode}`
+
+#### secondHeading
+
+Returns the second heading node in the document's ast
+
+Type `{AstNode}`
+
+#### lastHeading
+
+Returns the last heading node in the document's ast
+
+Type `{AstNode}`
+
+#### leadingElementsAfterTitle
+
+Returns the nodes that come after the document title and before the first subheading.
+
+Type `{Array[AstNode]}`
+
+#### imports
+
+Returns the import statement nodes from the document's ast, if any used by MDX.
+
+Type `{Array[AstNode]}`
+
+#### headingsByDepth
+
+Returns an object with the various depths 1-6 and an array of heading nodes at that depth.
+
+Type `{Object{Number: Array[AstNode]}}`
+
+#### links
+
+Returns all of the link nodes from the document's ast.
+
+Type `{Array[AstNode]}`
+
+#### tables
+
+Returns all of the table nodes from the document's ast.
+
+Type `{Array[AstNode]}`
+
+#### tablesAsData
+
+Returns each table parsed as data. Each table is an array of objects, each object is a row, whose keys are the headings of the table.
