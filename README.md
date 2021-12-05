@@ -43,7 +43,7 @@ To start with, you have a folder that contains mdx files.
 
 This folder is represented by an instance of the Active MDX [Collection](./docs/api/Collection.mdx)
 
-```js
+```javascript
 // index.js
 import { Collection } from "active-mdx"
 
@@ -53,7 +53,7 @@ export default new Collection({ rootPath: "./content" })
 
 You can use this anywhere
 
-```js
+```javascript
 import collection from './index.js'
 
 collection.load({ models: true }).then(async (collection) => {
@@ -89,7 +89,7 @@ export default class Epic extends Model {
 
 This will take mdx content such as [epics/authentication.mdx](./examples/sdlc/epics/authentication.mdx)
 
-```md
+```markdown
 ---
 status: proposed
 ---

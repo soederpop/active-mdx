@@ -2,7 +2,7 @@
 
 ## You need the MDX Loader and Next.js Config
 
-```js
+```javascript
 // next.config.mjs
 import { removeFrontMatter } from "active-mdx/src/plugins/mdx.js"
 import nextMdx from "@next/mdx"
@@ -33,7 +33,7 @@ export default withMDX({
 
 You should create a server module that exports the collection and specifies the root folder where the mdx content will live
 
-```js
+```javascript
 // content/index.js
 import { Collection } from "active-mdx"
 import Epic from "./models/Epic.mjs"
@@ -57,7 +57,7 @@ export default collection
 
 ## A CatchAll Page which will display any document in the collection
 
-```js
+```javascript
 // pages/[...catchAll].js
 import content from "content"
 import components from "content/mdx"
@@ -100,7 +100,7 @@ export async function getStaticProps(context = {}) {
 
 ## Using Next.js API Routes to work with the collection / query models /
 
-```js
+```javascript
 // pages/api/active-mdx/[...catchAll].js
 import NextAPI from "active-mdx/src/next/api.js"
 import content from "content"

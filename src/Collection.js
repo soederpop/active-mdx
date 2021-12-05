@@ -4,6 +4,10 @@ import matter from "gray-matter"
 import Document from "./Document.js"
 import Model from "./Model.js"
 import * as inflections from "inflect"
+import lodash from "lodash"
+
+const privates = new WeakMap()
+const { isEmpty } = lodash
 
 /**
  * A Collection is a collection of raw files, documents backed by those raw files, and models backed by the documents.
@@ -22,10 +26,14 @@ export default class Collection {
       Model.collections.set(name, this)
     }
 
-    this.extensions = extensions
-    this.items = new Map()
-    this.documents = new Map()
-    this.models = new Map([
+    const p = {}
+    privates.set(this, p)
+
+    p.extensions = extensions
+    p.items = new Map()
+    p.documents = new Map()
+
+    p.models = new Map([
       ["Model", { ModelClass: Model, options: { prefix: "" } }]
     ])
 
@@ -34,6 +42,41 @@ export default class Collection {
     models.forEach((ModelClass) => {
       this.model(ModelClass.name, ModelClass)
     })
+  }
+
+  /**
+   * Returns true if the collection has been loaded.
+   */
+  get loaded() {
+    return privates.get(this).loaded
+  }
+
+  /**
+   * @type {Array[String]}
+   */
+  get extensions() {
+    return privates.get(this).extensions
+  }
+
+  /**
+   * @type {Map}
+   */
+  get items() {
+    return privates.get(this).items
+  }
+
+  /**
+   * @type {Map}
+   */
+  get documents() {
+    return privates.get(this).documents
+  }
+
+  /**
+   * @type {Map}
+   */
+  get models() {
+    return privates.get(this).models
   }
 
   /**
@@ -50,6 +93,10 @@ export default class Collection {
     return this.constructor.resolve(this.rootPath, ...args)
   }
 
+  /**
+   * @param {Class} model the model to query
+   * @param {...args} args the arguments to pass to the model's query method
+   */
   query(model, ...args) {
     const Model = typeof model === "string" ? this.model(model) : model
     return Model.query(...args)
@@ -60,6 +107,8 @@ export default class Collection {
    *
    * @param {String} modelName the name of the model
    * @param {Function} ModelClass the model class. Should extend from active-mdx's Model base class
+   * @param {Object} options
+   * @param {Boolean} options.throwErrors pass false to not throw errors if the model is already registered
    *
    * @returns {Collection} this
    */
@@ -68,14 +117,18 @@ export default class Collection {
       const actualKey = this.modelAliases[modelName]
 
       if (!this.models.has(actualKey)) {
-        throw new Error(`Could not find a model class ${modelName}`)
+        if (options.throwErrors !== false) {
+          throw new Error(`Could not find a model class ${modelName}`)
+        }
       }
 
       return this.models.get(actualKey).ModelClass
     }
 
     if (this.models.has(modelName)) {
-      throw new Error(`Model ${modelName} already exists`)
+      if (options.throwErrors !== false) {
+        throw new Error(`Model ${modelName} already exists`)
+      }
     }
 
     this.models.set(modelName, {
@@ -117,6 +170,8 @@ export default class Collection {
 
   /**
    * Returns an array of all of the ids for items in the collection.
+   *
+   * @type {Array[String]}
    */
   get available() {
     return Array.from(this.items.keys())
@@ -151,6 +206,12 @@ export default class Collection {
    * @returns {Document} the document instance
    */
   document(pathId) {
+    if (!this.loaded) {
+      throw new Error(
+        `Collection has not been loaded.  Call load() on the collection first.`
+      )
+    }
+
     let doc = this.documents.get(pathId)
 
     if (doc) {
@@ -214,11 +275,22 @@ export default class Collection {
    * Saves the raw content of a member of this collection to disk.
    *
    * If the item does not exist at a pathId, it will create it.
+   *
+   * @param {String} pathId
+   * @param {Object} options
+   * @param {String} options.content
+   * @param {String} [options.extension='.mdx']
    */
   async saveItem(pathId, { content, extension = ".mdx" } = {}) {
     if (!this.items.has(pathId)) {
       const filePath = this.resolve(`${pathId}${extension}`)
       this.updateItem(pathId, { path: filePath, content })
+    }
+
+    if (isEmpty(content)) {
+      throw new Error(
+        `Cannot save an empty item to ${pathId}. You must pass some content.`
+      )
     }
 
     const { path: filePath } = this.items.get(pathId)
@@ -279,9 +351,11 @@ export default class Collection {
 
       for (let modelPath of modelPaths) {
         const ModelClass = await import(modelPath).then((mod) => mod.default)
-        this.model(ModelClass.name, ModelClass)
+        this.model(ModelClass.name, ModelClass, { throwErrors: false })
       }
     }
+
+    privates.get(this).loaded = true
 
     return this
   }
