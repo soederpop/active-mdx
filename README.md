@@ -1,6 +1,8 @@
 # Active MDX
 > Content Modeling for MDX
 
+[Online Documentation](https://active-mdx-blog-soederpop.vercel.app/)
+
 [MDX](https://mdxjs.com) is a great enhancement for Markdown. Where regular Markdown renders to static html, MDX provides you with a dynamic, react based output which you can customize and make interactive, whether by embedding React components, or customizing the components used to render the markdown output. 
 
 ActiveMDX works in Node.js and provides a structured content modeling API on top of [Collections](docs/api/Collection.mdx) of MDX files in a folder and its subfolders. This lets you work with the collection of documents as if it was a database, an individual document being a record, and the structure of the content ( and YAML frontmatter ) determining its attributes.  When you combine the custom presentation of MDX and React, with data derived from the content itself, it opens up powerful possibilities.
