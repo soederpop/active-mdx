@@ -1,6 +1,7 @@
 import minimist from "minimist"
 import lodash from "lodash"
 import runAction from "./run-action.mjs"
+import init from "./init.mjs"
 
 const { mapKeys, omit, kebabCase, camelCase } = lodash
 
@@ -15,6 +16,12 @@ export default async function main() {
   const [cmd] = argv._
 
   switch (cmd) {
+    case "init":
+      await init({
+        ...argv,
+        _: argv._.slice(1)
+      })
+      break
     case "action":
     case "run":
       await runAction(argv)

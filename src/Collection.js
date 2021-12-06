@@ -38,7 +38,7 @@ export default class Collection {
 
     privates.set(this, p)
 
-    this.rootPath = path.resolve(this.constructor.resolve(rootPath))
+    this.rootPath = rootPath
 
     models.forEach((ModelClass) => {
       this.model(ModelClass.name, ModelClass)
@@ -81,9 +81,13 @@ export default class Collection {
   }
 
   /**
-   * Resolve a path relative to process.cwd()
+   * Resolve a path relative to process.cwd().  If you pass a file:// url from e.g. import.meta.url it will return the directory.
    */
   static resolve(...args) {
+    if (String(args[0]).startsWith("file:")) {
+      return path.parse(args[0]).dir.replace("file://", "")
+    }
+
     return path.resolve(process.cwd(), ...args)
   }
 

@@ -1,4 +1,20 @@
-# ActiveMDX Docs
+# ActiveMDX
+
+## Installation
+
+```shell
+$ npm install active-mdx
+# Or if you're using yarn
+$ yarn add active-mdx
+```
+
+## Initializing Your First Project
+
+The following command will create your first ActiveMDX collection inside the folder content
+
+```shell
+$ amdx init ./content
+```
 
 ## Guides
 

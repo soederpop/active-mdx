@@ -5,9 +5,8 @@
   "main": "./index.js",
   "type": "module",
   "scripts": {
-    "link:local": "ln -sf $PWD ./node_modules/active-md",
+    "link:local": "ln -sf $PWD ./node_modules/active-mdx",
     "console": "node scripts/console.mjs",
-    "preconsole": "npm run build",
     "build": "npm run build:node",
     "build:node": "esbuild index.js --bundle --format=cjs --outfile=dist/index.cjs --platform=node",
     "test": "mocha --require test/test.js test/*.spec.js",

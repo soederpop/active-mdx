@@ -2,6 +2,7 @@ import runtime from "@skypager/node"
 import { Model, Collection, Document } from "../index.js"
 import { collection, Epic, Story } from "../examples/sdlc/index.js"
 import docs from "../docs/index.js"
+import basic from "../templates/basic/index.js"
 
 async function main() {
   await collection.load()
@@ -20,7 +21,8 @@ async function main() {
     search: Epic.from(collection.document("epics/search")),
     docs,
     astQueryDoc: docs.document("api/AstQuery"),
-    astQuery: docs.document("api/AstQuery").toModel()
+    astQuery: docs.document("api/AstQuery").toModel(),
+    basic
   })
 }
 
