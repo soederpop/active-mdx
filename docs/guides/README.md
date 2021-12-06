@@ -28,6 +28,10 @@ Epics are categories of stories, and stories represent individual features or ta
         └── searching-for-a-product-by-category.mdx
 ```
 
+With ActiveMDX it is possible to write a single epic document, and expand it into separate story documents later.  You can then publish the stories to github or jira, or wherever.  As those stories progress through the development lifecycle, you can keep the files in sync.  You can generate a google document with all of the stories, and have people provide estimates, and then sync the estimates back into the content.
+
+ActiveMDX makes it easy to keep your writing in sync with the rest of the world, as the things you are writing about move and change and progress.
+
 ## Collections represent a bunch of markdown / mdx documents
 
 Assuming the example tree above is in the `content` folder.
