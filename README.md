@@ -1,7 +1,7 @@
 # Active MDX
 > Content Modeling for MDX
 
-[Online Documentation](https://active-mdx-blog-soederpop.vercel.app/)
+[Online Documentation](https://active-mdx-blog.vercel.app)
 
 [MDX](https://mdxjs.com) is a great enhancement for Markdown. Where regular Markdown renders to static html, MDX provides you with a dynamic, react based output which you can customize and make interactive, whether by embedding React components, or customizing the components used to render the markdown output. 
 
