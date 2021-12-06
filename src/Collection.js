@@ -27,7 +27,6 @@ export default class Collection {
     }
 
     const p = {}
-    privates.set(this, p)
 
     p.extensions = extensions
     p.items = new Map()
@@ -36,6 +35,8 @@ export default class Collection {
     p.models = new Map([
       ["Model", { ModelClass: Model, options: { prefix: "" } }]
     ])
+
+    privates.set(this, p)
 
     this.rootPath = path.resolve(this.constructor.resolve(rootPath))
 
@@ -218,7 +219,13 @@ export default class Collection {
       return doc
     }
 
-    const { content, meta, path } = this.items.get(pathId)
+    if (!this.items.has(pathId)) {
+      throw new Error(`Could not find document ${pathId}`)
+    }
+
+    const data = this.items.get(pathId)
+
+    const { content, meta, path } = data
     doc = this.createDocument({ id: pathId, content, meta })
 
     this.documents.set(pathId, doc)

@@ -7,6 +7,8 @@ import {
   HasOneRelationship
 } from "./Relationship.js"
 
+import expandAction from "./actions/expand.js"
+
 const { defaultsDeep, result, castArray, kebabCase, camelCase, upperFirst } =
   lodash
 
@@ -183,7 +185,7 @@ export default class Model {
       mine = classPrivates.get(this)
     }
 
-    mine.actions = mine.actions || new Map()
+    mine.actions = mine.actions || new Map([["expand", { fn: expandAction }]])
 
     Array.from(Actions.entries()).forEach(([name, data]) => {
       if (mine.actions.has(name)) {
