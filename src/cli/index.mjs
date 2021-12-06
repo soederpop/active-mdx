@@ -1,6 +1,5 @@
 import minimist from "minimist"
 import lodash from "lodash"
-import generateMdxImport from "./generate-mdx-import.mjs"
 import runAction from "./run-action.mjs"
 
 const { mapKeys, omit, kebabCase, camelCase } = lodash
@@ -16,10 +15,8 @@ export default async function main() {
   const [cmd] = argv._
 
   switch (cmd) {
-    case "generate-mdx-import":
-      await generateMdxImport(argv)
-      break
     case "action":
+    case "run":
       await runAction(argv)
       break
     default:
