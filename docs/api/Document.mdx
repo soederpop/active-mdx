@@ -46,25 +46,82 @@ of the same depth, or the end of the document.
 
 Returns `{Array[ASTNode]}`
 
+#### toText
+
+Turns the document markdown source into a text form with no syntax. You can pass an optional
+function which will be passed a node and return true see if it should be included in the text.
+- `{Function} [filterFn]` 
+
+Returns `{String}`
+
+#### toTextComponents
+
+Turns the document markdown source into a text form with no syntax. You can pass an optional
+function which will be passed a node and return true see if it should be included in the text.
+- `{Function} [filterFn]` 
+
+Returns `{Array[String]}`
+
 #### removeSection
 
 Removes the nodes under the given heading from the AST.
+- `{ASTNode} headingNode` the heading node whose content you want to remove.
+
+Returns `{Document}`
 
 #### replaceSectionContent
 
+Replaces the content underneath a heading with new content.
+- `{ASTNode} headingNode` the heading node whose content you want to replace.
+- `{String|Array[ASTNode]} nodesOrMarkdown` new content to add to the section.  Can either be AST Nodes or a markdown string which we will convert from markdown into ASTNodes
+
 #### insertBefore
+
+Insert new content before a given node.
+- `{ASTNode} node` the node where we will insert the text before.
+- `{String|Array[ASTNode]} nodesOrMarkdown` new content to add.  Can either be AST Nodes or a markdown string which we will convert from markdown into ASTNodes
+
+Returns `{Document}`
 
 #### insertAfter
 
+Insert new content after a given node.
+- `{ASTNode} node` the node where we will insert the text after.
+- `{String|Array[ASTNode]} nodesOrMarkdown` new content to add.  Can either be AST Nodes or a markdown string which we will convert from markdown into ASTNodes
+
+Returns `{Document}`
+
 #### appendToSection
+
+Insert new content at the end of a section, determined by that section's heading.
+- `{ASTNode} headingNode` the heading node where we will append text to.
+- `{String|Array[ASTNode]} nodesOrMarkdown` new content to add.  Can either be AST Nodes or a markdown string which we will convert from markdown into ASTNodes
+
+Returns `{Document}`
 
 #### replaceContent
 
+Replaces the entire content of this document with new content.
+- `{String} content` new markdown source
+
+Returns `{Document}`
+
 #### appendContent
+
+Adds new markdown source content to the end of the document.
+- `{String} content` new markdown source
+
+Returns `{Document}`
 
 #### rerenderAST
 
+Updates this document's AST with new content, or with its existing content if there's been a change.
+- `{String} [newContent=this.content]` new markdown source
+
 #### reloadFromAST
+
+Updates this document's content from a new AST, or the current AST if there's been a change.
+- `{MDAST} [newAST=this.ast]` new markdown AST
 
 #### stringify
 
@@ -72,6 +129,8 @@ Converts an AST into MDX code.
 - `{MDAst} [ast=this.ast]` the AST to convert
 
 #### compile
+
+Use mdx to convert this document's markdown code into React JSX Code.
 
 
 
