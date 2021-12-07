@@ -1,0 +1,23 @@
+---
+type: ApiDoc
+path: src/BelongsToRelationship.js
+---
+
+# BelongsToRelationship extends [Relationship](./Relationship.mdx)
+
+A `BelongsToRelationship` instance is returned when you run `modelInstance.belongsTo("Parent").
+
+It is intended to return a single object, whereas `HasManyRelationship` returns an array.
+
+```javascript
+import { Model } from "active-mdx"
+
+class Post extends Model {
+  author() {
+    // assumes a model class Author has been registered with the collection
+    return this.belongsTo("Author", {
+      id: (post) => post.meta.author
+    })
+  }
+}
+```
