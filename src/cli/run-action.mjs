@@ -32,6 +32,11 @@ export default async function runAction(argv) {
 
   await collection.load({ models: !modulePath })
 
+  if (collection.actions.has(action) && !pathIds.length) {
+    await collection.runAction(action, argv)
+    return
+  }
+
   for (let pathId of pathIds) {
     const model = collection.getModel(pathId)
 

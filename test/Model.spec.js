@@ -66,7 +66,6 @@ describe("The Model Class", function () {
 
       epic.should.have.property("hasMany").that.is.a("function")
       epic.should.have.property("belongsTo").that.is.a("function")
-      epic.should.have.property("hasOne").that.is.a("function")
     })
 
     it("will fetch related models", function () {

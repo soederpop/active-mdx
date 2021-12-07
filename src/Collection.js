@@ -31,6 +31,7 @@ export default class Collection {
     p.extensions = extensions
     p.items = new Map()
     p.documents = new Map()
+    p.actions = new Map()
 
     p.models = new Map([
       ["Model", { ModelClass: Model, options: { prefix: "" } }]
@@ -47,12 +48,14 @@ export default class Collection {
 
   /**
    * Returns true if the collection has been loaded.
+   * @type {Boolean}
    */
   get loaded() {
     return privates.get(this).loaded
   }
 
   /**
+   * Which file extensions will this collection look for.  Defaults to ["mdx", "md"]
    * @type {Array[String]}
    */
   get extensions() {
@@ -60,6 +63,7 @@ export default class Collection {
   }
 
   /**
+   * Items is a map of documentIds and their raw content and meta data.
    * @type {Map}
    */
   get items() {
@@ -67,6 +71,8 @@ export default class Collection {
   }
 
   /**
+   * Documents is a map of documentIds and the Document instances that are created with the content
+   * and metadata from our items map.
    * @type {Map}
    */
   get documents() {
@@ -74,6 +80,7 @@ export default class Collection {
   }
 
   /**
+   * Models is a map of model names and their ModelClasses.
    * @type {Map}
    */
   get models() {
@@ -282,6 +289,31 @@ export default class Collection {
     }
   }
 
+  async runAction(name, ...args) {
+    if (!this.actions.has(name)) {
+      throw new Error(`Action ${name} does not exist on this collection.`)
+    }
+
+    const actionFn = this.actions.get(name)
+
+    const results = await actionFn(this, ...args)
+
+    return results
+  }
+
+  action(name, actionFn) {
+    this.actions.set(name, actionFn)
+    return this
+  }
+
+  get actions() {
+    return privates.get(this).actions
+  }
+
+  get availableActions() {
+    return Array.from(this.actions.keys())
+  }
+
   /**
    * Saves the raw content of a member of this collection to disk.
    *
@@ -384,9 +416,15 @@ export default class Collection {
       return memo.replace(`.${ext}`, "")
     }, relativePath)
   }
+
+  static readDirectory = readDirectory
 }
 
-async function readDirectory(dirPath, match = /\.mdx?$/i, recursive = true) {
+export async function readDirectory(
+  dirPath,
+  match = /\.mdx?$/i,
+  recursive = true
+) {
   var paths = []
   var files = await fs.readdir(dirPath)
   for (var i = 0; i < files.length; i++) {

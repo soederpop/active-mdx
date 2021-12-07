@@ -32,4 +32,22 @@ describe("The Collection Class", function () {
     docs.modelClasses.should.not.be.empty
     docs.models.has("ApiDoc").should.equal(true)
   })
+
+  describe("Collection Actions", function () {
+    it("can register action functions to be run on the collection", async function () {
+      const docs = new Collection({
+        rootPath: Collection.resolve("docs")
+      })
+
+      docs.should.have.property("actions")
+      docs.should.have.property("availableActions").that.is.an("array")
+
+      docs.action("test-action", function (c) {
+        return c.rootPath
+      })
+
+      const result = await docs.runAction("test-action")
+      result.should.equal(docs.rootPath)
+    })
+  })
 })
