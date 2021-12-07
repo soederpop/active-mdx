@@ -24,7 +24,7 @@ async function generateApiDocs(collection) {
       console.log("API Doc is missing a path meta attribute", apiDoc.id)
     } else {
       console.log(`Syncing ${apiDoc.meta.path} -> ${apiDoc.id}`)
+      await apiDoc.runAction("sync-with-code")
     }
-    //await apiDoc.runAction("sync-with-code")
   }
 }

@@ -15,11 +15,16 @@ Resolve a path relative to the root path of of this collection.
 
 #### query
 
+- `{Class} model` the model to query
+- `{...args} args` the arguments to pass to the model's query method
+
 #### model
 
 Get or register a model class with the collection.
 - `{String} modelName` the name of the model
 - `{Function} ModelClass` the model class. Should extend from active-mdx's Model base class
+- `{Object} options` 
+- `{Boolean} options.throwErrors` pass false to not throw errors if the model is already registered
 
 Returns `{Collection} this`
 
@@ -49,11 +54,19 @@ JSON representation of the items in the collection.
 - `{Object} options` 
 - `{Boolean} [options.content=false]` whether to include the content of the items in the collection
 
+#### runAction
+
+#### action
+
 #### saveItem
 
 Saves the raw content of a member of this collection to disk.
 
 If the item does not exist at a pathId, it will create it.
+- `{String} pathId` 
+- `{Object} options` 
+- `{String} options.content` 
+- `{String} [options.extension='.mdx']`
 
 #### updateItem
 
@@ -85,6 +98,37 @@ Returns `{String} the pathId`
 ### Instance Properties
 
 
+#### loaded
+
+Returns true if the collection has been loaded.
+
+Type `{Boolean}`
+
+#### extensions
+
+Which file extensions will this collection look for.  Defaults to ["mdx", "md"]
+
+Type `{Array[String]}`
+
+#### items
+
+Items is a map of documentIds and their raw content and meta data.
+
+Type `{Map}`
+
+#### documents
+
+Documents is a map of documentIds and the Document instances that are created with the content
+and metadata from our items map.
+
+Type `{Map}`
+
+#### models
+
+Models is a map of model names and their ModelClasses.
+
+Type `{Map}`
+
 #### modelClasses
 
 Returns an array containing all of the classes registered as models witht his collection.
@@ -98,6 +142,12 @@ The keys are the alias, the value is the real model name.
 
 Returns an array of all of the ids for items in the collection.
 
+Type `{Array[String]}`
+
+#### actions
+
+#### availableActions
+
 
 
 ### Static / Class Methods
@@ -105,6 +155,6 @@ Returns an array of all of the ids for items in the collection.
 
 #### resolve
 
-Resolve a path relative to process.cwd()
+Resolve a path relative to process.cwd().  If you pass a file:// url from e.g. import.meta.url it will return the directory.
 
 
