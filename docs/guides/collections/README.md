@@ -60,3 +60,40 @@ import collection from "./content/index.js"
 
 const Post = collection.model("Post")
 ```
+
+## Action System
+
+You are able to register action functions with the collection.  
+
+```javascript
+
+export const collection = new Collection({ rootPath, models: [ApiDoc] })
+
+collection.model("ApiDoc", ApiDoc)
+collection.action("generate-api-docs", generateApiDocs)
+
+export { ApiDoc }
+
+export default collection
+
+async function generateApiDocs(collection) {
+  const apiDocs = await ApiDoc.query((qb) => {
+    qb.where("meta.nodoc", "neq", true)
+  }).fetchAll()
+
+  for (let apiDoc of apiDocs) {
+    if (!apiDoc.meta.path) {
+      console.log("API Doc is missing a path meta attribute", apiDoc.id)
+    } else {
+      console.log(`Syncing ${apiDoc.meta.path} -> ${apiDoc.id}`)
+      await apiDoc.runAction("sync-with-code")
+    }
+  }
+}
+```
+
+You can run this action on the collection with the `amdx` CLI.
+
+```shell
+$ amdx action generate-api-docs 
+```
