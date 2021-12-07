@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "link:local": "ln -sf $PWD ./node_modules/active-mdx",
+    "preconsole": "yarn link:local",
     "console": "node scripts/console.mjs",
     "build": "npm run build:node",
     "build:node": "esbuild index.js --bundle --format=cjs --outfile=dist/index.cjs --platform=node",
@@ -39,6 +40,7 @@
     "remark-parse": "^10.0.1",
     "remark-stringify": "^10.0.2",
     "retext": "^8.1.0",
+    "retext-english": "^4.1.0",
     "retext-keywords": "^7.1.0",
     "retext-pos": "^4.1.0",
     "retext-syntax-mentions": "^3.1.0",

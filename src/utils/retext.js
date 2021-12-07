@@ -1,6 +1,7 @@
 import { retext } from "retext"
 import keywords from "retext-keywords"
 import pos from "retext-pos"
+import retextEnglish from "retext-english"
 
 export default function parse(text = "", options = {}) {
   const processor = createProcessor(options)
@@ -15,5 +16,8 @@ export function process(text = "", options = {}) {
 }
 
 function createProcessor(options) {
-  return retext().use(pos, options).use(keywords, options)
+  return retext()
+    .use(retextEnglish, options)
+    .use(pos, options)
+    .use(keywords, options)
 }

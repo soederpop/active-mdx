@@ -1,5 +1,5 @@
 import * as retext from "./utils/retext.js"
-import { keyBy } from "lodash-es"
+import { mapValues, groupBy, uniq, keyBy } from "lodash-es"
 
 const privates = new WeakMap()
 
@@ -14,6 +14,10 @@ export default class LanguageAnalyzer {
     })
   }
 
+  get documentText() {
+    return this.document.toText(this.options.filter)
+  }
+
   get document() {
     return privates.get(this).document
   }
@@ -26,11 +30,28 @@ export default class LanguageAnalyzer {
     return privates.get(this).data
   }
 
-  get keywords() {
+  get keywordsFrequency() {
+    const grouped = groupBy(
+      this.keywordResults.flatMap((i) => i.matches || []),
+      (match) => this.document.utils.toString(match.node)
+    )
+
+    return mapValues(grouped, (v) => v.length)
+  }
+
+  get uniqueKeywords() {
+    return uniq(
+      this.keywordResults
+        .flatMap((i) => i.matches || [])
+        .map((i) => this.document.utils.toString(i.node))
+    ).sort()
+  }
+
+  get keywordResults() {
     return Object.values(this.keywordsIndex).flatMap((v) => v)
   }
 
-  get keyphrases() {
+  get keyphraseResults() {
     return Object.values(this.keyphrasesIndex).flatMap((v) => v)
   }
 
@@ -75,8 +96,23 @@ export default class LanguageAnalyzer {
     )
 
     Object.values(results).forEach(({ keyphrases, keywords, text }) => {
-      this.keyphrasesIndex[text] = keyphrases
-      this.keywordsIndex[text] = keywords
+      this.keyphrasesIndex[text] = keyphrases.map((result) => {
+        result.matches.forEach((i) => {
+          i.text = this.document.utils.toString(i.node)
+          i.parentText = this.document.utils.toString(i.parent)
+        })
+
+        return result
+      })
+
+      this.keywordsIndex[text] = keywords.map((result) => {
+        result.matches.forEach((i) => {
+          i.text = this.document.utils.toString(i.node)
+          i.parentText = this.document.utils.toString(i.parent)
+        })
+
+        return result
+      })
     })
 
     privates.get(this).data = results
