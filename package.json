@@ -12,7 +12,8 @@
     "test": "mocha --require test/test.js test/*.spec.js",
     "prerelease": "npm run test",
     "release": "npm version patch",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "generate:apidocs": "node scripts/amdx.mjs action generate-api-docs --root-path=docs"
   },
   "author": "Jon Soeder <jon@chicago.com>",
   "license": "MIT",

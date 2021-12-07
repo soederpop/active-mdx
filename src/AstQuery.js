@@ -7,7 +7,7 @@ import { selectAll, select } from "unist-util-select"
 import { toString } from "mdast-util-to-string"
 
 /**
- * The ASTQuery takes a MDAST tree and provides methods for querying that tree to find specific nodes.
+ * The AstQuery takes a MDAST tree and provides methods for querying that tree to find specific nodes.
  *
  * You should never need to create this class yourself, an instance of this class is available on every Document
  * by using doc.astQuery.

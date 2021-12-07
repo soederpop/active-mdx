@@ -154,7 +154,7 @@ export default class Document {
   }
 
   /**
-   * Creates a new instance of the ASTQuery class for a given AST.
+   * Creates a new instance of the AstQuery class for a given AST.
    *
    * @param {MDAst} ast the ast, defaults to this document's AST
    * @returns {AstQuery}

@@ -1,12 +1,8 @@
 import * as inflections from "inflect"
 import lodash from "lodash"
 import CollectionQuery from "./CollectionQuery.js"
-import {
-  HasManyRelationship,
-  BelongsToRelationship,
-  HasOneRelationship
-} from "./Relationship.js"
-
+import HasManyRelationship from "./HasManyRelationship.js"
+import BelongsToRelationship from "./BelongsToRelationship.js"
 import expandAction from "./actions/expand.js"
 
 const { defaultsDeep, result, castArray, kebabCase, camelCase, upperFirst } =
@@ -408,19 +404,6 @@ export default class Model {
    */
   hasMany(modelNameOrModelClass, options = {}) {
     return new HasManyRelationship(this, modelNameOrModelClass, options)
-  }
-
-  /**
-   * Returns a HasOneRelationship instance for this model.  You can call fetch on this to get
-   * an array containing the one instance of the related model.
-   * @param {String|Model} modelNameOrModelClass
-   * @param {Object} options
-   * @param {String} options.heading - the parent heading the child relations will be found under.
-   *
-   * @returns {HasOneRelationship}
-   */
-  hasOne(modelNameOrModelClass, options = {}) {
-    return new HasOneRelationship(this, modelNameOrModelClass, options)
   }
 
   /**
