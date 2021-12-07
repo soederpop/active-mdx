@@ -7,6 +7,7 @@ import NodeShortcuts from "./NodeShortcuts.js"
 import stringify from "mdx-stringify"
 import yaml from "js-yaml"
 import gfm from "remark-gfm"
+import * as retext from "./utils/retext.js"
 
 const { isEmpty, omit, minBy } = lodash
 
@@ -197,6 +198,9 @@ export default class Document {
     return {
       toString,
       stringifyAst,
+      retext,
+      extractKeywords: (text) =>
+        retext.process(text).then((result) => result.data),
       extractSection: (startHeading) => extractSection(this, startHeading),
       createNewAst: (children = []) => ({
         type: "root",
@@ -236,7 +240,33 @@ export default class Document {
   }
 
   /**
+   * Turns the document markdown source into a text form with no syntax. You can pass an optional
+   * function which will be passed a node and return true see if it should be included in the text.
+   *
+   * @param {Function} [filterFn]
+   * @returns {String}
+   */
+  toText(filterFn = (node) => true) {
+    return this.toTextComponents(filterFn).join("\n")
+  }
+
+  /**
+   * Turns the document markdown source into a text form with no syntax. You can pass an optional
+   * function which will be passed a node and return true see if it should be included in the text.
+   *
+   * @param {Function} [filterFn]
+   * @returns {Array[String]}
+   */
+  toTextComponents(filterFn = (node) => true) {
+    return this.ast.children.filter(filterFn).map(this.utils.toString)
+  }
+
+  /**
    * Removes the nodes under the given heading from the AST.
+   *
+   * @param {ASTNode} headingNode the heading node whose content you want to remove.
+   *
+   * @returns {Document}
    */
   removeSection(startHeading) {
     if (typeof startHeading === "string") {
@@ -249,9 +279,15 @@ export default class Document {
       return !sectionNodes.includes(node)
     })
 
-    return sectionNodes
+    return this
   }
 
+  /**
+   * Replaces the content underneath a heading with new content.
+   *
+   * @param {ASTNode} headingNode the heading node whose content you want to replace.
+   * @param {String|Array[ASTNode]} nodesOrMarkdown new content to add to the section.  Can either be AST Nodes or a markdown string which we will convert from markdown into ASTNodes
+   */
   replaceSectionContent(startHeading, nodesOrMarkdown = []) {
     if (typeof startHeading === "string") {
       startHeading = this.astQuery.findHeadingByText(startHeading)
@@ -273,6 +309,14 @@ export default class Document {
     return this
   }
 
+  /**
+   * Insert new content before a given node.
+   *
+   * @param {ASTNode} node the node where we will insert the text before.
+   * @param {String|Array[ASTNode]} nodesOrMarkdown new content to add.  Can either be AST Nodes or a markdown string which we will convert from markdown into ASTNodes
+   *
+   * @returns {Document}
+   */
   insertBefore(node, nodesOrMarkdown = []) {
     if (typeof nodesOrMarkdown === "string") {
       nodesOrMarkdown = this.processor.parse(nodesOrMarkdown).children
@@ -282,6 +326,14 @@ export default class Document {
     return this
   }
 
+  /**
+   * Insert new content after a given node.
+   *
+   * @param {ASTNode} node the node where we will insert the text after.
+   * @param {String|Array[ASTNode]} nodesOrMarkdown new content to add.  Can either be AST Nodes or a markdown string which we will convert from markdown into ASTNodes
+   *
+   * @returns {Document}
+   */
   insertAfter(node, nodesOrMarkdown = []) {
     if (typeof nodesOrMarkdown === "string") {
       nodesOrMarkdown = this.processor.parse(nodesOrMarkdown).children
@@ -291,6 +343,14 @@ export default class Document {
     return this
   }
 
+  /**
+   * Insert new content at the end of a section, determined by that section's heading.
+   *
+   * @param {ASTNode} headingNode the heading node where we will append text to.
+   * @param {String|Array[ASTNode]} nodesOrMarkdown new content to add.  Can either be AST Nodes or a markdown string which we will convert from markdown into ASTNodes
+   *
+   * @returns {Document}
+   */
   appendToSection(startHeading, nodesOrMarkdown = []) {
     if (typeof startHeading === "string") {
       startHeading = this.astQuery.findHeadingByText(startHeading)
@@ -310,27 +370,50 @@ export default class Document {
     return this
   }
 
-  replaceContent(content) {
+  /**
+   * Replaces the entire content of this document with new content.
+   *
+   * @param {String} content new markdown source
+   * @returns {Document}
+   */
+  replaceContent(content = "") {
     privates.get(this).content = content
     privates.get(this).ast = this.processor.parse(content)
     return this
   }
 
+  /**
+   * Adds new markdown source content to the end of the document.
+   *
+   * @param {String} content new markdown source
+   * @returns {Document}
+   */
   appendContent(content) {
     privates.get(this).content += content
-    privates.get(this).ast = this.processor.parse(content)
+    this.rerenderAST()
     return this
   }
 
+  /**
+   * Updates this document's AST with new content, or with its existing content if there's been a change.
+   *
+   * @param {String} [newContent=this.content] new markdown source
+   */
   rerenderAST(newContent = this.content) {
     privates.get(this).ast = this.processor.parse(newContent)
     return this
   }
 
+  /**
+   * Updates this document's content from a new AST, or the current AST if there's been a change.
+   *
+   * @param {MDAST} [newAST=this.ast] new markdown AST
+   */
   reloadFromAST(newAst = this.ast) {
+    privates.get(this).ast = newAst
+
     const code = stringifyAst(newAst)
     privates.get(this).content = code
-    privates.get(this).ast = newAst
 
     return this
   }
@@ -344,9 +427,13 @@ export default class Document {
     return stringifyAst(ast)
   }
 
-  compile() {
+  /**
+   * Use mdx to convert this document's markdown code into React JSX Code.
+   */
+  compile(options = {}) {
     return sync(this.content, {
-      remarkPlugins: [gfm]
+      remarkPlugins: [gfm, ...(options.remarkPlugins || [])],
+      rehypePlugins: [gfm, ...(options.rehypePlugins || [])]
     })
   }
 
