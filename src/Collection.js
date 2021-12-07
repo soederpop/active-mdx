@@ -4,10 +4,9 @@ import matter from "gray-matter"
 import Document from "./Document.js"
 import Model from "./Model.js"
 import * as inflections from "inflect"
-import lodash from "lodash"
+import { isEmpty } from "lodash-es"
 
 const privates = new WeakMap()
-const { isEmpty } = lodash
 
 /**
  * A Collection is a collection of raw files, documents backed by those raw files, and models backed by the documents.

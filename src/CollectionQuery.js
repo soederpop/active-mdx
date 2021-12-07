@@ -1,7 +1,5 @@
 import QueryBuilder from "./QueryBuilder.js"
-import lodash from "lodash"
-
-const { isEqual, get } = lodash
+import { isEqual, get } from "lodash-es"
 
 export default class CollectionQuery {
   constructor(opts = {}) {

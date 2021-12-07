@@ -1,15 +1,13 @@
-import lodash from "lodash"
 import { toString } from "mdast-util-to-string"
 import { createMdxAstCompiler, sync } from "@mdx-js/mdx"
 import AstQuery from "./AstQuery.js"
 import Model from "./Model.js"
 import NodeShortcuts from "./NodeShortcuts.js"
+import LanguageAnalyzer from "./LanguageAnalyzer.js"
 import stringify from "mdx-stringify"
 import yaml from "js-yaml"
 import gfm from "remark-gfm"
-import * as retext from "./utils/retext.js"
-
-const { isEmpty, omit, minBy } = lodash
+import { isEmpty, omit, minBy } from "lodash-es"
 
 const privates = new WeakMap()
 
@@ -198,9 +196,6 @@ export default class Document {
     return {
       toString,
       stringifyAst,
-      retext,
-      extractKeywords: (text) =>
-        retext.process(text).then((result) => result.data),
       extractSection: (startHeading) => extractSection(this, startHeading),
       createNewAst: (children = []) => ({
         type: "root",
@@ -237,6 +232,17 @@ export default class Document {
     privates.get(this).content = content
 
     return content
+  }
+
+  analyzeLanguage(options = {}) {
+    if (privates.get(this).languageAnalyzer) {
+      return privates.get(this).languageAnalyzer
+    }
+
+    const analyzer = new LanguageAnalyzer(this, options)
+    privates.get(this).languageAnalyzer = analyzer
+
+    return analyzer
   }
 
   /**

@@ -126,4 +126,18 @@ export default class NodeShortcuts {
   get tablesAsData() {
     return this.tables.map(parseTable)
   }
+
+  /**
+   * Returns the paragraph nodes
+   */
+  get paragraphs() {
+    return this.astQuery.selectAll("paragraph")
+  }
+
+  /**
+   * Returns the list nodes
+   */
+  get lists() {
+    return this.astQuery.selectAll("list")
+  }
 }

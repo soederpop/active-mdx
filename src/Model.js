@@ -1,12 +1,17 @@
 import * as inflections from "inflect"
-import lodash from "lodash"
 import CollectionQuery from "./CollectionQuery.js"
 import HasManyRelationship from "./HasManyRelationship.js"
 import BelongsToRelationship from "./BelongsToRelationship.js"
 import expandAction from "./actions/expand.js"
 
-const { defaultsDeep, result, castArray, kebabCase, camelCase, upperFirst } =
-  lodash
+import {
+  defaultsDeep,
+  result,
+  castArray,
+  kebabCase,
+  camelCase,
+  upperFirst
+} from "lodash-es"
 
 const privates = new WeakMap()
 

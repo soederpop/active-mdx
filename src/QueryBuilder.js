@@ -1,6 +1,4 @@
-import lodash from "lodash"
-
-const { castArray } = lodash
+import { castArray } from "lodash-es"
 
 const privates = new WeakMap()
 
