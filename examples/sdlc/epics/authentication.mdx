@@ -1,5 +1,6 @@
 ---
 priority: high
+status: gathering-requirements
 ---
 
 # Authentication
@@ -8,22 +9,34 @@ The Authentication stories cover users logging in and out of the application, as
 
 ## Stories
 
-### A User should be able to register
+### A User should be able to register.
 
 As a User I would like to register so that I can use the application.
 
-### A User should be able to login
+#### Acceptance Criteria
+
+- A user can visit the signup form, supply their name, email, and password
+- The signup form should validate the user's information and supply errors
+- The user should receive a confirmation email
+- The user should show up in our database as confirmed after clicking the confirmation link
+
+#### Mockups
+
+- [Invision: Registration Form](https://invisionapp.com)
+- [Invision: Registration Form Error State](https://invisionapp.com)
+
+### A User should be able to login.
 
 As a User I would like to login so that I can use the application.
 
-### A User should be able to logout
+#### Acceptance Criteria
 
-As a User I would like to logout so that I can use the application.
+- A user can visit the signup form, supply their name, email, and password
+- The signup form should validate the user's information and supply errors
+- The user should receive a confirmation email
+- The user should show up in our database as confirmed after clicking the confirmation link
 
-### A User should be able to change their password
+#### Mockups
 
-As a User I would like to change my password so that I can use the application.
-
-### A User should be able to reset their password
-
-As a User I would like to reset my password so that I can use the application.
+- [Invision: Login Form](https://invisionapp.com)
+- [Invision: Login Form Error State ](https://invisionapp.com)

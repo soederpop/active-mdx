@@ -27,7 +27,10 @@ export default class HasManyRelationship extends Relationship {
       const nodes = this.document.extractSection(parentHeading).slice(1)
 
       return nodes
-        .filter(({ type }) => type === "heading")
+        .filter(
+          ({ type, depth }) =>
+            type === "heading" && depth == parentHeading.depth + 1
+        )
         .map((heading) => {
           const section = this.document.extractSection(heading)
 
@@ -35,7 +38,9 @@ export default class HasManyRelationship extends Relationship {
             title: utils.toString(heading),
             startNode: heading,
             section,
-            ast: utils.normalizeHeadings(utils.createNewAst(section)),
+            ast: utils.normalizeHeadings(
+              JSON.parse(JSON.stringify(utils.createNewAst(section)))
+            ),
             id: options.id
               ? options.id(utils.toString(heading))
               : this.id(utils.toString(heading))

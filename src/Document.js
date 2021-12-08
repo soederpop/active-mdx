@@ -182,7 +182,23 @@ export default class Document {
    * @returns {Array[ASTNode]}
    */
   extractSection(startHeading) {
+    if (typeof startHeading === "string") {
+      startHeading = this.astQuery.findHeadingByText(startHeading)
+    }
+
     return extractSection(this, startHeading)
+  }
+
+  /**
+   * Returns an AST Query for the nodes underneath a particular heading
+   */
+  querySection(startHeading) {
+    const children = this.extractSection(startHeading).slice(1)
+
+    return new AstQuery({
+      type: "root",
+      children
+    })
   }
 
   /**

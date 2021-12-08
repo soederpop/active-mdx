@@ -3,7 +3,7 @@ import keywords from "retext-keywords"
 import pos from "retext-pos"
 import retextEnglish from "retext-english"
 
-export default function parse(text = "", options = {}) {
+export function parse(text = "", options = {}) {
   const processor = createProcessor(options)
 
   return processor.parse(text)

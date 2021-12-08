@@ -1,5 +1,6 @@
 import * as retext from "./utils/retext.js"
 import { mapValues, groupBy, uniq, keyBy } from "lodash-es"
+import AstQuery from "./AstQuery.js"
 
 const privates = new WeakMap()
 
@@ -8,9 +9,8 @@ export default class LanguageAnalyzer {
     privates.set(this, {
       document,
       options,
-      data: {},
-      keywords: {},
-      keyphrases: {}
+      nodesIndex: new Map(),
+      nodeTypeIndex: new Map()
     })
   }
 
@@ -26,97 +26,84 @@ export default class LanguageAnalyzer {
     return privates.get(this).options
   }
 
-  get data() {
-    return privates.get(this).data
+  get nodesIndex() {
+    return privates.get(this).nodesIndex
   }
 
-  get keywordsFrequency() {
-    const grouped = groupBy(
-      this.keywordResults.flatMap((i) => i.matches || []),
-      (match) => this.document.utils.toString(match.node)
-    )
-
-    return mapValues(grouped, (v) => v.length)
-  }
-
-  get uniqueKeywords() {
-    return uniq(
-      this.keywordResults
-        .flatMap((i) => i.matches || [])
-        .map((i) => this.document.utils.toString(i.node))
-    ).sort()
-  }
-
-  get keywordResults() {
-    return Object.values(this.keywordsIndex).flatMap((v) => v)
-  }
-
-  get keyphraseResults() {
-    return Object.values(this.keyphrasesIndex).flatMap((v) => v)
-  }
-
-  get keywordsIndex() {
-    return privates.get(this).keywords
-  }
-
-  get keyphrasesIndex() {
-    return privates.get(this).keywords
+  get nodeTypeIndex() {
+    return privates.get(this).nodeTypeIndex
   }
 
   async run() {
-    await this.extractKeywords()
+    await Promise.all([
+      this.analyzeNodesByType("heading"),
+      this.analyzeNodesByType("paragraph")
+    ])
+
     return this
   }
 
+  query(textOrNode = this.documentText) {
+    const ast = this.parse(textOrNode)
+    return new AstQuery(ast)
+  }
+
+  parse(textOrNode = this.documentText) {
+    let text = textOrNode
+
+    if (typeof textOrNode === "object") {
+      text = this.document.utils.toString(textOrNode)
+    }
+
+    return retext.parse(text)
+  }
+
+  async analyze(textOrNode = this.documentText) {
+    let text = textOrNode
+
+    if (typeof textOrNode === "object") {
+      text = this.document.utils.toString(textOrNode)
+    }
+
+    const results = await retext.process(text).then(({ data }) => data)
+
+    return results
+  }
+
   /**
-   * This will use the retext processor to go through each node of the document and extract keywords and keyphrases
    * @private
    */
-  async extractKeywords(options = {}) {
-    const { children } = this.document.ast
-    const { filter = () => true } = options
+  async analyzeNodesByType(nodeType) {
+    const { toString } = this.document.utils
+    const nodesOfType = this.document.astQuery.selectAll(nodeType)
 
     await Promise.all(
-      children.filter(filter).map((node) =>
-        retext.process(this.document.utils.toString(node)).then((result) => {
-          node.keywords = result.data.keywords
-          node.keyphrases = result.data.keyphrases
+      nodesOfType.map((node) =>
+        this.analyze(node).then(({ keywords, keyphrases }) => {
+          const entry = {
+            keywords: keywords.map((i) => ({
+              word: uniq(i.matches.map((i) => toString(i.node)))[0],
+              ...i
+            })),
+            keyphrases: keyphrases.map((i) => ({
+              ...i,
+              phrases: uniq(
+                i.matches.map((i) => i.nodes.map(toString).join(""))
+              )
+            })),
+            type: nodeType,
+            node
+          }
+
+          this.nodesIndex.set(node, entry)
+
+          if (!this.nodeTypeIndex.has(nodeType)) {
+            this.nodeTypeIndex.set(nodeType, [])
+          }
+
+          this.nodeTypeIndex.get(nodeType).push(entry)
         })
       )
     )
-
-    const results = keyBy(
-      children.flatMap((node, index) => ({
-        keyphrases: node.keyphrases,
-        keywords: node.keywords,
-        text: this.document.utils.toString(node),
-        index: index
-      })),
-      "text"
-    )
-
-    Object.values(results).forEach(({ keyphrases, keywords, text }) => {
-      this.keyphrasesIndex[text] = keyphrases.map((result) => {
-        result.matches.forEach((i) => {
-          i.text = this.document.utils.toString(i.node)
-          i.parentText = this.document.utils.toString(i.parent)
-        })
-
-        return result
-      })
-
-      this.keywordsIndex[text] = keywords.map((result) => {
-        result.matches.forEach((i) => {
-          i.text = this.document.utils.toString(i.node)
-          i.parentText = this.document.utils.toString(i.parent)
-        })
-
-        return result
-      })
-    })
-
-    privates.get(this).data = results
-
-    return results
   }
 }

@@ -139,11 +139,34 @@ export default class AstQuery {
   }
 
   /**
+   * Finds all headings where the content matches the given string.  Not case sensitive.
+   * Passing false as a second argument will use a substring match.
+   *
+   * @param {String} text the text of the heading to match
+   * @param {Boolean} exact whether to use an exact match or a substring match
+   *
+   * @returns {Array[AstNode]} all headings with the given text
+   */
+  findAllHeadingsByText(text = "", exact = true) {
+    return this.selectAll("heading").filter((heading) => {
+      const headingText = toString(heading).toLowerCase()
+
+      if (exact) {
+        return headingText.trim() === text.toLowerCase()
+      }
+
+      return headingText.includes(text.toLowerCase())
+    })
+  }
+
+  /**
    * Find a heading where the content matches the given string.  Not case sensitive.
    * Passing false as a second argument will use a substring match.
    *
    * @param {String} text the text of the heading to match
    * @param {Boolean} exact whether to use an exact match or a substring match
+   *
+   * @returns {AstNode} the first heading with the given text
    */
   findHeadingByText(text = "", exact = true) {
     return this.selectAll("heading").find((heading) => {
