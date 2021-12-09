@@ -3,3 +3,4 @@ node_modules/
 *.log
 dist/
 examples/sdlc/stories/*
+packages/*/node_modules
