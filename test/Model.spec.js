@@ -78,11 +78,6 @@ describe("The Model Class", function () {
 
       const stories = epic.stories().fetchAll()
       stories.should.be.an("array").that.is.not.empty
-      stories
-        .map((story) => story.id)
-        .should.include(
-          "stories/authentication/a-user-should-be-able-to-register"
-        )
     })
 
     it("lets you specify defaults", function () {
@@ -112,11 +107,6 @@ describe("The Model Class", function () {
       })
 
       json.should.have.property("stories").that.is.an("array").that.is.not.empty
-      json.stories
-        .map((story) => story.id)
-        .should.include(
-          "stories/authentication/a-user-should-be-able-to-register"
-        )
     })
   })
 
