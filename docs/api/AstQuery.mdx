@@ -169,11 +169,22 @@ Get all headings at a given depth.
 
 Returns `{Array[AstNode]} all headings at the given depth`
 
+#### findAllHeadingsByText
+
+Finds all headings where the content matches the given string.  Not case sensitive.
+Passing false as a second argument will use a substring match.
+- `{String} text` the text of the heading to match
+- `{Boolean} exact` whether to use an exact match or a substring match
+
+Returns `{Array[AstNode]} all headings with the given text`
+
 #### findHeadingByText
 
 Find a heading where the content matches the given string.  Not case sensitive.
 Passing false as a second argument will use a substring match.
 - `{String} text` the text of the heading to match
 - `{Boolean} exact` whether to use an exact match or a substring match
+
+Returns `{AstNode} the first heading with the given text`
 
 
