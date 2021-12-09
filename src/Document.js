@@ -193,7 +193,11 @@ export default class Document {
    * Returns an AST Query for the nodes underneath a particular heading
    */
   querySection(startHeading) {
-    const children = this.extractSection(startHeading).slice(1)
+    let children = []
+
+    try {
+      children = this.extractSection(startHeading).slice(1)
+    } catch (error) {}
 
     return new AstQuery({
       type: "root",
@@ -525,6 +529,12 @@ export default class Document {
     return links
       .filter(({ url }) => available.indexOf(url) !== -1)
       .map(({ url }) => this.collection.document(url))
+  }
+
+  normalizeHeadings() {
+    const newAst = this.utils.normalizeHeadings(this.ast)
+    this.reloadFromAST(newAst)
+    return this
   }
 }
 
