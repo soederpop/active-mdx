@@ -393,6 +393,14 @@ export default class Model {
     return this.document.title
   }
 
+  /**
+   * The title of the underlying document in a format suitable for use as an ID in a URL
+   * @type {String}
+   */
+  get slug() {
+    return this.document.slug
+  }
+
   get relationships() {
     return privates.get(this).relationships
   }

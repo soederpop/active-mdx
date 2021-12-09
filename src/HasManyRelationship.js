@@ -1,4 +1,5 @@
 import Relationship from "./Relationship.js"
+import { kebabCase } from "lodash-es"
 
 export default class HasManyRelationship extends Relationship {
   get type() {
@@ -13,7 +14,7 @@ export default class HasManyRelationship extends Relationship {
     return [
       this.TargetModelClass.prefix,
       this.parent.title.toLowerCase(),
-      childTitle.toLowerCase().replace(/\s\s/, " ").replace(/\s/g, "-")
+      kebabCase(childTitle.toLowerCase().replace(/\s\s/, " "))
     ].join("/")
   }
 
@@ -38,12 +39,12 @@ export default class HasManyRelationship extends Relationship {
             title: utils.toString(heading),
             startNode: heading,
             section,
-            ast: utils.normalizeHeadings(
-              JSON.parse(JSON.stringify(utils.createNewAst(section)))
-            ),
-            id: options.id
-              ? options.id(utils.toString(heading))
-              : this.id(utils.toString(heading))
+            ast: utils.normalizeHeadings(utils.createNewAst(section)),
+            id: formatId(
+              options.id
+                ? options.id(kebabCase(utils.toString(heading).toLowerCase()))
+                : this.id(kebabCase(utils.toString(heading).toLowerCase()))
+            )
           }
         })
     }
@@ -51,6 +52,14 @@ export default class HasManyRelationship extends Relationship {
 
   fetch(options = {}) {
     return this.fetchAll(options)
+  }
+
+  async create(options = {}) {
+    const models = this.fetchAll(options)
+
+    await Promise.all(models.map((model) => model.save()))
+
+    return models
   }
 
   fetchAll(options = {}) {
@@ -79,4 +88,11 @@ export default class HasManyRelationship extends Relationship {
       }
     })
   }
+}
+
+function formatId(id) {
+  return id
+    .split("/")
+    .map((i) => kebabCase(i))
+    .join("/")
 }

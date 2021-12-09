@@ -7,7 +7,7 @@ import LanguageAnalyzer from "./LanguageAnalyzer.js"
 import stringify from "mdx-stringify"
 import yaml from "js-yaml"
 import gfm from "remark-gfm"
-import { isEmpty, omit, minBy } from "lodash-es"
+import { kebabCase, camelCase, isEmpty, omit, minBy } from "lodash-es"
 
 const privates = new WeakMap()
 
@@ -131,6 +131,13 @@ export default class Document {
   }
 
   /**
+   * Returns the title of this document in a format suitable for use as an ID.
+   */
+  get slug() {
+    return kebabCase(this.title.toLowerCase())
+  }
+
+  /**
    * Serialize this document as JSON.
    *
    * @returns {Object}
@@ -214,6 +221,8 @@ export default class Document {
    */
   get utils() {
     return {
+      kebabCase,
+      camelCase,
       toString,
       stringifyAst,
       extractSection: (startHeading) => extractSection(this, startHeading),

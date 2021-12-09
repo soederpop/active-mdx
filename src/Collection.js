@@ -323,10 +323,12 @@ export default class Collection {
    * @param {String} options.content
    * @param {String} [options.extension='.mdx']
    */
-  async saveItem(pathId, { content, extension = ".mdx" } = {}) {
+  async saveItem(pathId, { content: raw, extension = ".mdx" } = {}) {
+    const { data, content } = matter(raw)
+
     if (!this.items.has(pathId)) {
       const filePath = this.resolve(`${pathId}${extension}`)
-      this.updateItem(pathId, { path: filePath, content })
+      this.updateItem(pathId, { path: filePath, raw, content, data })
     }
 
     if (isEmpty(content)) {
@@ -341,9 +343,17 @@ export default class Collection {
 
     await fs.writeFile(filePath, content, "utf8")
 
-    this.updateItem(pathId, { content })
+    this.updateItem(pathId, { content, data })
 
     return this.items.get(pathId)
+  }
+
+  pathExists(pathId, { extension = ".mdx" } = {}) {
+    const filePath = this.resolve(`${pathId}${extension}`)
+    return fs
+      .stat(filePath)
+      .then(() => true)
+      .catch(() => false)
   }
 
   /**
