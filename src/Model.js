@@ -304,7 +304,7 @@ export default class Model {
    * @type {Object}
    */
   get meta() {
-    return defaultsDeep({}, this.document.meta, this.defaults?.meta || {})
+    return defaultsDeep(this.document.meta, this.defaults?.meta || {})
   }
 
   /**
