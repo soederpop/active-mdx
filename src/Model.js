@@ -165,6 +165,18 @@ export default class Model {
     }
   }
 
+  static async fetchAll(options = {}) {
+    return this.query().fetchAll(options)
+  }
+
+  static async first() {
+    return this.fetchAll().then((r) => r[0])
+  }
+
+  static async last() {
+    return this.fetchAll().then((r) => r[r.length - 1])
+  }
+
   /**
    * Gets a list of named queries registered with this model
    *

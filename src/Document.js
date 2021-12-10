@@ -82,6 +82,12 @@ export default class Document {
     return privates.get(this).id
   }
 
+  get extension() {
+    return privates.get(this).extension || "mdx"
+  }
+
+  get path() {}
+
   get modelClass() {
     let ModelClass
 
@@ -142,6 +148,19 @@ export default class Document {
    */
   get slug() {
     return kebabCase(this.title.toLowerCase())
+  }
+
+  get path() {
+    return this.collection.resolve(this.id) + `.${this.extension}`
+  }
+
+  /**
+   * Returns true if the document is backed by a file on disk and it exists
+   */
+  get fileExists() {
+    return this.collection.pathExistsSync(this.id, {
+      extension: this.extension
+    })
   }
 
   /**

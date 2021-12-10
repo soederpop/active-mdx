@@ -5,6 +5,7 @@ import Document from "./Document.js"
 import Model from "./Model.js"
 import * as inflections from "inflect"
 import { isEmpty } from "lodash-es"
+import { statSync } from "fs"
 
 const privates = new WeakMap()
 
@@ -348,8 +349,19 @@ export default class Collection {
     return this.items.get(pathId)
   }
 
-  pathExists(pathId, { extension = ".mdx" } = {}) {
-    const filePath = this.resolve(`${pathId}${extension}`)
+  pathExistsSync(pathId, { extension = "mdx" } = {}) {
+    const filePath = this.resolve(`${pathId}.${extension}`)
+
+    try {
+      statSync(filePath)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  async pathExists(pathId, { extension = "mdx" } = {}) {
+    const filePath = this.resolve(`${pathId}.${extension}`)
     return fs
       .stat(filePath)
       .then(() => true)
@@ -377,10 +389,15 @@ export default class Collection {
    * @param {Object} options
    * @param {Boolean} [options.models=false] whether to automatically find and require model classes from the models subfolder in the collection
    * @param {String} [options.modelsFolder="models"] which subfolder the models will live in.  Only applies if options.models is true
+   * @param {Boolean} [options.refresh=false] whether to refresh the collection from disk. Call this if you want to reload / the files have changed
    * @returns {Collection} this
    */
   async load(options = {}) {
-    const paths = await readDirectory(this.rootPath)
+    if (this.loaded && !options.refresh) {
+      return this
+    }
+
+    const { paths = await readDirectory(this.rootPath) } = options
 
     await Promise.all(
       paths.map((path) => {

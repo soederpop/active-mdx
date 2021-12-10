@@ -62,6 +62,15 @@ export default class HasManyRelationship extends Relationship {
     return models
   }
 
+  first() {
+    return this.fetchAll()[0]
+  }
+
+  last() {
+    const models = this.fetchAll()
+    return models[models.length - 1]
+  }
+
   fetchAll(options = {}) {
     const { TargetModelClass } = this
     const { collection } = this.parent.document
