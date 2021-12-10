@@ -44,7 +44,7 @@ export default class HasManyRelationship extends Relationship {
               options.id
                 ? options.id(kebabCase(utils.toString(heading).toLowerCase()))
                 : this.id(kebabCase(utils.toString(heading).toLowerCase()))
-            )
+            ).replace(/\./g, "")
           }
         })
     }
