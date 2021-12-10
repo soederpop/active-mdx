@@ -44,7 +44,14 @@ export default class Document {
    */
   async save(options = {}) {
     const { collection } = this
+
+    if (options.normalize !== false) {
+      this.normalizeHeadings()
+      this.rerenderAST()
+    }
+
     await collection.saveItem(this.id, { content: this.rawContent, ...options })
+
     return this
   }
 

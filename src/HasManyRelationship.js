@@ -39,7 +39,7 @@ export default class HasManyRelationship extends Relationship {
             title: utils.toString(heading),
             startNode: heading,
             section,
-            ast: utils.normalizeHeadings(utils.createNewAst(section)),
+            ast: utils.createNewAst(section),
             id: formatId(
               options.id
                 ? options.id(kebabCase(utils.toString(heading).toLowerCase()))

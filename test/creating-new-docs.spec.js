@@ -40,7 +40,7 @@ describe("Creating new documents from existing documents", function () {
       .catch((e) => false)
 
     existsAtFirst.should.equal(false)
-    const stories = await search.stories().create()
+    await search.stories().create()
     const existsNow = await fs
       .stat(
         collection.resolve(
@@ -48,6 +48,7 @@ describe("Creating new documents from existing documents", function () {
         )
       )
       .catch((e) => false)
+      .then((e) => true)
     existsNow.should.equal(true)
   })
 })
