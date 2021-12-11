@@ -91,7 +91,7 @@ export default class Document {
   get modelClass() {
     let ModelClass
 
-    if (this.meta.type) {
+    if (this.meta?.type) {
       ModelClass =
         this.collection.models.get(this.meta.type)?.ModelClass ||
         this.collection.modelClasses.find(

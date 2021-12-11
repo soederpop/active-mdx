@@ -342,7 +342,9 @@ export default class Collection {
 
     await fs.mkdir(path.parse(filePath).dir, { recursive: true })
 
-    await fs.writeFile(filePath, content, "utf8")
+    // we write the raw content after the matter has been extracted
+    // 💡 Should I skip separating frontmatter completely?
+    await fs.writeFile(filePath, raw, "utf8")
 
     this.updateItem(pathId, { content, data })
 
@@ -393,7 +395,9 @@ export default class Collection {
    * @returns {Collection} this
    */
   async load(options = {}) {
-    if (this.loaded && !options.refresh) {
+    const { refresh = process.env.NODE_ENV !== "production" } = options
+
+    if (this.loaded && !refresh) {
       return this
     }
 

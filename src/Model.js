@@ -24,6 +24,8 @@ const privates = new WeakMap()
 export default class Model {
   constructor(document, options = {}) {
     privates.set(this, { document, relationships: new Map() })
+    // so it is visible in a REPL
+    this._label = document.id
   }
 
   /**
@@ -386,7 +388,8 @@ export default class Model {
    * Save the underlying document
    */
   async save(options = {}) {
-    return this.document.save(options)
+    await this.document.save(options)
+    return this
   }
 
   /**
