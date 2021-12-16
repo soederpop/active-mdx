@@ -1,0 +1,160 @@
+---
+type: ApiDoc
+path: src/Collection.js
+---
+# Collection Class
+
+## API
+
+### Instance Methods
+
+
+#### resolve
+
+Resolve a path relative to the root path of of this collection.
+
+#### query
+
+- `{Class} model` the model to query
+- `{...args} args` the arguments to pass to the model's query method
+
+#### model
+
+Get or register a model class with the collection.
+- `{String} modelName` the name of the model
+- `{Function} ModelClass` the model class. Should extend from active-mdx's Model base class
+- `{Object} options` 
+- `{Boolean} options.throwErrors` pass false to not throw errors if the model is already registered
+
+Returns `{Collection} this`
+
+#### getModel
+
+Returns an instance of a model for a document with the given id.
+- `{String} pathId` the id of the document
+- `{Model} model` the model class to represent the document.  If you don't pass it the collection will attempt to guess by the prefix, or document meta.type
+
+#### document
+
+Returns an instance of the Document class for the given pathId
+- `{String} pathId` the id of the document
+
+Returns `{Document} the document instance`
+
+#### createDocument
+
+Creates a new Document tied to this collection.
+- `{Object} attributes` 
+- `{String} undefined`
+
+#### toJSON
+
+Returns a JSON object with metadata about the collection, along with optional
+JSON representation of the items in the collection.
+- `{Object} options` 
+- `{Boolean} [options.content=false]` whether to include the content of the items in the collection
+
+#### runAction
+
+#### action
+
+#### saveItem
+
+Saves the raw content of a member of this collection to disk.
+
+If the item does not exist at a pathId, it will create it.
+- `{String} pathId` 
+- `{Object} options` 
+- `{String} options.content` 
+- `{String} [options.extension='.mdx']`
+
+#### updateItem
+
+Loads an item into the items collection.  An item represents a file, path, content, etc
+from disk.
+- `{String} pathId` the id of the item.  Should be a relative path to the collection root, without the extension.
+- `{Object} patch` info to update the item with.
+
+#### load
+
+Recursively searches the rootPath file tree for mdx files and loads them into the collection.
+
+It will parse each file, and treat YAML frontmatter and content separately.
+- `{Object} options` 
+- `{Boolean} [options.models=false]` whether to automatically find and require model classes from the models subfolder in the collection
+- `{String} [options.modelsFolder="models"]` which subfolder the models will live in.  Only applies if options.models is true
+
+Returns `{Collection} this`
+
+#### getPathId
+
+Returns the pathId for a given absolute path.
+- `{String} absolutePath` absolute path of an mdx file
+
+Returns `{String} the pathId`
+
+
+
+### Instance Properties
+
+
+#### loaded
+
+Returns true if the collection has been loaded.
+
+Type `{Boolean}`
+
+#### extensions
+
+Which file extensions will this collection look for.  Defaults to ["mdx", "md"]
+
+Type `{Array[String]}`
+
+#### items
+
+Items is a map of documentIds and their raw content and meta data.
+
+Type `{Map}`
+
+#### documents
+
+Documents is a map of documentIds and the Document instances that are created with the content
+and metadata from our items map.
+
+Type `{Map}`
+
+#### models
+
+Models is a map of model names and their ModelClasses.
+
+Type `{Map}`
+
+#### modelClasses
+
+Returns an array containing all of the classes registered as models witht his collection.
+
+#### modelAliases
+
+Returns an object containing all possible aliases for the model names in this collection.
+The keys are the alias, the value is the real model name.
+
+#### available
+
+Returns an array of all of the ids for items in the collection.
+
+Type `{Array[String]}`
+
+#### actions
+
+#### availableActions
+
+
+
+### Static / Class Methods
+
+
+#### resolve
+
+Resolve a path relative to process.cwd().  If you pass a file:// url from e.g. import.meta.url it will return the directory.
+
+

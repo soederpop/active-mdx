@@ -1,0 +1,232 @@
+[
+  {
+    "id": "epics/authentication",
+    "meta": {
+      "priority": "high",
+      "status": "gathering-requirements"
+    },
+    "title": "Authentication",
+    "stories": [
+      {
+        "id": "stories/authentication/a-user-should-be-able-to-register.",
+        "meta": {
+          "epic": "authentication",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          },
+          "status": "created"
+        },
+        "title": "A User should be able to register."
+      },
+      {
+        "id": "stories/authentication/a-user-should-be-able-to-login.",
+        "meta": {
+          "epic": "authentication",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          },
+          "status": "created"
+        },
+        "title": "A User should be able to login."
+      }
+    ]
+  },
+  {
+    "id": "epics/content-management",
+    "meta": {
+      "priority": "high",
+      "status": "gathering-requirements"
+    },
+    "title": "Content Management",
+    "stories": [
+      {
+        "id": "stories/content management/a-content-moderator-should-be-able-to-manage-blog-posts",
+        "meta": {
+          "epic": "content management",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A Content Moderator should be able to manage blog posts"
+      },
+      {
+        "id": "stories/content management/a-content-moderator-should-be-able-to-manage-the-product-catalog",
+        "meta": {
+          "epic": "content management",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A Content Moderator should be able to manage the product catalog"
+      }
+    ]
+  },
+  {
+    "id": "epics/order-lifecycle-management",
+    "meta": {
+      "priority": "high",
+      "status": "gathering-requirements"
+    },
+    "title": "Order Lifecycle Management",
+    "stories": [
+      {
+        "id": "stories/order lifecycle management/a-customer-should-be-able-to-place-an-order",
+        "meta": {
+          "epic": "order lifecycle management",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A customer should be able to place an order"
+      },
+      {
+        "id": "stories/order lifecycle management/a-customer-should-be-able-to-view-their-order-history",
+        "meta": {
+          "epic": "order lifecycle management",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A customer should be able to view their order history"
+      },
+      {
+        "id": "stories/order lifecycle management/a-customer-should-be-able-to-cancel-an-order",
+        "meta": {
+          "epic": "order lifecycle management",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A customer should be able to cancel an order"
+      },
+      {
+        "id": "stories/order lifecycle management/a-customer-should-receive-an-email-when-an-order-is-placed",
+        "meta": {
+          "epic": "order lifecycle management",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A customer should receive an email when an order is placed"
+      },
+      {
+        "id": "stories/order lifecycle management/a-store-administrator-should-be-able-to-cancel-an-order",
+        "meta": {
+          "epic": "order lifecycle management",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A Store Administrator should be able to cancel an order"
+      }
+    ]
+  },
+  {
+    "id": "epics/payment-processing",
+    "meta": {
+      "priority": "high",
+      "status": "gathering-requirements"
+    },
+    "title": "Payment Processing",
+    "stories": [
+      {
+        "id": "stories/payment processing/a-customer-should-be-able-to-pay-with-a-credit-card",
+        "meta": {
+          "epic": "payment processing",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A customer should be able to pay with a credit card"
+      },
+      {
+        "id": "stories/payment processing/a-customer-should-be-able-to-pay-with-paypal",
+        "meta": {
+          "epic": "payment processing",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A customer should be able to pay with paypal"
+      },
+      {
+        "id": "stories/payment processing/a-customer-should-be-able-to-pay-with-a-gift-card",
+        "meta": {
+          "epic": "payment processing",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A customer should be able to pay with a gift card"
+      }
+    ]
+  },
+  {
+    "id": "epics/product-search-and-browsing",
+    "meta": {
+      "priority": "high",
+      "status": "gathering-requirements"
+    },
+    "title": "Product Search and Browsing",
+    "stories": [
+      {
+        "id": "stories/product search and browsing/a-user-should-be-able-to-search-for-products-by-name",
+        "meta": {
+          "epic": "product search and browsing",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A user should be able to search for products by name"
+      },
+      {
+        "id": "stories/product search and browsing/a-user-should-be-able-to-search-for-products-by-category",
+        "meta": {
+          "epic": "product search and browsing",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A user should be able to search for products by category"
+      },
+      {
+        "id": "stories/product search and browsing/a-user-should-be-able-to-search-for-products-by-brand",
+        "meta": {
+          "epic": "product search and browsing",
+          "status": "created",
+          "estimates": {
+            "low": 8,
+            "high": 16
+          }
+        },
+        "title": "A user should be able to search for products by brand"
+      }
+    ]
+  }
+]
