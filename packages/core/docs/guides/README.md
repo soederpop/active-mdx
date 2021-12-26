@@ -38,7 +38,7 @@ Assuming the example tree above is in the `content` folder.
 
 ```javascript
 // index.js
-import { Collection } from "active-mdx"
+import { Collection } from "@active-mdx/core"
 
 const collection = new Collection({
     rootPath: Collection.resolve('content')

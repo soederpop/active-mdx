@@ -47,7 +47,7 @@ This folder is represented by an instance of the Active MDX [Collection](./docs/
 
 ```javascript
 // index.js
-import { Collection } from "active-mdx"
+import { Collection } from "@active-mdx/core"
 
 // load({ models: true }) will automatically register ./models/*.js as model classes
 export default new Collection({ rootPath: "./content" })
@@ -68,7 +68,7 @@ The mdx files inside of the `epics` folder are represented by a [Model](./docs/a
 
 ```javascript
 // ./models/Epic.js
-import { Model } from "active-mdx"
+import { Model } from "@active-mdx/core"
 import Story from "./Story.js"
 
 export default class Epic extends Model {

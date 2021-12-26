@@ -43,7 +43,7 @@ When you call `load()` on the collection, you can pass `{ models: true }` and it
 If you've already loaded the collection and want to register another model, you can do it this way:
 
 ```javascript
-import { Model } from "active-mdx"
+import { Model } from "@active-mdx/core"
 import collection from "./content/index.js"
 
 class Post extends Model {

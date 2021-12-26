@@ -2,6 +2,7 @@
 type: ApiDoc
 path: src/BelongsToRelationship.js
 ---
+
 # BelongsToRelationship extends [Relationship](./Relationship.mdx)
 
 A `BelongsToRelationship` instance is returned when you run \`modelInstance.belongsTo("Parent").
@@ -9,7 +10,7 @@ A `BelongsToRelationship` instance is returned when you run \`modelInstance.belo
 It is intended to return a single object, whereas `HasManyRelationship` returns an array.
 
 ```javascript
-import { Model } from "active-mdx"
+import { Model } from "@active-mdx/core"
 
 class Post extends Model {
   author() {
@@ -25,16 +26,10 @@ class Post extends Model {
 
 ### Instance Methods
 
-
 #### fetchAll
 
 #### fetch
 
-
-
 ### Instance Properties
 
-
 #### type
-
-

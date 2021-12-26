@@ -1,4 +1,4 @@
-import { Collection } from "active-mdx"
+import { Collection } from "@active-mdx/core"
 import Post from "./models/Post.js"
 import Author from "./models/Author.js"
 
