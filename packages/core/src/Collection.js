@@ -469,7 +469,6 @@ export default class Collection {
         options.modelsFolder || "models"
       )
 
-      console.log("MODELS FOLDER", this.rootPath, modelsFolder)
       const modelPaths = await readDirectory(modelsFolder, /\.m?js$/, false)
 
       for (let modelPath of modelPaths) {

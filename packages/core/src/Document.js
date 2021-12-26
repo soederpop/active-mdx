@@ -1,5 +1,8 @@
 import { toString } from "mdast-util-to-string"
-import { createMdxAstCompiler, sync } from "@mdx-js/mdx"
+import {
+  createProcessor as createMdxAstCompiler,
+  compileSync as sync
+} from "@mdx-js/mdx"
 import AstQuery from "./AstQuery.js"
 import Model from "./Model.js"
 import NodeShortcuts from "./NodeShortcuts.js"
@@ -8,6 +11,11 @@ import stringify from "mdx-stringify"
 import yaml from "js-yaml"
 import gfm from "remark-gfm"
 import { kebabCase, camelCase, isEmpty, omit, minBy } from "lodash-es"
+import * as acorn from "acorn"
+import { fromMarkdown } from "mdast-util-from-markdown"
+import { toMarkdown } from "mdast-util-to-markdown"
+import { mdxjsEsm } from "micromark-extension-mdxjs-esm"
+import { mdxjsEsmFromMarkdown, mdxjsEsmToMarkdown } from "mdast-util-mdxjs-esm"
 
 const privates = new WeakMap()
 
@@ -584,12 +592,7 @@ export function extractSection(doc, startHeading) {
 }
 
 export function stringifyAst(ast) {
-  return createMdxAstCompiler({
-    remarkPlugins: [],
-    rehypePlugins: []
-  })
-    .use(stringify)
-    .stringify(ast)
+  return toMarkdown(ast, { extensions: [mdxjsEsmToMarkdown] })
 }
 
 export function normalizeHeadings(ast) {

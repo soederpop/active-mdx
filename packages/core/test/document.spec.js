@@ -64,7 +64,7 @@ describe("The Document Class", function () {
       .insertBefore(customerHeading, "[BEFORE_CUSTOMER](link)")
       .reloadFromAST()
 
-    index.content.should.match(/BEFORE_CUSTOMER.*\n\n\#\#\#\ Customer/)
+    index.content.should.match(/BEFORE.*\n\n\#\#\#\ Customer/)
   })
 
   it("can insert content before a node", function () {
