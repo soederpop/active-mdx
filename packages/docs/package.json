@@ -11,12 +11,12 @@
     "console": "node scripts/console.mjs"
   },
   "dependencies": {
+    "@active-mdx/core": "^0.1.0",
     "@codesandbox/sandpack-react": "^0.9.8",
     "@mdx-js/loader": "^1.6.22",
     "@mdx-js/mdx": "^1.6.22",
     "@monaco-editor/react": "^4.3.1",
     "@next/mdx": "^12.0.4",
-    "@active-mdx/core": "^0.1.0",
     "gray-matter": "^4.0.3",
     "isomorphic-vm": "^0.0.1",
     "lodash.debounce": "^4.0.8",
@@ -27,6 +27,7 @@
     "react-json-inspector": "^7.1.1",
     "react-syntax-highlighter": "^15.4.5",
     "rehype-slug": "^5.0.0",
+    "remark-rehype": "^10.1.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.4",
     "stringify-object": "^4.0.0"
