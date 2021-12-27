@@ -313,9 +313,16 @@ export default class Collection {
         ModelClass.query()
           .fetchAll()
           .then((results) => {
-            models[ModelClass.name] = results.map((model) =>
-              model.toJSON(options[ModelClass.name] || {})
-            )
+            models[ModelClass.name] = results
+              .map((model) => {
+                try {
+                  model.toJSON(options[ModelClass.name] || {})
+                } catch (error) {
+                  console.log("Error exporting model", model.id)
+                  return false
+                }
+              })
+              .filter(Boolean)
           })
       )
     )

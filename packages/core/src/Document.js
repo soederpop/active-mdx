@@ -16,6 +16,9 @@ import { fromMarkdown } from "mdast-util-from-markdown"
 import { toMarkdown } from "mdast-util-to-markdown"
 import { mdxjsEsm } from "micromark-extension-mdxjs-esm"
 import { mdxjsEsmFromMarkdown, mdxjsEsmToMarkdown } from "mdast-util-mdxjs-esm"
+import { remark } from "remark"
+import remarkMdx from "remark-mdx"
+import remarkStringify from "remark-stringify"
 
 const privates = new WeakMap()
 
@@ -493,7 +496,7 @@ export default class Document {
    * @param {MDAst} [ast=this.ast] the AST to convert
    */
   stringify(ast = this.ast) {
-    return stringifyAst(ast)
+    return this.processor.use()
   }
 
   /**
@@ -510,10 +513,7 @@ export default class Document {
    * Provides access to the MDX AST compiler
    */
   get processor() {
-    return createMdxAstCompiler({
-      remarkPlugins: [gfm],
-      rehypePlugins: []
-    })
+    return remark().use(gfm).use(remarkMdx).use(remarkStringify)
   }
 
   /**
@@ -592,7 +592,7 @@ export function extractSection(doc, startHeading) {
 }
 
 export function stringifyAst(ast) {
-  return toMarkdown(ast, { extensions: [mdxjsEsmToMarkdown] })
+  return remark().use(gfm).use(remarkMdx).use(remarkStringify).stringify(ast)
 }
 
 export function normalizeHeadings(ast) {
