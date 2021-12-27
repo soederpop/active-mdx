@@ -22,7 +22,7 @@ describe("The Collection Class", function () {
 
   it("can autoload model classes if theyre in a models folder", async function () {
     const docs = new Collection({
-      rootPath: Collection.resolve("docs")
+      rootPath: Collection.resolve("..", "docs", "content")
     })
 
     docs.modelClasses.should.have.property("length", 0)
@@ -36,7 +36,7 @@ describe("The Collection Class", function () {
   describe("Collection Actions", function () {
     it("can register action functions to be run on the collection", async function () {
       const docs = new Collection({
-        rootPath: Collection.resolve("docs")
+        rootPath: Collection.resolve("..", "docs", "content")
       })
 
       docs.should.have.property("actions")

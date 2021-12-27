@@ -5,8 +5,6 @@
   "main": "./index.js",
   "type": "module",
   "scripts": {
-    "link:local": "ln -sf $PWD ./node_modules/active-mdx",
-    "preconsole": "yarn link:local",
     "console": "node scripts/console.mjs",
     "build": "npm run build:node",
     "build:node": "esbuild index.js --bundle --format=cjs --outfile=dist/index.cjs --platform=node",
