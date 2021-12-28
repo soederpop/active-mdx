@@ -517,7 +517,7 @@ export default class Collection {
       })
     )
 
-    if (this.loaded) {
+    if (this.loaded && refresh) {
       await Promise.all(
         Array.from(this.documents.values()).map((doc) => doc.reload())
       )
