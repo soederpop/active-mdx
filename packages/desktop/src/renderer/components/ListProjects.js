@@ -75,7 +75,7 @@ export default function ListProjects({
             >
               {project.initials}
             </div>
-            <div className="flex-1 flex items-center justify-between border-t border-r border-b border-slate-800 bg-black rounded-r-md truncate">
+            <div className="flex-1 flex items-center justify-between border-t border-r border-b border-slate-800 rounded-r-md truncate">
               <div className="flex-1 px-4 py-2 text-sm truncate">
                 <a href={project.href} className="text-white font-medium">
                   {project.name}

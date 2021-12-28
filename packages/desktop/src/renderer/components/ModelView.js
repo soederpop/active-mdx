@@ -1,5 +1,6 @@
 import React, { useEffect } from "react"
 import { useAppContext } from "./AppProvider"
+import { sortBy } from "lodash-es"
 
 export default function ModelView(props = {}) {
   const { model, modelData = {}, filter = "", onSelect } = props
@@ -38,7 +39,7 @@ export default function ModelView(props = {}) {
   return (
     <div className="flex p-10 text-white">
       <div className="w-3/4 pr-2">
-        {records.filter(filterFn).map((record, index) => (
+        {sortBy(records.filter(filterFn), "title").map((record, index) => (
           <div
             onClick={() => onSelect(record)}
             key={index}

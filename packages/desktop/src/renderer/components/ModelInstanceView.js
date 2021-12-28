@@ -51,22 +51,22 @@ export default function ModelInstanceView({ model, project, modelClass }) {
   return (
     <div className="flex w-full">
       <div className="text-white w-2/5 pl-2">
-        <div className="p-4 border-b-2 border-slate-600">
+        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
           <a onClick={() => setView("source")}>View Source</a>
         </div>
-        <div className="p-4 border-b-2 border-slate-600">
+        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
           <a onClick={() => API.openWithNative({ url: response.path })}>
             Open this Document in VSCode
           </a>
         </div>
-        <div className="p-4 border-b-2 border-slate-600">
+        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
           <a>Validate this Model</a>
         </div>
-        <div className="p-4 border-b-2 border-slate-600">
+        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
           <a onClick={() => setView("json")}>View JSON</a>
         </div>
         {modelClass.availableActions.map((action) => (
-          <div className="p-4 border-b-2 border-slate-600">
+          <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
             Run {action} action
           </div>
         ))}
