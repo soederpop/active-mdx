@@ -1,6 +1,20 @@
-import { contextBridge } from "electron"
-import * as APIClient from "./api/client.js"
+import { ipcRenderer, contextBridge } from "electron"
 
-contextBridge.exposeInMainWorld("API", {
-  ...APIClient
-})
+const METHODS = [
+  "openWithNative",
+  "updateWindow",
+  "getModel",
+  "getProjectData",
+  "listProjects"
+]
+
+contextBridge.exposeInMainWorld(
+  "API",
+  METHODS.reduce(
+    (memo, actionName) => ({
+      ...memo,
+      [actionName]: (options = {}) => ipcRenderer.invoke(actionName, options)
+    }),
+    {}
+  )
+)

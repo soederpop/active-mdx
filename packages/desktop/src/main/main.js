@@ -8,6 +8,8 @@ import { compile } from "./javascript"
 
 let win = undefined
 
+export const getMainWindow = () => createWindow()
+
 function createWindow() {
   if (win) {
     return win
@@ -58,9 +60,8 @@ app.on("ready", function () {
     createWindow().hide()
   })
 
-  APIServer.start({
-    mainWindow: createWindow()
-  })
+  console.log("App Is Ready")
+  Promise.resolve(APIServer.start())
 
   /*
   protocol.registerFileProtocol("mdx", (request, callback) => {
