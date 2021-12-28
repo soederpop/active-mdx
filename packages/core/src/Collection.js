@@ -16,7 +16,7 @@ export default class Collection {
   constructor(
     { rootPath = process.cwd(), extensions = ["mdx", "md"] },
     models = [],
-    name = path.parse(rootPath).base
+    name = rootPath
   ) {
     if (!Model.defaultCollection) {
       Model.collections.set("default", this)
@@ -40,6 +40,7 @@ export default class Collection {
     privates.set(this, p)
 
     this.rootPath = rootPath
+    this.name = name
 
     models.forEach((ModelClass) => {
       this.model(ModelClass.name, ModelClass)
@@ -242,7 +243,7 @@ export default class Collection {
 
     const data = this.items.get(pathId)
 
-    const { content, meta, path } = data
+    const { content, meta } = data
     doc = this.createDocument({ id: pathId, content, meta })
 
     this.documents.set(pathId, doc)
@@ -258,6 +259,18 @@ export default class Collection {
    */
   createDocument(attributes = {}) {
     return new Document({ ...attributes, collection: this })
+  }
+
+  get itemsByModifiedDate() {
+    return Array.from(this.items.entries())
+      .sort((a, b) => {
+        return a[1].updatedAt - b[1].updatedAt
+      })
+      .map((entry) => [
+        entry[0],
+        entry[1].updatedAt,
+        this.getModel(entry[0]).constructor.name
+      ])
   }
 
   /**
@@ -294,6 +307,9 @@ export default class Collection {
 
     return {
       models,
+      recent: this.itemsByModifiedDate
+        .reverse()
+        .slice(0, options.recentCount || 5),
       modelAliases: this.modelAliases,
       itemIds: Array.from(this.items.keys()),
       ...optional
@@ -308,27 +324,34 @@ export default class Collection {
 
     const models = {}
 
+    const failedExports = []
+
     await Promise.all(
-      modelClasses.map((ModelClass) =>
-        ModelClass.query()
-          .fetchAll()
-          .then((results) => {
-            models[ModelClass.name] = results
-              .map((model) => {
-                try {
-                  model.toJSON(options[ModelClass.name] || {})
-                } catch (error) {
-                  console.log("Error exporting model", model.id)
-                  return false
-                }
-              })
-              .filter(Boolean)
-          })
-      )
+      modelClasses.map((ModelClass) => {
+        const query = ModelClass.query({ collection: this.name })
+
+        console.log("Exporting Collection", this.name, query.collection.name)
+
+        return query.fetchAll().then((results) => {
+          console.log(`${ModelClass.name} has ${results.length} items`)
+          models[ModelClass.name] = results
+            .map((model) => {
+              try {
+                return model.toJSON(options[ModelClass.name] || {})
+              } catch (error) {
+                failedExports.push(model.id)
+                console.log("Error exporting model", model.id)
+                return false
+              }
+            })
+            .filter(Boolean)
+        })
+      })
     )
 
     return {
       modelData: models,
+      failedExports,
       ...json
     }
   }
@@ -393,6 +416,30 @@ export default class Collection {
     this.updateItem(pathId, { content, data })
 
     return this.items.get(pathId)
+  }
+
+  async readItem(pathId) {
+    const { path } = this.items.get(pathId)
+
+    return await fs
+      .readFile(path, "utf8")
+      .then((buf) => String(buf))
+      .then((raw) => fs.stat(path).then((stat) => ({ raw, stat })))
+      .then(({ raw, stat }) => {
+        const { data, content } = matter(raw)
+        const payload = {
+          raw,
+          content,
+          meta: data,
+          path,
+          createdAt: stat.ctime,
+          updatedAt: stat.mtime
+        }
+
+        this.updateItem(pathId, payload)
+
+        return payload
+      })
   }
 
   pathExistsSync(pathId, { extension = "mdx" } = {}) {
