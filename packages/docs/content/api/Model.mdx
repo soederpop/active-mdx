@@ -2,8 +2,9 @@
 type: ApiDoc
 path: src/Model.js
 ---
-
 # Model Class
+
+## API
 
 ## API
 
@@ -13,16 +14,16 @@ path: src/Model.js
 
 Runs a registered action by its name.
 
-- `{String} actionName`
-- `{Object} options` options to be passed to the action function
+*   `{String} actionName`
+*   `{Object} options` options to be passed to the action function
 
 #### toJSON
 
 Represent this model as a pure JavaScript object.
 
-- `{Object} options`
-- `{Array[String]} options.related` - include any defined relations of the mdoel. It will return any related models and call toJSON on those as well.
-- `{Array[String]} options.attributes` - include any defined attributes of the model.
+*   `{Object} options`
+*   `{Array[String]} options.related` - include any defined relations of the mdoel.  It will return any related models and call toJSON on those as well.
+*   `{Array[String]} options.attributes` - include any defined attributes of the model.
 
 Returns `{Object}`
 
@@ -32,22 +33,24 @@ Save the underlying document
 
 #### hasMany
 
-Returns a HasManyRelationship instance for this model. You can call fetchAll on this to get
+Returns a HasManyRelationship instance for this model.  You can call fetchAll on this to get
 instances of the related model.
 
-- `{String|Model} modelNameOrModelClass`
-- `{Object} options`
-- `{String} options.heading` - the parent heading the child relations will be found under.
+*   `{String|Model} modelNameOrModelClass`
+*   `{Object} options`
+*   `{String} options.heading` - the parent heading the child relations will be found under.
 
 Returns `{HasManyRelationship}`
 
 #### belongsTo
 
-Returns a BelongsToRelationship instance for this model. You can call fetch on this to get the instance of the parent Model.
+Returns a BelongsToRelationship instance for this model.  You can call fetch on this to get the instance of the parent Model.
 
-- `{String|Model} modelNameOrModelClass`
-- `{Object} options`
-- `{Function} options.id` a function which will be passed this models underlying document, and should return the id of the parent model this belongs to
+*   `{String|Model} modelNameOrModelClass`
+*   `{Object} options`
+*   `{Function} options.id` a function which will be passed this models underlying document, and should return the id of the parent model this belongs to
+
+#### validate
 
 ### Instance Properties
 
@@ -78,8 +81,8 @@ Type `{Object}`
 #### defaults
 
 You can override this to return default data to be used when creating data for serialization purposes.
-For example you can return `{ meta: { defaultValue: 1 } }` to ensure all instances of this model have that
-as their metadata.
+
+The value you provide will be merged in with lodash.defaultsDeep so you can provide an object of meta data to automatically set these values.
 
 #### collection
 
@@ -109,7 +112,23 @@ The title of the underlying document
 
 Type `{String}`
 
+#### slug
+
+The title of the underlying document in a format suitable for use as an ID in a URL
+
+Type `{String}`
+
 #### relationships
+
+#### model
+
+#### errorMessages
+
+#### errors
+
+#### hasErrors
+
+#### validator
 
 ### Static / Class Methods
 
@@ -123,39 +142,47 @@ When defining your own Model class, you should override this method with your ow
 
 Creates an instance of this Model class from a given Document.
 
-- `{Document} document`
-- `{Object} options`
+*   `{Document} document`
+*   `{Object} options`
 
 #### registerQuery
 
 Register an query function with this model class.
 
-- `{String} name` the name of the query
-- `{Function} fn` a function which returns models matching the query
-- `{Object} options`
+*   `{String} name` the name of the query
+*   `{Function} fn` a function which returns models matching the query
+*   `{Object} options`
 
 #### query
 
-Run a query against the model. Can either pass the name of a query that has already been registered
+Run a query against the model.  Can either pass the name of a query that has already been registered
 or a function that will be used to build the query and return results.
 
 Returns `{CollectionQuery}`
 
+#### fetchAll
+
+#### first
+
+#### last
+
 #### action
 
-Register an action function with this model class. An action is an asynchronous function
+Register an action function with this model class.  An action is an asynchronous function
 that will run being passed the model instance as the first argument.
 
-- `{String} name`
-- `{Function} fn`
-- `{Object} options`
+*   `{String} name`
+*   `{Function} fn`
+*   `{Object} options`
 
 ### Static / Class Properties
 
+#### joi
+
 #### prefix
 
-When defining your own Model class, you can override this method with your own prefix. By default
-it will use the lowercase, pluralized name of the model. E.g. Book -> books
+When defining your own Model class, you can override this method with your own prefix.  By default
+it will use the lowercase, pluralized name of the model.  E.g. Book -> books
 
 #### inflections
 
@@ -197,3 +224,5 @@ Type `{Collection}`
 Gets any collections this Model can be associated with.
 
 Type `{Map}`
+
+#### schema

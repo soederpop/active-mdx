@@ -20,10 +20,24 @@ export default class ApiDoc extends Model {
     return "api"
   }
 
+  static get schema() {
+    return this.joi
+      .object({
+        meta: this.joi
+          .object({
+            path: this.joi.string().required()
+          })
+          .unknown(true)
+      })
+      .unknown(true)
+  }
+
   get sourceFilePath() {
     return this.collection.constructor.resolve(
       this.collection.rootPath,
       "..",
+      "..",
+      "core",
       this.meta.path
     )
   }
@@ -287,66 +301,71 @@ export default class ApiDoc extends Model {
 
     return ast
   }
+
+  async syncWithCode() {
+    const model = this
+    const classMethods = this.classInstanceMethods
+    const classGetters = model.classGetters
+    const staticMethods = model.staticClassMethods
+    const staticGetters = model.staticClassGetters
+
+    const body = ["## API\n"]
+
+    const apiHeading = model.document.astQuery.findHeadingByText("api")
+
+    if (!isEmpty(classMethods)) {
+      body.push("### Instance Methods\n\n")
+      body.push(
+        ...Object.values(model.getDocBlocks("classInstanceMethods")).map(
+          (m) => m.markdown
+        )
+      )
+      body.push("\n")
+    }
+
+    if (!isEmpty(classGetters)) {
+      body.push("### Instance Properties\n\n")
+      body.push(
+        ...Object.values(model.getDocBlocks("classGetters")).map(
+          (m) => m.markdown
+        )
+      )
+      body.push("\n")
+    }
+
+    if (!isEmpty(staticMethods)) {
+      body.push("### Static / Class Methods\n\n")
+      body.push(
+        ...Object.values(model.getDocBlocks("staticClassMethods")).map(
+          (m) => m.markdown
+        )
+      )
+      body.push("\n")
+    }
+
+    if (!isEmpty(staticGetters)) {
+      body.push("### Static / Class Properties\n\n")
+      body.push(
+        ...Object.values(model.getDocBlocks("staticClassGetters")).map(
+          (m) => m.markdown
+        )
+      )
+      body.push("\n")
+    }
+
+    const apiDocsContent = body.join("\n")
+
+    if (apiHeading) {
+      model.document.replaceSectionContent(apiHeading, apiDocsContent)
+    } else {
+      model.document.appendContent(apiDocsContent)
+    }
+
+    return model
+  }
 }
 
 ApiDoc.action("sync-with-code", async function generateOutline(model) {
-  const classMethods = model.classInstanceMethods
-  const classGetters = model.classGetters
-  const staticMethods = model.staticClassMethods
-  const staticGetters = model.staticClassGetters
-
-  const body = ["## API\n"]
-
-  const apiHeading = model.document.astQuery.findHeadingByText("api")
-
-  if (apiHeading) {
-    model.document.removeSection(apiHeading)
-    model.document.replaceContent(model.document.stringify())
-    await model.save()
-  }
-
-  if (!isEmpty(classMethods)) {
-    body.push("### Instance Methods\n\n")
-    body.push(
-      ...Object.values(model.getDocBlocks("classInstanceMethods")).map(
-        (m) => m.markdown
-      )
-    )
-    body.push("\n")
-  }
-
-  if (!isEmpty(classGetters)) {
-    body.push("### Instance Properties\n\n")
-    body.push(
-      ...Object.values(model.getDocBlocks("classGetters")).map(
-        (m) => m.markdown
-      )
-    )
-    body.push("\n")
-  }
-
-  if (!isEmpty(staticMethods)) {
-    body.push("### Static / Class Methods\n\n")
-    body.push(
-      ...Object.values(model.getDocBlocks("staticClassMethods")).map(
-        (m) => m.markdown
-      )
-    )
-    body.push("\n")
-  }
-
-  if (!isEmpty(staticGetters)) {
-    body.push("### Static / Class Properties\n\n")
-    body.push(
-      ...Object.values(model.getDocBlocks("staticClassGetters")).map(
-        (m) => m.markdown
-      )
-    )
-    body.push("\n")
-  }
-
-  const apiDocsContent = body.join("\n")
-
-  model.document.appendContent(`\n${apiDocsContent}`)
+  await model.syncWithCode()
   await model.save()
 })

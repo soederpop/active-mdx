@@ -3,6 +3,7 @@ import CollectionQuery from "./CollectionQuery.js"
 import HasManyRelationship from "./HasManyRelationship.js"
 import BelongsToRelationship from "./BelongsToRelationship.js"
 import expandAction from "./actions/expand.js"
+import joi from "joi"
 
 import {
   defaultsDeep,
@@ -12,6 +13,7 @@ import {
   camelCase,
   upperFirst
 } from "lodash-es"
+import Validator from "./Validator.js"
 
 const privates = new WeakMap()
 
@@ -23,9 +25,22 @@ const privates = new WeakMap()
  */
 export default class Model {
   constructor(document, options = {}) {
-    privates.set(this, { document, relationships: new Map() })
+    const errorTracker = new Map()
+
+    errorTracker.toJSON = () => Object.fromEntries(errorTracker.entries())
+
+    privates.set(this, {
+      document,
+      relationships: new Map(),
+      errors: errorTracker
+    })
+
     // so it is visible in a REPL
     this._label = document.id
+  }
+
+  static get joi() {
+    return joi
   }
 
   /**
@@ -181,7 +196,7 @@ export default class Model {
   }
 
   static async fetchAll(options = {}) {
-    return this.query().fetchAll(options)
+    return this.query(options).fetchAll(options)
   }
 
   static async first() {
@@ -270,6 +285,14 @@ export default class Model {
     return classPrivates.get(Model).collections
   }
 
+  static get schema() {
+    return joi
+      .object({
+        title: joi.string().required()
+      })
+      .unknown(true)
+  }
+
   /**
    * Returns the ID of the underlying document
    * @type {String}
@@ -324,8 +347,8 @@ export default class Model {
 
   /**
    * You can override this to return default data to be used when creating data for serialization purposes.
-   * For example you can return { meta: { defaultValue: 1 } } to ensure all instances of this model have that
-   * as their metadata.
+   *
+   * The value you provide will be merged in with lodash.defaultsDeep so you can provide an object of meta data to automatically set these values.
    */
   get defaults() {
     return {}
@@ -456,6 +479,30 @@ export default class Model {
    */
   belongsTo(modelNameOrModelClass, options = {}) {
     return new BelongsToRelationship(this, modelNameOrModelClass, options)
+  }
+
+  get model() {
+    return this.constructor
+  }
+
+  get errorMessages() {
+    return this.errors.toJSON()
+  }
+
+  get errors() {
+    return privates.get(this).errors
+  }
+
+  get hasErrors() {
+    return privates.get(this).errors.size > 0
+  }
+
+  get validator() {
+    return new Validator({ model: this })
+  }
+
+  async validate(options = {}) {
+    return this.validator.validate(options)
   }
 }
 

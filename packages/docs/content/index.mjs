@@ -14,3 +14,23 @@ collection.model("Guide", Guide)
 export { ApiDoc, Guide }
 
 export default collection
+
+collection.action("generate-api-docs", async function generateApiDocs() {
+  const apiDocs = await ApiDoc.fetchAll()
+
+  for (let apiDoc of apiDocs) {
+    await apiDoc.validate()
+
+    if (!apiDoc.hasErrors) {
+      try {
+        await apiDoc.syncWithCode()
+        await apiDoc.save()
+        console.log(`Saved ${apiDoc.id}`)
+      } catch (error) {
+        console.error(`Failed to save ${apiDoc.id}`, error)
+      }
+    } else {
+      console.log(`${apiDoc.id} is not valid. Skipping`)
+    }
+  }
+})

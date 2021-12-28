@@ -13,7 +13,7 @@ describe("Model Querying", function () {
 
   it("lets me query", async function () {
     const epics = await collection.query("Epic").fetchAll()
-    epics.length.should.equal(2)
+    epics.length.should.be.greaterThan(2)
   })
 
   it("lets me query with attribute equality", async function () {
