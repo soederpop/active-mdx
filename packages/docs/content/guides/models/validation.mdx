@@ -1,0 +1,40 @@
+# Model Validation
+
+We use the [joi](https://npmjs.com/package/joi) library to validate the result of `model.toJSON()`
+
+```javascript
+export default class Epic extends Model {
+  static get schema() {
+    const { joi } = this
+
+    return joi
+      .object({
+        title: joi.string().required(),
+        stories: joi
+          .array()
+          .items(
+            joi
+              .object({
+                meta: joi.object({}).unknown(true).required(),
+                title: joi.string().required().min(1)
+              })
+              .unknown(true)
+          )
+          .min(1)
+      })
+      .unknown(true)
+  }
+}
+```
+
+This allows you to call `await model.validate()` to validate that the model provides the expected data when you parse it.
+
+```javascript
+const invalidModel = collection.getModel("invalid")
+
+await invalidModel.validate()
+
+invalidModel.hasErrors // true
+
+invalidModel.errorMessages // { "title": { message: "title is required" } }
+```

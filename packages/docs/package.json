@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sync:content": "cp -r ../active-mdx/docs/* content/ && git checkout content/*.js content/**/*.js",
     "console": "node scripts/console.mjs"
   },
   "dependencies": {
