@@ -517,6 +517,12 @@ export default class Collection {
       })
     )
 
+    if (this.loaded) {
+      await Promise.all(
+        Array.from(this.documents.values()).map((doc) => doc.reload())
+      )
+    }
+
     if (options.models) {
       const modelsFolder = this.resolve(
         this.rootPath,

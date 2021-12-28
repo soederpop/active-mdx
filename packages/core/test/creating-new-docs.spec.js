@@ -12,7 +12,6 @@ describe("Creating new documents from existing documents", function () {
   })
 
   after(async function () {
-    return true
     await fs
       .rm(collection.resolve("stories", "searching-and-browsing"), {
         recursive: true

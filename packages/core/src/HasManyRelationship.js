@@ -25,6 +25,11 @@ export default class HasManyRelationship extends Relationship {
 
     if (childType === "heading") {
       const parentHeading = astQuery.findHeadingByText(heading)
+
+      if (!parentHeading) {
+        return []
+      }
+
       const nodes = this.document.extractSection(parentHeading).slice(1)
 
       return nodes
