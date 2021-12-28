@@ -134,12 +134,16 @@ export default class Model {
       const options = args[1] || {}
       const { collection = "default" } = options
 
-      return new CollectionQuery({
+      const cq = new CollectionQuery({
         collection: this.collections.get(collection),
         fn: registeredQuery.fn,
         options,
         model: this
       })
+
+      cq.source = "string" + collection
+
+      return cq
     }
 
     if (typeof args[0] === "function") {
@@ -147,23 +151,32 @@ export default class Model {
       const options = args[1] || {}
       const { collection = "default" } = options
 
-      return new CollectionQuery({
+      const cq = new CollectionQuery({
         collection: this.collections.get(collection),
         fn,
         options,
         model: this
       })
+
+      cq.source = "function" + collection
+
+      return cq
     }
 
     if (typeof args[0] === "object" || args.length === 0) {
       const options = args[0] || {}
       const { collection = "default" } = options
-      return new CollectionQuery({
+
+      const cq = new CollectionQuery({
         collection: this.collections.get(collection),
         options,
         model: this,
         fn: () => true
       })
+
+      cq.source = "object" + collection
+
+      return cq
     }
   }
 

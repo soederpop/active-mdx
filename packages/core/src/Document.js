@@ -67,6 +67,18 @@ export default class Document {
   }
 
   /**
+   * Reloads this document's content from the collection
+   */
+  async reload() {
+    const { content, meta } = await this.collection.readItem(this.id)
+    privates.get(this).content = content
+    privates.get(this).meta = meta
+    this.rerenderAST()
+
+    return this
+  }
+
+  /**
    * Returns the raw content of the document, including yaml frontmatter.
    *
    * @readonly
@@ -96,8 +108,6 @@ export default class Document {
   get extension() {
     return privates.get(this).extension || "mdx"
   }
-
-  get path() {}
 
   get modelClass() {
     let ModelClass
