@@ -371,6 +371,10 @@ export default class Collection {
     return {
       modelData: models,
       failedExports,
+      availableActions: this.availableActions,
+      packageRoot: this.packageRoot,
+      rootPath: this.rootPath,
+      name: this.name,
       ...json
     }
   }

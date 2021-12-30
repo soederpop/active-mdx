@@ -1,6 +1,7 @@
 import minimist from "minimist"
 import lodash from "lodash"
 import runAction from "./run-action.mjs"
+import render from "./render.mjs"
 import exportCollection from "./export-collection.mjs"
 import init from "./init.mjs"
 import { Collection } from "../../index.js"
@@ -31,6 +32,10 @@ export default async function main() {
         exportCollection({ ...argv, collection })
       )
       break
+    case "render":
+      await loadCollection(argv).then((collection) =>
+        render({ ...argv, collection })
+      )
     case "action":
     case "run":
       await loadCollection(argv).then((collection) =>
