@@ -5,7 +5,8 @@ import Document from "./Document.js"
 import Model from "./Model.js"
 import * as inflections from "inflect"
 import { isEmpty } from "lodash-es"
-import { statSync } from "fs"
+import { readFileSync, statSync } from "fs"
+import { findUpSync } from "find-up"
 
 const privates = new WeakMap()
 
@@ -184,6 +185,24 @@ export default class Collection {
         return memo
       },
       {}
+    )
+  }
+
+  get packageRoot() {
+    if (privates.get(this).packageRoot) {
+      return privates.get(this).packageRoot
+    }
+
+    const packageRoot = path.parse(
+      findUpSync("package.json", { cwd: this.rootPath })
+    ).dir
+
+    return (privates.get(this).packageRoot = packageRoot)
+  }
+
+  get packageManifest() {
+    return JSON.parse(
+      readFileSync(path.resolve(this.packageRoot, "package.json")).toString()
     )
   }
 
