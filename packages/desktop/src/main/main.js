@@ -89,7 +89,7 @@ function createWindow(params = {}) {
 
 app.on("ready", function () {
   globalShortcut.register("CommandOrControl+,", function () {
-    createMainWindow().show()
+    createMainWindow()
   })
 
   ipcMain.handle("closeApp", function () {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import MarkdownEditor from "./MarkdownEditor"
+import MdxPreview from "./MdxPreview"
 import { useClientCall } from "./hooks"
 import { useAppContext } from "./AppProvider"
 import { runModelAction } from "../actions.js"
@@ -54,6 +55,9 @@ export default function ModelInstanceView({
           <a onClick={() => setView("source")}>View Source</a>
         </div>
         <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
+          <a onClick={() => setView("preview")}>Preview</a>
+        </div>
+        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
           <a onClick={() => API.openWithNative({ url: response.path })}>
             Open this Document in VSCode
           </a>
@@ -85,6 +89,9 @@ export default function ModelInstanceView({
       <div className="w-3/5">
         {view === "source" && response?.document?.content && (
           <MarkdownEditor value={response.document.content} height="90vh" />
+        )}
+        {view === "preview" && response?.document?.id && (
+          <MdxPreview cwd={cwd} pathId={response.document.id} height="90vh" />
         )}
         {view === "json" && response?.model && (
           <pre>{JSON.stringify(response.model, null, 2)}</pre>

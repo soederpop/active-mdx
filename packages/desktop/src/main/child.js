@@ -1,6 +1,7 @@
 import minimist from "minimist"
-import { omit, mapKeys, kebabCase, camelCase } from "lodash-es"
+import { mapKeys, kebabCase, camelCase } from "lodash-es"
 import { spawn } from "child_process"
+import { execa } from "execa"
 
 const service = process.argv[2]
 const options = mapKeys(minimist(process.argv.slice(3)), (v, k) =>
@@ -9,6 +10,9 @@ const options = mapKeys(minimist(process.argv.slice(3)), (v, k) =>
 
 async function main() {
   switch (service) {
+    case "renderMdxDocument":
+      await renderMdxDocument({ pathId: options._[0], ...options })
+      break
     case "runActiveMdxAction":
       await runActiveMdxAction({
         actionName: options._[0],
@@ -19,6 +23,26 @@ async function main() {
     default:
       console.error("Unknown service", service)
   }
+}
+
+async function renderMdxDocument({ pathId, activeMdxCwd, ...options }) {
+  const flags = Object.entries(options).map(
+    ([k, v]) => `--${kebabCase(k)}=${v}`
+  )
+
+  const args = ["render", pathId, ...flags]
+
+  //console.log("Spawning AMDX", { args, cwd: activeMdxCwd })
+
+  return new Promise((res, rej) => {
+    const child = spawn("amdx", args, {
+      cwd: activeMdxCwd,
+      stdio: "inherit"
+    })
+
+    child.on("error", rej)
+    child.on("exit", res)
+  })
 }
 
 async function runActiveMdxAction(o = {}) {

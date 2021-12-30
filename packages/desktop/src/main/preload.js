@@ -16,6 +16,7 @@ const METHODS = [
 
 const baseApi = {
   runActiveMdxAction,
+  renderMdxDocument,
   createWindow
 }
 
@@ -53,6 +54,30 @@ contextBridge.exposeInMainWorld(
 
 let ipcChannel = 0
 
+async function renderMdxDocument({ cwd, pathId, modulePath, ...options }) {
+  const { channel = `render-mdx-document-${ipcChannel++}` } = options
+
+  return new Promise((resolve) => {
+    const output = []
+
+    ipcRenderer.on(`spawn-${channel}`, (event, data = {}) => {
+      if (data.type === "stdout") {
+        output.push(data.value)
+      } else if (data.type === "close") {
+        resolve(output)
+      }
+    })
+
+    ipcRenderer.invoke("spawn", {
+      service: "renderMdxDocument",
+      channel,
+      args: [pathId, `--active-mdx-cwd=${cwd}`].concat(
+        modulePath ? [`--module-path=${modulePath}`] : []
+      )
+    })
+  })
+}
+
 async function runActiveMdxAction({
   cwd,
   actionName,
@@ -70,7 +95,7 @@ async function runActiveMdxAction({
   ]
 
   ipcRenderer.on(`spawn-${channel}`, (event, data = {}) => {
-    console.log(`spawn-${channel}`, data)
+    //console.log(`spawn-${channel}`, data)
     if (typeof onEvent === "function") {
       onEvent(data)
     }
