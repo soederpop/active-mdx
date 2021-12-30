@@ -1,51 +1,3 @@
-import { bundleMDX } from "mdx-bundler"
-import { getMDXComponent } from "mdx-bundler/client/index.js"
-import { renderToStaticMarkup } from "react-dom/server.js"
-import { createElement } from "react"
-import fs from "fs/promises"
-
-export default async function render(argv = {}) {
-  const html = await getHtml(argv)
-
-  if (argv.outputFile) {
-    await fs.writeFile(argv.outputFile, html)
-  } else {
-    console.log(html)
-  }
-}
-
-async function getHtml(argv = {}) {
-  const { collection } = argv
-  const pathId = argv._[1]
-
-  const { code } = await bundleMDX({
-    file: collection.items.get(pathId).path,
-    cwd: collection.packageRoot
-  })
-
-  const Component = getMDXComponent(code)
-
-  const html = renderToStaticMarkup(createElement(Component, {}))
-
-  if (argv.html) {
-    return wrapInHtml(html)
-  } else if (argv.styles) {
-    return includeStyles(html)
-  } else {
-    return html
-  }
-}
-
-const includeStyles = (html) => `
-  <style>
-    ${githubStyle()}
-  </style>
-  <div class="markdown-body" style="padding: 16px">
-    ${html}
-  </div>
-`
-
-const wrapInHtml = (html) => `
 <!DOCTYPE html>
 <html>
   <head>
@@ -57,17 +9,6 @@ const wrapInHtml = (html) => `
     <title>Markdown Preview</title>
     <meta name="color-scheme" content="light dark" />
     <style>
-      ${githubStyle()}
-    </style>
-  </head>
-  <body>
-    <article class="markdown-body">
-      ${html}
-    </article>
-</html>
-`
-
-const githubStyle = () => `
       @media (prefers-color-scheme: dark) {
         .markdown-body {
           color-scheme: dark;
@@ -947,4 +888,35 @@ const githubStyle = () => `
       .markdown-body ::-webkit-calendar-picker-indicator {
         filter: invert(50%);
       }
-`
+
+    </style>
+    <style>
+      body {
+        box-sizing: border-box;
+        min-width: 200px;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 45px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #0d1117;
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css"
+    />
+    <style>
+      .github-fork-ribbon:before {
+        background-color: #121612;
+      }
+    </style>
+  </head>
+  <body>
+    <article class="markdown-body">
+      <!-- INSERT_HTML -->
+    </article>
+</html>
