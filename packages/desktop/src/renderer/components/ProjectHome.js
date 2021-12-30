@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react"
 import Divider from "./Divider"
 import { useClientCall } from "./hooks"
 import { useAppContext } from "./AppProvider"
-
 import ModelList from "./ModelList"
 import ModelInstanceView from "./ModelInstanceView"
 import ModelView from "./ModelView"
+import { runCollectionAction } from "../actions"
 import { titleize } from "inflect"
 
 export default function ProjectHome({
@@ -36,7 +36,7 @@ export default function ProjectHome({
           filter={filter}
           {...context}
           {...response}
-          {...(response?.serverResponse || {})}
+          {...(response.serverResponse || {})}
           project={project}
         />
       )
@@ -125,31 +125,6 @@ function ProjectMainScreen(props = {}) {
 
 let actionCounter = 0
 function ActionList({ filter = "", packageRoot, actions: availableActions }) {
-  const [stdout, setStdout] = useState([])
-
-  const runAction = (actionName, cwd) => {
-    const channel = `action-runner-${actionCounter++}`
-
-    API.runActiveMdxAction({
-      actionName,
-      cwd,
-      channel,
-      modulePath: "./content/index.mjs",
-      onEvent: (event) => {
-        switch (event.type) {
-          case "stdout":
-            setStdout(stdout.concat(event.value))
-            break
-          case "close":
-            setStdout([])
-            break
-          default:
-            break
-        }
-      }
-    })
-  }
-
   const actions = availableActions
     .map((action) => ({
       action,
@@ -166,17 +141,11 @@ function ActionList({ filter = "", packageRoot, actions: availableActions }) {
         <div
           className="p-4 border-b-2 border-slate-600 hover:bg-slate-600"
           key={action}
-          onClick={() => runAction(action, packageRoot)}
+          onClick={() =>
+            runCollectionAction({ actionName: action, cwd: packageRoot })
+          }
         >
           {name}
-          {stdout.length > 0 && (
-            <pre
-              className="bg-black border-white"
-              style={{ maxHeight: "200px", overflowY: "scroll" }}
-            >
-              {stdout.join("\n")}
-            </pre>
-          )}
         </div>
       ))}
     </div>

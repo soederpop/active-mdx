@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import MarkdownEditor from "./MarkdownEditor"
 import { useClientCall } from "./hooks"
 import { useAppContext } from "./AppProvider"
+import { runModelAction } from "../actions.js"
 
 export default function ModelInstanceView({
   model,
@@ -64,18 +65,16 @@ export default function ModelInstanceView({
           <a onClick={() => setView("json")}>View JSON</a>
         </div>
         {modelClass.availableActions.map((action) => {
-          const runModelAction = () => {
-            API.runActiveMdxAction({
-              cwd,
-              actionName: action,
-              models: [response.model.id],
-              modulePath: "./content/index.mjs"
-            })
-          }
           return (
             <div
               key={action}
-              onClick={runModelAction}
+              onClick={() =>
+                runModelAction({
+                  cwd,
+                  actionName: action,
+                  models: [response.model.id]
+                })
+              }
               className="p-4 border-b-2 border-slate-600 hover:bg-slate-600"
             >
               Run {action} action

@@ -7,13 +7,7 @@ const options = mapKeys(minimist(process.argv.slice(3)), (v, k) =>
   k === "_" ? k : camelCase(kebabCase(k))
 )
 
-console.log("Child Process", {
-  service,
-  options
-})
-
 async function main() {
-  console.log("Dispatching", service, options)
   switch (service) {
     case "runActiveMdxAction":
       await runActiveMdxAction({
@@ -36,7 +30,7 @@ async function runActiveMdxAction(o = {}) {
 
   const args = ["action", actionName, ...models, ...flags]
 
-  console.log("Spawning AMDX", { args, cwd: activeMdxCwd })
+  //console.log("Spawning AMDX", { args, cwd: activeMdxCwd })
 
   return new Promise((res, rej) => {
     const child = spawn("amdx", args, {

@@ -1,4 +1,4 @@
-import { app, ipcMain } from "electron"
+import { app, ipcMain, BrowserWindow } from "electron"
 import { fork, spawn } from "child_process"
 import path from "path"
 
@@ -11,7 +11,10 @@ export async function start(options = {}, callback) {
 
   Object.keys(actions).forEach((actionName) => {
     ipcMain.handle(actionName, async (event, options) =>
-      actions[actionName](options)
+      actions[actionName]({
+        ...options,
+        targetWindow: BrowserWindow.fromWebContents(event.sender)
+      })
     )
   })
 

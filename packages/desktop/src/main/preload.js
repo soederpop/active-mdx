@@ -1,4 +1,6 @@
 import { ipcRenderer, contextBridge } from "electron"
+import minimist from "minimist"
+import { omit, kebabCase, camelCase, mapKeys } from "lodash"
 
 const METHODS = [
   "openWithNative",
@@ -6,12 +8,31 @@ const METHODS = [
   "getModel",
   "getProjectData",
   "listProjects",
-  "closeApp"
+  "closeApp",
+  "closeCurrentWindow",
+  "showCurrentWindow",
+  "hideCurrentWindow"
 ]
 
 const baseApi = {
-  runActiveMdxAction
+  runActiveMdxAction,
+  createWindow
 }
+
+const entryPoint = getEntryPoint() || "App"
+
+function getEntryPoint() {
+  const index = process.argv.indexOf("--entry")
+  return process.argv[index + 1]
+}
+
+const baseArgv = minimist(process.argv.slice(2))
+contextBridge.exposeInMainWorld("AppEntryOptions", {
+  ...baseArgv,
+  ...mapKeys(omit(baseArgv, "_", "entry"), (v, k) => camelCase(kebabCase(k))),
+  _: baseArgv._,
+  entryPoint
+})
 
 contextBridge.exposeInMainWorld(
   "API",
@@ -61,4 +82,8 @@ async function runActiveMdxAction({
     channel,
     cwd
   })
+}
+
+async function createWindow(options = {}) {
+  await ipcRenderer.invoke("createWindow", options)
 }

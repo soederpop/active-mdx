@@ -4,7 +4,7 @@ import MainInput from "./components/MainInput"
 import Router from "./components/Router"
 import BottomToolbar from "./components/BottomToolbar"
 
-export function App() {
+export default function App() {
   const [filter, setFilter] = useState("")
   const [showFilter, setShowFilter] = useState(true)
 

@@ -8,23 +8,18 @@ import { compile } from "./javascript"
 
 let win = undefined
 
-export const getMainWindow = () => createWindow()
+export const getMainWindow = () => createMainWindow()
 
-function createWindow() {
+function createMainWindow() {
   if (win) {
     return win
   }
 
-  win = new BrowserWindow({
-    width: 800,
-    height: 820,
+  win = createWindow({
+    entryPoint: "App",
     minHeight: 600,
     minWidth: 650,
     titleBarStyle: "hidden",
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      webSecurity: false
-    },
     show: false
   })
 
@@ -51,16 +46,79 @@ function createWindow() {
   return win
 }
 
+function createWindow(params = {}) {
+  const {
+    entryPoint = "App",
+    args = [],
+    windowButtons = false,
+    fullWidth = false,
+    ...options
+  } = params
+
+  const win = new BrowserWindow({
+    width: 800,
+    height: 820,
+    titleBarStyle: "hidden",
+    ...options,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      webSecurity: false,
+      ...(options.webPreferences || {}),
+      additionalArguments: ["--entry", entryPoint, ...args]
+    }
+  })
+
+  win.setWindowButtonVisibility(!!windowButtons)
+
+  const isDev = is.development
+
+  if (isDev) {
+    win.loadURL("http://localhost:9080")
+  } else {
+    win.loadURL(
+      format({
+        pathname: path.join(__dirname, "index.html"),
+        protocol: "file",
+        slashes: true
+      })
+    )
+  }
+
+  return win
+}
+
 app.on("ready", function () {
   globalShortcut.register("CommandOrControl+,", function () {
-    createWindow().show()
+    createMainWindow().show()
   })
 
   ipcMain.handle("closeApp", function () {
-    createWindow().hide()
+    createMainWindow().hide()
   })
 
-  console.log("App Is Ready")
+  ipcMain.handle("closeCurrentWindow", function (event) {
+    BrowserWindow.fromWebContents(event.sender).close()
+  })
+
+  ipcMain.handle("showCurrentWindow", function (event) {
+    BrowserWindow.fromWebContents(event.sender).show()
+  })
+
+  ipcMain.handle("hideCurrentWindow", function (event) {
+    BrowserWindow.fromWebContents(event.sender).hide()
+  })
+
+  ipcMain.handle(
+    "createWindow",
+    function (event, { showOnReady = false, ...options }) {
+      const win = createWindow(options)
+
+      if (showOnReady) {
+        win.on("ready-to-show", () => win.show())
+      }
+    }
+  )
+
   Promise.resolve(APIServer.start())
 
   /*
@@ -81,6 +139,6 @@ app.on("ready", function () {
 
 app.on("activate", () => {
   if (win === null && app.isReady()) {
-    createWindow()
+    createMainWindow()
   }
 })

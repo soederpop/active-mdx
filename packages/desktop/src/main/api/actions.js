@@ -56,7 +56,7 @@ export async function homeFolder(options = {}) {
 }
 
 export async function updateWindow(options = {}) {
-  const mainWindow = getMainWindow()
+  const { targetWindow } = options
   // Create a window that fills the screen's available work area.
   const primaryDisplay = screen.getPrimaryDisplay()
   const { width, height } = primaryDisplay.workAreaSize
@@ -64,11 +64,14 @@ export async function updateWindow(options = {}) {
   // Create a window that fills the screen's available work area.
 
   if (options.profile === "centered-large") {
-    mainWindow.setSize(Math.round(width * 0.8), Math.round(height * 0.8))
-    mainWindow.center()
+    targetWindow.setSize(Math.round(width * 0.8), Math.round(height * 0.8))
+    targetWindow.center()
   } else if (options.profile === "main") {
-    mainWindow.setSize(800, 820)
-    mainWindow.center()
+    targetWindow.setSize(800, 820)
+    targetWindow.center()
+  } else if (options.profile === "top-drawer") {
+    targetWindow.setSize(width, 400)
+    targetWindow.setPosition(0, 0)
   }
 }
 
