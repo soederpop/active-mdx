@@ -52,8 +52,17 @@ function createWindow(params = {}) {
     args = [],
     windowButtons = false,
     fullWidth = false,
+    htmlFile = "index.html",
+    htmlPath = path.join(__dirname, htmlFile),
     ...options
   } = params
+
+  console.log("Creating Window", {
+    htmlFile,
+    htmlPath,
+    entryPoint,
+    args
+  })
 
   const win = new BrowserWindow({
     width: 800,
@@ -77,7 +86,7 @@ function createWindow(params = {}) {
   } else {
     win.loadURL(
       format({
-        pathname: path.join(__dirname, "index.html"),
+        pathname: htmlPath,
         protocol: "file",
         slashes: true
       })

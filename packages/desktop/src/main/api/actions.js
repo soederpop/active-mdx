@@ -103,7 +103,6 @@ export async function getModel({ model, project } = {}) {
 }
 
 export async function getProjectData(options = {}) {
-  console.log("GetProjectData", options)
   const projects = await listProjects().then((r) => r.projects)
 
   const project = projects.find(

@@ -7,7 +7,8 @@ export default function MdxPreview({ pathId, cwd, modulePath }) {
     API.renderMdxDocument({
       cwd,
       modulePath: modulePath || "content/index.mjs",
-      pathId
+      pathId,
+      styles: true
     }).then((result) => {
       setOutput(result)
     })

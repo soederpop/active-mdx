@@ -71,7 +71,7 @@ async function renderMdxDocument({ cwd, pathId, modulePath, ...options }) {
     ipcRenderer.invoke("spawn", {
       service: "renderMdxDocument",
       channel,
-      args: [pathId, `--active-mdx-cwd=${cwd}`].concat(
+      args: [pathId, `--active-mdx-cwd=${cwd}`, `--styles=true`].concat(
         modulePath ? [`--module-path=${modulePath}`] : []
       )
     })
