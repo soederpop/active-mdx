@@ -6,6 +6,7 @@ import { useAppContext } from "./AppProvider"
 import ModelList from "./ModelList"
 import ModelInstanceView from "./ModelInstanceView"
 import ModelView from "./ModelView"
+import { titleize } from "inflect"
 
 export default function ProjectHome({
   filter,
@@ -28,8 +29,6 @@ export default function ProjectHome({
 
   const { screen = "main" } = context
 
-  console.log("Rendering Project Home", screen, context)
-
   switch (screen) {
     case "model-instance":
       return (
@@ -37,11 +36,11 @@ export default function ProjectHome({
           filter={filter}
           {...context}
           {...response}
+          {...(response?.serverResponse || {})}
           project={project}
         />
       )
     case "model":
-      console.log("Model View", context.model)
       return (
         <ModelView
           filter={filter}
@@ -70,11 +69,14 @@ export default function ProjectHome({
 }
 
 function ProjectMainScreen(props = {}) {
+  console.log("Project MAin Screen", props)
   const {
     filter,
     recent = [],
     modelData,
     models = [],
+    availableActions = [],
+    packageRoot,
     project,
     setContext
   } = props
@@ -98,7 +100,7 @@ function ProjectMainScreen(props = {}) {
             })
           }}
           key={id}
-          className="py-2 border-b-slate-600 border-b-2"
+          className="py-2 border-b-slate-600 border-b-2 hover:bg-slate-600"
         >
           {id}
         </div>
@@ -111,6 +113,72 @@ function ProjectMainScreen(props = {}) {
           setContext({ model, screen: "model" })
         }}
       />
+      <Divider title="Actions" />
+      <ActionList
+        filter={filter}
+        actions={availableActions}
+        packageRoot={packageRoot}
+      />
+    </div>
+  )
+}
+
+let actionCounter = 0
+function ActionList({ filter = "", packageRoot, actions: availableActions }) {
+  const [stdout, setStdout] = useState([])
+
+  const runAction = (actionName, cwd) => {
+    const channel = `action-runner-${actionCounter++}`
+
+    API.runActiveMdxAction({
+      actionName,
+      cwd,
+      channel,
+      modulePath: "./content/index.mjs",
+      onEvent: (event) => {
+        switch (event.type) {
+          case "stdout":
+            setStdout(stdout.concat(event.value))
+            break
+          case "close":
+            setStdout([])
+            break
+          default:
+            break
+        }
+      }
+    })
+  }
+
+  const actions = availableActions
+    .map((action) => ({
+      action,
+      name: titleize(action.replace(/-/g, " "))
+    }))
+    .filter(
+      ({ name, action }) =>
+        !filter.length || name.includes(filter) || action.includes(filter)
+    )
+
+  return (
+    <div className="text-white">
+      {actions.map(({ action, name }) => (
+        <div
+          className="p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+          key={action}
+          onClick={() => runAction(action, packageRoot)}
+        >
+          {name}
+          {stdout.length > 0 && (
+            <pre
+              className="bg-black border-white"
+              style={{ maxHeight: "200px", overflowY: "scroll" }}
+            >
+              {stdout.join("\n")}
+            </pre>
+          )}
+        </div>
+      ))}
     </div>
   )
 }

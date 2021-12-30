@@ -3,7 +3,12 @@ import MarkdownEditor from "./MarkdownEditor"
 import { useClientCall } from "./hooks"
 import { useAppContext } from "./AppProvider"
 
-export default function ModelInstanceView({ model, project, modelClass }) {
+export default function ModelInstanceView({
+  model,
+  packageRoot: cwd,
+  project,
+  modelClass
+}) {
   const [view, setView] = useState("source")
   const { toggleFilter, setContext, context } = useAppContext()
   const { loading, response } = useClientCall(() =>
@@ -41,13 +46,6 @@ export default function ModelInstanceView({ model, project, modelClass }) {
     return <div />
   }
 
-  console.log("ModalInstanceView", {
-    model,
-    modelClass,
-    project,
-    serverResponse: response
-  })
-
   return (
     <div className="flex w-full">
       <div className="text-white w-2/5 pl-2">
@@ -65,11 +63,25 @@ export default function ModelInstanceView({ model, project, modelClass }) {
         <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
           <a onClick={() => setView("json")}>View JSON</a>
         </div>
-        {modelClass.availableActions.map((action) => (
-          <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
-            Run {action} action
-          </div>
-        ))}
+        {modelClass.availableActions.map((action) => {
+          const runModelAction = () => {
+            API.runActiveMdxAction({
+              cwd,
+              actionName: action,
+              models: [response.model.id],
+              modulePath: "./content/index.mjs"
+            })
+          }
+          return (
+            <div
+              key={action}
+              onClick={runModelAction}
+              className="p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+            >
+              Run {action} action
+            </div>
+          )
+        })}
       </div>
       <div className="w-3/5">
         {view === "source" && response?.document?.content && (

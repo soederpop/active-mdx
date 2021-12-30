@@ -5,7 +5,8 @@ const METHODS = [
   "updateWindow",
   "getModel",
   "getProjectData",
-  "listProjects"
+  "listProjects",
+  "closeApp"
 ]
 
 const baseApi = {
@@ -35,6 +36,7 @@ async function runActiveMdxAction({
   cwd,
   actionName,
   models = [],
+  onEvent,
   ...options
 } = {}) {
   const { channel = `active-mdx-action-${ipcChannel++}` } = options
@@ -48,6 +50,9 @@ async function runActiveMdxAction({
 
   ipcRenderer.on(`spawn-${channel}`, (event, data = {}) => {
     console.log(`spawn-${channel}`, data)
+    if (typeof onEvent === "function") {
+      onEvent(data)
+    }
   })
 
   await ipcRenderer.invoke("spawn", {

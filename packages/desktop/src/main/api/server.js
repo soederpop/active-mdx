@@ -60,5 +60,7 @@ export async function start(options = {}, callback) {
         })
       }
     })
+
+    return options
   })
 }
