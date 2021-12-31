@@ -33,6 +33,19 @@ describe("The Collection Class", function () {
     docs.models.has("ApiDoc").should.equal(true)
   })
 
+  describe("Collection Exporting", function () {
+    it("can export a collection", async function () {
+      const docs = new Collection({
+        rootPath: Collection.resolve("..", "docs", "content")
+      })
+
+      await docs.load()
+      const data = await docs.export()
+
+      data.should.be.an("object").with.property("modelData")
+    })
+  })
+
   describe("Collection Actions", function () {
     it("can register action functions to be run on the collection", async function () {
       const docs = new Collection({
