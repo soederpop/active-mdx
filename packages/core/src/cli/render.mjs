@@ -2,7 +2,7 @@ import { bundleMDX } from "mdx-bundler"
 import { getMDXComponent } from "mdx-bundler/client/index.js"
 import { renderToStaticMarkup } from "react-dom/server.js"
 import { createElement } from "react"
-import fs from "fs/promises"
+import { compileToFile } from "../utils/compile-jsx.js"
 
 export default async function render(argv = {}) {
   const html = await getHtml(argv)
@@ -15,7 +15,7 @@ export default async function render(argv = {}) {
 }
 
 async function getHtml(argv = {}) {
-  const { collection } = argv
+  const { collection, components: componentsFile } = argv
   const pathId = argv._[1]
 
   const { code } = await bundleMDX({
@@ -25,7 +25,20 @@ async function getHtml(argv = {}) {
 
   const Component = getMDXComponent(code)
 
-  const html = renderToStaticMarkup(createElement(Component, {}))
+  let components = {}
+
+  if (componentsFile) {
+    const { result: importPath } = await compileToFile(componentsFile)
+    await import(importPath).then((mod) => {
+      components = { ...mod }
+    })
+  }
+
+  const html = renderToStaticMarkup(
+    createElement(Component, {
+      components
+    })
+  )
 
   if (argv.html) {
     return wrapInHtml(html)
