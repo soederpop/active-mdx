@@ -1,6 +1,4 @@
-import lodash from "lodash"
-
-const { isEmpty } = lodash
+import { isEmpty } from "lodash-es"
 
 export default async function expand(model, options = {}) {
   if (validateModel(model) === false) {

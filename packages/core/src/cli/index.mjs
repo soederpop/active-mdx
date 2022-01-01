@@ -1,5 +1,4 @@
 import minimist from "minimist"
-import lodash from "lodash"
 import runAction from "./run-action.mjs"
 import render from "./render.mjs"
 import exportCollection from "./export-collection.mjs"
@@ -8,8 +7,7 @@ import { Collection } from "../../index.js"
 import path from "path"
 import fs from "fs/promises"
 import { findUp } from "find-up"
-
-const { mapKeys, omit, kebabCase, camelCase } = lodash
+import { mapKeys, omit, kebabCase, camelCase } from "lodash-es"
 
 let processArgv = minimist(process.argv.slice(2))
 
