@@ -441,6 +441,17 @@ export default class Collection {
     return this.items.get(pathId)
   }
 
+  async deleteItem(pathId) {
+    const { path: filePath } = this.items.get(pathId)
+
+    await fs.rm(filePath).catch((e) => e)
+
+    this.items.delete(pathId)
+    this.documents.delete(pathId)
+
+    return this
+  }
+
   async readItem(pathId) {
     const { path } = this.items.get(pathId)
 
@@ -513,6 +524,10 @@ export default class Collection {
 
     if (this.loaded && !refresh) {
       return this
+    }
+
+    if (this.loaded && refresh) {
+      this.items.clear()
     }
 
     const { paths = await readDirectory(this.rootPath) } = options
