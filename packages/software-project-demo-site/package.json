@@ -2,6 +2,9 @@
   "name": "@active-mdx/software-project-demo-site",
   "version": "0.2.3",
   "private": true,
+  "activeMdx": {
+    "rootPath": "./content"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

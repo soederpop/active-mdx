@@ -1,4 +1,4 @@
-import content from "docs"
+import content from "content"
 import dynamic from "next/dynamic"
 import DocumentProvider from "components/DocumentProvider"
 import Breadcrumb from "components/Breadcrumb"

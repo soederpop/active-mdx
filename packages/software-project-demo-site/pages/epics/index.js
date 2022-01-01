@@ -1,5 +1,5 @@
 import React from "react"
-import content from "docs"
+import content from "content"
 import { Icon, Container, Header, Card } from "semantic-ui-react"
 import Link from "next/link"
 

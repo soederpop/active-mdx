@@ -1,5 +1,5 @@
 import Head from "next/head"
-import content from "docs"
+import content from "content"
 import ScopeOfWork from "components/ScopeOfWork"
 
 export default function ScopeOfWorkPage(props = {}) {

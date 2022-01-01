@@ -1,5 +1,5 @@
 import Head from "next/head"
-import content from "docs"
+import content from "content"
 import ProjectTimeline from "components/ProjectTimeline"
 import { sortBy } from "lodash-es"
 import { Header, Segment } from "semantic-ui-react"
