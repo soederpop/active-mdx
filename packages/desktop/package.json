@@ -1,6 +1,6 @@
 {
   "name": "desktop2",
-  "version": "1.0.0",
+  "version": "0.2.1",
   "scripts": {
     "dev": "electron-esbuild dev",
     "build": "electron-esbuild build",
