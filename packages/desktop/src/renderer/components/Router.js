@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { useAppContext } from "./AppProvider"
-import ListProjects from "./ListProjects"
+import ListProjects, { CreateNewProject } from "./ListProjects"
 import ProjectHome from "./ProjectHome"
 
 export default function Router(props = {}) {
@@ -14,11 +14,16 @@ export default function Router(props = {}) {
 
   if (!activeProject) {
     return (
-      <ListProjects
-        onSelectProject={(project) => {
-          setActiveProject(project)
-        }}
-      />
+      <>
+        <ListProjects
+          onSelectProject={(project) => {
+            setActiveProject(project)
+          }}
+        />
+        <div className="w-1/2 mx-auto">
+          <CreateNewProject />
+        </div>
+      </>
     )
   } else {
     return <ProjectHome project={activeProject} />
