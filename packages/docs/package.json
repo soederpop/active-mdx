@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/docs-site",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,7 +13,7 @@
     "rootPath": "./content"
   },
   "dependencies": {
-    "@active-mdx/core": "^0.2.3",
+    "@active-mdx/core": "^0.2.4",
     "@codesandbox/sandpack-react": "^0.9.8",
     "@mdx-js/loader": "^1.6.22",
     "@mdx-js/mdx": "^1.6.22",
