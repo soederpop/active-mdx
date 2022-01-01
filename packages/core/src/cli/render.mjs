@@ -8,6 +8,7 @@ export default async function render(argv = {}) {
   const html = await getHtml(argv)
 
   if (argv.outputFile) {
+    console.log(`Writing ${html.length} bytes to ${argv.outputFile}`)
     await fs.writeFile(argv.outputFile, html)
   } else {
     console.log(html)

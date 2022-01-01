@@ -1,0 +1,10 @@
+{
+  "name": "@my/active-mdx-project",
+  "private": true,
+  "version": "0.0.1",
+  "author": "Jon Soeder <jon@chicago.com>",
+  "description": "A project that uses MDX",
+  "dependencies": {
+    "@active-mdx/core": "latest"
+  }
+}

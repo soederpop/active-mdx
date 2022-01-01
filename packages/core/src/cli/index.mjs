@@ -50,7 +50,11 @@ async function displayHelp() {
   console.log("HELP TODO")
 }
 
-async function loadCollection({ modulePath, rootPath, ...argv } = {}) {
+async function loadCollection({
+  modulePath,
+  rootPath = process.cwd(),
+  ...argv
+} = {}) {
   if (!rootPath) {
     const cwd = process.cwd()
     const packageJsonPath = await findUp("package.json")
