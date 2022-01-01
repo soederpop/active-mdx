@@ -88,7 +88,8 @@ function ProjectMainScreen(props = {}) {
     availableActions = [],
     packageRoot,
     project,
-    setContext
+    setContext,
+    reload
   } = props
 
   useEffect(() => {
@@ -128,13 +129,23 @@ function ProjectMainScreen(props = {}) {
         filter={filter}
         actions={availableActions}
         packageRoot={packageRoot}
+        project={project}
+        reload={reload}
       />
     </div>
   )
 }
 
 let actionCounter = 0
-function ActionList({ filter = "", packageRoot, actions: availableActions }) {
+function ActionList({
+  filter = "",
+  project,
+  packageRoot,
+  actions: availableActions,
+  reload
+}) {
+  const { setActiveProject } = useAppContext()
+
   const actions = availableActions
     .map((action) => ({
       action,
@@ -147,6 +158,21 @@ function ActionList({ filter = "", packageRoot, actions: availableActions }) {
 
   return (
     <div className="text-white">
+      <div
+        className="p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+        onClick={() => API.openWithNative({ url: packageRoot })}
+      >
+        Open in VSCode
+      </div>
+      <div
+        className="p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+        onClick={() =>
+          API.untrackProject(project).then(() => setActiveProject(null))
+        }
+      >
+        Untrack Project
+      </div>
+
       {actions.map(({ action, name }) => (
         <div
           className="p-4 border-b-2 border-slate-600 hover:bg-slate-600"

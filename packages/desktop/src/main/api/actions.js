@@ -174,6 +174,14 @@ export async function listProjects(options = {}) {
   return Object.values(projects)
 }
 
+export async function untrackProject(project = {}) {
+  const projects = storage.get("projects") || {}
+  delete projects[project.path.replace("~", homePath)]
+  storage.set("projects", projects)
+
+  return listProjects()
+}
+
 export async function deleteModel({ model, project }) {
   const collection = await getCollection(project)
 
@@ -193,6 +201,19 @@ export async function validateModel({ model, project }) {
     isValid: !modelInstance.hasErrors,
     hasErrors: modelInstance.hasErrors
   }
+}
+
+export async function saveDocument({ id, content = "", project }) {
+  const collection = await getCollection(project)
+  const document = collection.document(id)
+
+  await document.replaceContent(content)
+  await document.save()
+
+  console.log("Saving Document", { id, content: content.length, project })
+  await collection.load({ refresh: true })
+
+  return true
 }
 
 export async function createNewDocument({ model, values, project }) {

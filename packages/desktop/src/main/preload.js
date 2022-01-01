@@ -14,7 +14,9 @@ const METHODS = [
   "hideCurrentWindow",
   "createNewDocument",
   "deleteModel",
-  "validateModel"
+  "validateModel",
+  "untrackProject",
+  "saveDocument"
 ]
 
 const baseApi = {

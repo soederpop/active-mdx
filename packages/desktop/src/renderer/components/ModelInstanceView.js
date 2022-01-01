@@ -15,7 +15,11 @@ export default function ModelInstanceView({
 }) {
   const [view, setView] = useState("source")
   const { toggleFilter, setContext, context } = useAppContext()
-  const { loading, response } = useClientCall(() =>
+  const {
+    reload: reloadModel,
+    loading,
+    response
+  } = useClientCall(() =>
     API.getModel({
       model,
       project
@@ -119,7 +123,17 @@ export default function ModelInstanceView({
       </div>
       <div className="w-3/5">
         {view === "source" && response?.document?.content && (
-          <MarkdownEditor value={response.document.content} height="90vh" />
+          <MarkdownEditor
+            value={response.document.content}
+            height="90vh"
+            handleSave={(content) =>
+              API.saveDocument({
+                id: response.document.id,
+                content,
+                project
+              })
+            }
+          />
         )}
         {view === "preview" && response?.document?.id && (
           <MdxPreview cwd={cwd} pathId={response.document.id} height="90vh" />
