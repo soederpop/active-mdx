@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react"
 
-export default function MdxPreview({ pathId, cwd, modulePath }) {
+export default function MdxPreview({ pathId, cwd }) {
   const [output, setOutput] = useState([])
 
   useEffect(() => {
     API.renderMdxDocument({
       cwd,
-      modulePath: modulePath || "content/index.mjs",
       pathId,
       styles: true
     }).then((result) => {

@@ -4,7 +4,6 @@ export const runModelAction = ({
   actionName,
   cwd,
   models = [],
-  modulePath,
   ...options
 }) => {
   const channel = `action-runner-${actionCounter++}`
@@ -22,8 +21,6 @@ export const runModelAction = ({
       cwd,
       "--channel",
       channel,
-      "--module-path",
-      modulePath || "./content/index.mjs",
       "--models",
       models.join(","),
       ...Object.entries(options).map(([key, value]) => `--${key}=${value}`)
@@ -31,12 +28,7 @@ export const runModelAction = ({
   })
 }
 
-export const runCollectionAction = ({
-  actionName,
-  cwd,
-  modulePath,
-  ...options
-}) => {
+export const runCollectionAction = ({ actionName, cwd, ...options }) => {
   const channel = `action-runner-${actionCounter++}`
 
   API.createWindow({
@@ -52,8 +44,6 @@ export const runCollectionAction = ({
       cwd,
       "--channel",
       channel,
-      "--module-path",
-      modulePath || "./content/index.mjs",
       ...Object.entries(options).map(([key, value]) => `--${key}=${value}`)
     ]
   })

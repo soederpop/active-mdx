@@ -7,6 +7,7 @@ import init from "./init.mjs"
 import { Collection } from "../../index.js"
 import path from "path"
 import fs from "fs/promises"
+import { findUp } from "find-up"
 
 const { mapKeys, omit, kebabCase, camelCase } = lodash
 
@@ -51,8 +52,18 @@ async function displayHelp() {
   console.log("HELP TODO")
 }
 
-async function loadCollection(argv) {
-  let { modulePath, rootPath = Collection.resolve() } = argv
+async function loadCollection({ modulePath, rootPath, ...argv } = {}) {
+  if (!rootPath) {
+    const cwd = process.cwd()
+    const packageJsonPath = await findUp("package.json")
+    const manifest = await fs
+      .readFile(packageJsonPath, "utf8")
+      .then((buf) => JSON.parse(String(buf)))
+
+    if (manifest.activeMdx?.rootPath) {
+      rootPath = path.resolve(cwd, manifest.activeMdx.rootPath)
+    }
+  }
 
   if (typeof modulePath !== "string") {
     const indexExists = await exists(path.resolve(rootPath, "index.js"))

@@ -71,6 +71,7 @@ function createWindow(params = {}) {
     ...options,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: true,
       webSecurity: false,
       ...(options.webPreferences || {}),
       additionalArguments: ["--entry", entryPoint, ...args]
@@ -98,7 +99,7 @@ function createWindow(params = {}) {
 
 app.on("ready", function () {
   globalShortcut.register("CommandOrControl+,", function () {
-    createMainWindow()
+    createMainWindow().show()
   })
 
   ipcMain.handle("closeApp", function () {

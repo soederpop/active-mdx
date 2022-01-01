@@ -23,7 +23,7 @@ export default function ListProjects({
   filter = "",
   onSelectProject
 }) {
-  const { loading, response = {} } = useClientCall(() => API.listProjects())
+  const { loading, response = [] } = useClientCall(() => API.listProjects())
   const { setContext } = useAppContext()
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function ListProjects({
     API.updateWindow({ profile: "main" })
   }, [])
 
-  const projects = (response.projects || [])
+  const projects = response
     .map((project, index) => ({
       ...project,
       path: project.path.replace(/\/Users\/\w+\//, "~/"),

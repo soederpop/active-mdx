@@ -13,7 +13,6 @@ switch (window.AppEntryOptions.entryPoint) {
         channel={window.AppEntryOptions.channel}
         cwd={window.AppEntryOptions.cwd}
         actionName={window.AppEntryOptions.actionName}
-        modulePath={window.AppEntryOptions.modulePath}
         models={window.AppEntryOptions.models?.split(",") || []}
       />,
       document.getElementById("root")

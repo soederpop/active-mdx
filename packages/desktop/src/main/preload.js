@@ -17,7 +17,12 @@ const METHODS = [
 const baseApi = {
   runActiveMdxAction,
   renderMdxDocument,
-  createWindow
+  createWindow,
+  storage: {
+    set: setStorage,
+    get: getStorage,
+    patch: patchStorage
+  }
 }
 
 const entryPoint = getEntryPoint() || "App"
@@ -54,7 +59,7 @@ contextBridge.exposeInMainWorld(
 
 let ipcChannel = 0
 
-async function renderMdxDocument({ cwd, pathId, modulePath, ...options }) {
+async function renderMdxDocument({ cwd, pathId, ...options }) {
   const { channel = `render-mdx-document-${ipcChannel++}` } = options
 
   return new Promise((resolve) => {
@@ -71,9 +76,7 @@ async function renderMdxDocument({ cwd, pathId, modulePath, ...options }) {
     ipcRenderer.invoke("spawn", {
       service: "renderMdxDocument",
       channel,
-      args: [pathId, `--active-mdx-cwd=${cwd}`, `--styles=true`].concat(
-        modulePath ? [`--module-path=${modulePath}`] : []
-      )
+      args: [pathId, `--active-mdx-cwd=${cwd}`, `--styles=true`]
     })
   })
 }
@@ -111,4 +114,20 @@ async function runActiveMdxAction({
 
 async function createWindow(options = {}) {
   await ipcRenderer.invoke("createWindow", options)
+}
+
+async function setStorage(key, value) {
+  return await ipcRenderer.invoke("setStorage", { key, value })
+}
+
+async function patchStorage(key, value) {
+  return await ipcRenderer.invoke("patchStorage", { key, value })
+}
+
+async function getStorage(key) {
+  if (typeof key === "string") {
+    return await ipcRenderer.invoke("getStorage", { key })
+  } else if (typeof key === "object") {
+    return await ipcRenderer.invoke("getStorage", key)
+  }
 }

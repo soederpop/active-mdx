@@ -9,6 +9,9 @@
     "lint": "next lint",
     "console": "node scripts/console.mjs"
   },
+  "activeMdx": {
+    "rootPath": "./content"
+  },
   "dependencies": {
     "@active-mdx/core": "^0.2.0",
     "@codesandbox/sandpack-react": "^0.9.8",

@@ -7,6 +7,7 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import CssMinimizerWebpackPlugin from 'css-minimizer-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration
@@ -14,6 +15,7 @@ interface Configuration extends WebpackConfiguration {
 
 const createConfig = (): Configuration => {
   const isProduction = process.env.NODE_ENV === 'production'
+  const rendererSources = path.resolve(__dirname, 'src', 'renderer')
 
   const plugins = [
     new MiniCssExtractPlugin(),
@@ -26,9 +28,13 @@ const createConfig = (): Configuration => {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
     }),
+    new CopyWebpackPlugin({
+      patterns: [{
+        from: path.join(rendererSources, 'copy'),
+      }]
+    })
   ].filter(Boolean)
 
-  const rendererSources = path.resolve(__dirname, 'src', 'renderer')
 
   const configuration: Configuration = {
     entry: {

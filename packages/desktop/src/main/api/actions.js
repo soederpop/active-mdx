@@ -3,7 +3,7 @@ import fs from "fs/promises"
 import { resolve } from "path"
 import { Collection } from "@active-mdx/core"
 import { compile } from "../javascript.js"
-import { getMainWindow } from "../main"
+import storage from "../storage"
 
 const homePath = app.getPath("home")
 
@@ -15,42 +15,20 @@ export async function openWithNative(options = {}) {
   })
 }
 export async function homeFolder(options = {}) {
-  console.log("Updating Home Folder")
-
   const homePath = app.getPath("home")
   const envHomePath = resolve(homePath, ".active-mdx")
-  const dbPath = resolve(envHomePath, "db")
-  const projectDbPath = resolve(dbPath, "projects.json")
+  const cachePath = resolve(envHomePath, "cache")
 
-  console.log("checking if db exists", {
-    homePath
-  })
-  const dbExists = await exists(dbPath)
+  const cacheExists = await exists(cachePath)
 
-  if (!dbExists) {
-    console.log("creating db path")
-    await fs.mkdir(dbPath, { recursive: true })
-  }
-
-  console.log("checking if projects db exists")
-  const projectsDbExists = await exists(projectDbPath)
-
-  if (!projectsDbExists) {
-    console.log("Writing projects cache")
-    await fs.writeFile(
-      projectDbPath,
-      JSON.stringify({
-        activeProject: "",
-        projects: []
-      })
-    )
+  if (!cacheExists) {
+    await fs.mkdir(cachePath, { recursive: true })
   }
 
   return {
     paths: {
       home: envHomePath,
-      db: dbPath,
-      projects: projectDbPath
+      cache: cachePath
     }
   }
 }
@@ -88,8 +66,28 @@ export async function compileModel({ model, project } = {}) {
   }
 }
 
+export async function getStorage({ key }) {
+  console.log("Getting Storage Value", key)
+  return storage.get(key)
+}
+
+export async function patchStorage({ key, value = {} }) {
+  const current = storage.get(key) || {}
+
+  storage.set(key, {
+    ...current,
+    ...value
+  })
+
+  return storage.get(key, value)
+}
+
+export async function setStorage({ key, value = {} }) {
+  storage.set(key, value)
+  return storage.get(key, value)
+}
+
 export async function getModel({ model, project } = {}) {
-  console.log("GetModel", model.id)
   const collection = await getCollection(project)
   const modelInstance = await collection.getModel(model.id)
   const item = collection.items.get(modelInstance.id)
@@ -103,7 +101,7 @@ export async function getModel({ model, project } = {}) {
 }
 
 export async function getProjectData(options = {}) {
-  const projects = await listProjects().then((r) => r.projects)
+  const projects = await listProjects()
 
   const project = projects.find(
     (p) => p.path === (options.path || options.rootPath).replace("~", homePath)
@@ -126,8 +124,25 @@ export async function getCollection({
   path = rootPath,
   modulePath,
   name = path,
-  refresh = true
+  refresh = false
 } = {}) {
+  if (collections.has(name)) {
+    return collections.get(name)
+  }
+
+  if (!modulePath) {
+    const indexJsExists = await exists(resolve(rootPath, "index.js"))
+    const indexMjsExists = await exists(resolve(rootPath, "index.mjs"))
+
+    if (indexMjsExists) {
+      modulePath = resolve(rootPath, "index.mjs")
+    }
+
+    if (indexJsExists) {
+      modulePath = resolve(rootPath, "index.js")
+    }
+  }
+
   if (modulePath) {
     const modulePathImport = resolve(path.replace("~", homePath), modulePath)
 
@@ -135,7 +150,6 @@ export async function getCollection({
       (mod) => mod.collection || mod.default
     )
 
-    console.log("Created Collection", collection.name, refresh)
     await collection.load({ models: true, refresh })
 
     collections.set(name, collection)
@@ -144,7 +158,6 @@ export async function getCollection({
   }
 
   const collection = new Collection({ rootPath: path })
-  console.log("Created Collection from Class", collection.name, refresh)
 
   await collection.load({ models: true, refresh })
 
@@ -154,13 +167,8 @@ export async function getCollection({
 }
 
 export async function listProjects(options = {}) {
-  const { paths } = await homeFolder()
-
-  const data = await fs
-    .readFile(paths.projects)
-    .then((buf) => JSON.parse(String(buf)))
-
-  return data
+  const projects = storage.get("projects") || {}
+  return Object.values(projects)
 }
 
 async function exists(path) {

@@ -15,7 +15,6 @@ export function OutputWrapper({
   channel,
   actionName,
   cwd,
-  modulePath,
   autoCloseDelay = 5000,
   models = []
 }) {
@@ -38,7 +37,6 @@ export function OutputWrapper({
       cwd,
       channel,
       models,
-      modulePath: modulePath || "./content/index.mjs",
       onEvent: (event) => {
         switch (event.type) {
           case "stdout":
@@ -57,7 +55,7 @@ export function OutputWrapper({
         }
       }
     })
-  }, [channel, actionName, cwd, modulePath])
+  }, [channel, actionName, cwd])
 
   return (
     <div
@@ -65,7 +63,7 @@ export function OutputWrapper({
       style={{ height: "100vh", width: "100%" }}
     >
       <div className="text-white border-b-2 m-b-3">
-        amdx action {actionName} --module-path={modulePath}
+        amdx action {actionName} ${models.length ? models.join(",") : ""}
       </div>
       <pre>{stdout.join("")}</pre>
       {typeof stopped !== "undefined" && (
