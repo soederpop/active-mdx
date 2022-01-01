@@ -4,7 +4,7 @@ import matter from "gray-matter"
 import Document from "./Document.js"
 import Model from "./Model.js"
 import * as inflections from "inflect"
-import { isEmpty } from "lodash-es"
+import { filter, isEmpty } from "lodash-es"
 import { readFileSync, statSync } from "fs"
 import { findUpSync } from "find-up"
 
@@ -14,6 +14,12 @@ const privates = new WeakMap()
  * A Collection is a collection of raw files, documents backed by those raw files, and models backed by the documents.
  */
 export default class Collection {
+  /**
+   * @param {Object} options
+   * @param {String} [options.rootPath=process.cwd()] the root path to look for files in
+   * @param {Array[String]} [options.extensions=["mdx", "md"]] the file extensions to look for
+   * @param {String} [options.name=rootPath] a name for this collection
+   */
   constructor(
     { rootPath = process.cwd(), extensions = ["mdx", "md"] },
     models = [],
@@ -53,7 +59,7 @@ export default class Collection {
    * @type {Boolean}
    */
   get loaded() {
-    return privates.get(this).loaded
+    return !!privates.get(this).loaded
   }
 
   /**
@@ -188,6 +194,10 @@ export default class Collection {
     )
   }
 
+  /**
+   * Returns the directory of the nearest package.json to this collection.
+   * @type {String}
+   */
   get packageRoot() {
     if (privates.get(this).packageRoot) {
       return privates.get(this).packageRoot
@@ -200,6 +210,10 @@ export default class Collection {
     return (privates.get(this).packageRoot = packageRoot)
   }
 
+  /**
+   * Returns the nearest package.json as an object.
+   * @type {Object}
+   */
   get packageManifest() {
     return JSON.parse(
       readFileSync(path.resolve(this.packageRoot, "package.json")).toString()
@@ -280,6 +294,13 @@ export default class Collection {
     return new Document({ ...attributes, collection: this })
   }
 
+  /**
+   * Returns a list of items sorted by their last modified date.
+   *
+   * The list will include the id, the time it was updated, and the model class that represents the document.
+   *
+   * @type {Array[]}
+   */
   get itemsByModifiedDate() {
     return Array.from(this.items.entries())
       .sort((a, b) => {
@@ -335,7 +356,18 @@ export default class Collection {
     }
   }
 
+  /**
+   * Generate a JSON export of the collection.  This export will contain a lot of valuable
+   * metadata about the collection, including all of the models serialized as JSON grouped
+   * by the model class.
+   *
+   * @param {Object} options options will be passed to the toJSON method
+   */
   async export(options = {}) {
+    if (!this.loaded) {
+      await this.load({ models: true })
+    }
+
     const json = this.toJSON(options)
     const modelClasses = this.modelClasses.filter(
       (modelClass) => modelClass !== Model
@@ -348,8 +380,6 @@ export default class Collection {
     await Promise.all(
       modelClasses.map((ModelClass) => {
         const query = ModelClass.query({ collection: this.name })
-
-        console.log("Exporting Collection", this.name, query.collection.name)
 
         return query.fetchAll().then((results) => {
           console.log(`${ModelClass.name} has ${results.length} items`)
@@ -379,6 +409,12 @@ export default class Collection {
     }
   }
 
+  /**
+   * Runs an action by name on this collection.  Any additional arguments are passed to the action.
+   *
+   * @param {String} name the name of the action to run
+   * @param {...*} args any additional arguments to pass to the action
+   */
   async runAction(name, ...args) {
     if (!this.actions.has(name)) {
       throw new Error(`Action ${name} does not exist on this collection.`)
@@ -391,15 +427,44 @@ export default class Collection {
     return results
   }
 
+  /**
+   * Register an action with this collection
+   *
+   * @param {String} name the name of the action
+   * @param {Function} actionFn a function to run when this action is called.
+   */
   action(name, actionFn) {
     this.actions.set(name, actionFn)
     return this
   }
 
+  /**
+   * Returns an array of all of the metadata for each item in the collection,
+   * the meta object will at least contain the id of the item.
+   */
+  get itemMeta() {
+    const results = Array.from(this.items.entries()).map(([pathId, item]) => ({
+      id: pathId,
+      ...item.meta
+    }))
+
+    results.filter = (...args) => filter(results, ...args)
+
+    return results
+  }
+
+  /**
+   * Returns a map containing all of the actions registered with the collection.
+   */
   get actions() {
     return privates.get(this).actions
   }
 
+  /**
+   * Returns a list of all available action names for this collection.
+   *
+   * @type {String[]}
+   */
   get availableActions() {
     return Array.from(this.actions.keys())
   }
@@ -441,7 +506,16 @@ export default class Collection {
     return this.items.get(pathId)
   }
 
+  /**
+   * Deletes the item on disk and removes it from the collection.
+   *
+   * @param {String} pathId
+   */
   async deleteItem(pathId) {
+    if (!this.items.has(pathId)) {
+      return this
+    }
+
     const { path: filePath } = this.items.get(pathId)
 
     await fs.rm(filePath).catch((e) => e)
@@ -452,8 +526,20 @@ export default class Collection {
     return this
   }
 
-  async readItem(pathId) {
-    const { path } = this.items.get(pathId)
+  /**
+   * Read the item from disk and update the collection with the new content.
+   *
+   * @param {String} pathId
+   * @param {String} [extension='mdx'] the extension to use if the pathId does not exist in the collection
+   */
+  async readItem(pathId, extension = "mdx") {
+    let path
+
+    if (!this.items.has(pathId)) {
+      path = this.resolve(`${pathId}.${extension}`)
+    } else {
+      path = this.items.get(pathId).path
+    }
 
     return await fs
       .readFile(path, "utf8")
@@ -476,8 +562,19 @@ export default class Collection {
       })
   }
 
+  /**
+   * Synchronously Check if the item in the collection actually exists on disk.
+   *
+   * @returns {Boolean}
+   */
   pathExistsSync(pathId, { extension = "mdx" } = {}) {
-    const filePath = this.resolve(`${pathId}.${extension}`)
+    let filePath
+
+    if (this.items.has(pathId)) {
+      filePath = this.items.get(pathId).path
+    } else {
+      filePath = this.resolve(`${pathId}.${extension}`)
+    }
 
     try {
       statSync(filePath)
@@ -487,8 +584,18 @@ export default class Collection {
     }
   }
 
+  /**
+   * Asynchronously check if an item in the collection actually exists on disk.
+   */
   async pathExists(pathId, { extension = "mdx" } = {}) {
-    const filePath = this.resolve(`${pathId}.${extension}`)
+    let filePath
+
+    if (this.items.has(pathId)) {
+      filePath = this.items.get(pathId).path
+    } else {
+      filePath = this.resolve(`${pathId}.${extension}`)
+    }
+
     return fs
       .stat(filePath)
       .then(() => true)
@@ -589,9 +696,7 @@ export default class Collection {
   getPathId(absolutePath) {
     const relativePath = path.relative(this.rootPath, absolutePath)
 
-    return this.extensions.reduce((memo, ext) => {
-      return memo.replace(`.${ext}`, "")
-    }, relativePath)
+    return relativePath.replace(/\.[a-z]+$/i, "")
   }
 
   static readDirectory = readDirectory

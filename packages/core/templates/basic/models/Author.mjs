@@ -1,5 +1,5 @@
 import { Model } from "@active-mdx/core"
-import Post from "./Post.js"
+import Post from "./Post.mjs"
 
 export default class Author extends Model {
   allPosts() {

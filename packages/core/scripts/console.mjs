@@ -2,7 +2,7 @@ import runtime from "@skypager/node"
 import { Model, Collection, Document } from "../index.js"
 import { collection, Epic, Story } from "../examples/sdlc/index.js"
 import docs from "../../docs/content/index.mjs"
-import basic from "../templates/basic/index.js"
+import basic from "../templates/basic/index.mjs"
 
 async function main() {
   await collection.load()
