@@ -176,15 +176,8 @@ export async function listProjects(options = {}) {
 
 export async function deleteModel({ model, project }) {
   const collection = await getCollection(project)
-  const item = collection.items.get(model.id)
 
-  if (item?.path) {
-    console.log("Deleting Document", item?.path)
-    await fs.rm(item.path).catch((e) => true)
-  }
-
-  collection.items.delete(model.id)
-  collection.load({ refresh: true })
+  await collection.deleteItem(model.id)
 
   return true
 }
