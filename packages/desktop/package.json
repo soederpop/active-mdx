@@ -1,6 +1,7 @@
 {
-  "name": "desktop2",
+  "name": "@active-mdx/desktop",
   "version": "0.2.1",
+  "private": true,
   "scripts": {
     "dev": "electron-esbuild dev",
     "build": "electron-esbuild build",
