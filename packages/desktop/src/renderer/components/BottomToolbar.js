@@ -35,7 +35,7 @@ export function BottomToolbar() {
   }
 
   return (
-    <nav className="bg-slate-900  flex" aria-label="Breadcrumb">
+    <nav className="bg-slate-900  flex cursor-pointer" aria-label="Breadcrumb">
       <ol
         role="list"
         className="max-w-screen-xl w-full mx-auto px-4 flex space-x-4 sm:px-6 lg:px-8"
@@ -44,7 +44,7 @@ export function BottomToolbar() {
           <div className="flex items-center">
             <a
               onClick={() => setActiveProject(undefined)}
-              className="text-gray-400 hover:text-gray-500"
+              className="text-slate-400 hover:text-slate-500"
             >
               <HomeIcon className="flex-shrink-0 h-5 w-5" aria-hidden="true" />
               <span className="sr-only">Home</span>
@@ -55,7 +55,7 @@ export function BottomToolbar() {
           <li key={page.index + page.name} className="flex">
             <div className="flex items-center">
               <svg
-                className="flex-shrink-0 w-6 h-full text-gray-200"
+                className="flex-shrink-0 w-6 h-full text-slate-200"
                 viewBox="0 0 24 44"
                 preserveAspectRatio="none"
                 fill="currentColor"
@@ -66,7 +66,7 @@ export function BottomToolbar() {
               </svg>
               <a
                 onClick={page.onClick}
-                className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                className="ml-4 text-sm font-medium text-slate-500 hover:text-slate-700"
                 aria-current={page.current ? "page" : undefined}
               >
                 {page.name}

@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react"
 
-export function useClientCall(method) {
+export function useClientCall(method, ...args) {
   const [loading, setLoading] = useState(false)
   const [response, setResponse] = useState()
 
-  useEffect(() => {
+  if (typeof method === "string") {
+    method = () => API[method](...args)
+  }
+
+  const doLoad = () => {
     setLoading(true)
     Promise.resolve(method())
       .then((response) => {
@@ -13,10 +17,14 @@ export function useClientCall(method) {
       .finally(() => {
         setLoading(false)
       })
-  }, [])
+  }
+
+  useEffect(() => doLoad(), [])
 
   return {
+    ...response,
     loading,
-    response
+    response,
+    reload: () => doLoad()
   }
 }

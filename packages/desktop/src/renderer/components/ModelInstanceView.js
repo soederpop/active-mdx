@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import MarkdownEditor from "./MarkdownEditor"
 import MdxPreview from "./MdxPreview"
+import ModelValidator from "./ModelValidator"
 import { useClientCall } from "./hooks"
 import { useAppContext } from "./AppProvider"
 import { runModelAction } from "../actions.js"
@@ -9,7 +10,8 @@ export default function ModelInstanceView({
   model,
   packageRoot: cwd,
   project,
-  modelClass
+  modelClass,
+  reload
 }) {
   const [view, setView] = useState("source")
   const { toggleFilter, setContext, context } = useAppContext()
@@ -19,6 +21,15 @@ export default function ModelInstanceView({
       project
     })
   )
+
+  const deleteModel = () =>
+    API.deleteModel({ model, project }).then(() =>
+      setContext({
+        screen: "model",
+        model: context.modelClass,
+        reload: true
+      })
+    )
 
   useEffect(() => {
     toggleFilter(false)
@@ -51,23 +62,43 @@ export default function ModelInstanceView({
   return (
     <div className="flex w-full">
       <div className="text-white w-2/5 pl-2">
-        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
-          <a onClick={() => setView("source")}>View Source</a>
+        <div
+          className="cursor-pointer p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+          onClick={() => setView("source")}
+        >
+          View Source
         </div>
-        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
-          <a onClick={() => setView("preview")}>Preview</a>
+        <div
+          className="cursor-pointer p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+          onClick={() => setView("preview")}
+        >
+          Preview
         </div>
-        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
-          <a onClick={() => API.openWithNative({ url: response.path })}>
-            Open this Document in VSCode
-          </a>
+        <div
+          className="cursor-pointer p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+          onClick={() => API.openWithNative({ url: response.path })}
+        >
+          Open in VSCode
         </div>
-        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
-          <a>Validate this Model</a>
+        <div
+          onClick={() => setView("validate")}
+          className="cursor-pointer p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+        >
+          Validate this model
         </div>
-        <div className="p-4 border-b-2 border-slate-600 hover:bg-slate-600">
-          <a onClick={() => setView("json")}>View JSON</a>
+        <div
+          className="cursor-pointer p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+          onClick={() => setView("json")}
+        >
+          View JSON
         </div>
+        <div
+          onClick={() => deleteModel()}
+          className="cursor-pointer p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+        >
+          Delete this model
+        </div>
+
         {modelClass.availableActions.map((action) => {
           return (
             <div
@@ -79,7 +110,7 @@ export default function ModelInstanceView({
                   models: [response.model.id]
                 })
               }
-              className="p-4 border-b-2 border-slate-600 hover:bg-slate-600"
+              className="cursor-pointer p-4 border-b-2 border-slate-600 hover:bg-slate-600"
             >
               Run {action} action
             </div>
@@ -92,6 +123,9 @@ export default function ModelInstanceView({
         )}
         {view === "preview" && response?.document?.id && (
           <MdxPreview cwd={cwd} pathId={response.document.id} height="90vh" />
+        )}
+        {view === "validate" && response?.model?.id && (
+          <ModelValidator project={project} model={model} height="90vh" />
         )}
         {view === "json" && response?.model && (
           <pre>{JSON.stringify(response.model, null, 2)}</pre>

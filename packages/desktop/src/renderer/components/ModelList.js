@@ -39,7 +39,7 @@ export default function ModelList(props = {}) {
         .map((model, index) => (
           <li
             key={model.name}
-            className="col-span-1 flex shadow-sm rounded-md"
+            className="col-span-1 flex shadow-sm rounded-md cursor-pointer"
             onClick={() => onSelect && onSelect(model)}
           >
             <div

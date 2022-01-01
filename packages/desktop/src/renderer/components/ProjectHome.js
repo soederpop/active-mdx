@@ -14,7 +14,11 @@ export default function ProjectHome({
   project,
   ...props
 }) {
-  const { loading, response = {} } = useClientCall(() =>
+  const {
+    loading,
+    reload,
+    response = {}
+  } = useClientCall(() =>
     API.getProjectData(project).then((response) => {
       console.log("Project Data", response)
       return response
@@ -27,6 +31,8 @@ export default function ProjectHome({
     return <div />
   }
 
+  console.log("APP Context", context)
+
   const { screen = "main" } = context
 
   switch (screen) {
@@ -38,6 +44,7 @@ export default function ProjectHome({
           {...response}
           {...(response.serverResponse || {})}
           project={project}
+          reload={reload}
         />
       )
     case "model":
@@ -46,6 +53,9 @@ export default function ProjectHome({
           filter={filter}
           {...context}
           {...response}
+          modelClass={context.model}
+          project={project}
+          reload={reload}
           onSelect={(model) =>
             setContext({
               model,
@@ -63,13 +73,13 @@ export default function ProjectHome({
           {...response}
           setContext={setContext}
           project={project}
+          reload={reload}
         />
       )
   }
 }
 
 function ProjectMainScreen(props = {}) {
-  console.log("Project MAin Screen", props)
   const {
     filter,
     recent = [],

@@ -1,9 +1,12 @@
 import { shell, screen, app } from "electron"
 import fs from "fs/promises"
+import path from "path"
 import { resolve } from "path"
 import { Collection } from "@active-mdx/core"
 import { compile } from "../javascript.js"
 import storage from "../storage"
+import { kebabCase } from "lodash-es"
+import { mkdir } from "fs"
 
 const homePath = app.getPath("home")
 
@@ -112,7 +115,7 @@ export async function getProjectData(options = {}) {
     throw new Error(`Could not find project`)
   }
 
-  const collection = await getCollection(project)
+  const collection = await getCollection({ ...project, refresh: true })
 
   const data = await collection.export(options)
 
@@ -169,6 +172,68 @@ export async function getCollection({
 export async function listProjects(options = {}) {
   const projects = storage.get("projects") || {}
   return Object.values(projects)
+}
+
+export async function deleteModel({ model, project }) {
+  const collection = await getCollection(project)
+  const item = collection.items.get(model.id)
+
+  if (item?.path) {
+    console.log("Deleting Document", item?.path)
+    await fs.rm(item.path).catch((e) => true)
+  }
+
+  collection.items.delete(model.id)
+  collection.load({ refresh: true })
+
+  return true
+}
+
+export async function validateModel({ model, project }) {
+  const collection = await getCollection(project)
+  const modelInstance = collection.getModel(model.id)
+
+  await modelInstance.validate()
+
+  return {
+    errors: modelInstance.errors.toJSON(),
+    isValid: !modelInstance.hasErrors,
+    hasErrors: modelInstance.hasErrors
+  }
+}
+
+export async function createNewDocument({ model, values, project }) {
+  const { name } = model
+  const { title = "", prefix = model.prefix } = values
+  const slug = kebabCase(title.toLowerCase())
+  const fileParts = [...prefix.split(path.sep), `${slug}.mdx`]
+  const collection = await getCollection(project)
+  const filePath = collection.resolve(...fileParts)
+  const dir = path.parse(filePath).dir
+
+  await fs.mkdir(dir, { recursive: true })
+
+  console.log(`Creating new Document`, {
+    filePath,
+    slug,
+    prefix,
+    values
+  })
+
+  const fileContent = `
+---
+type: ${name}
+---
+
+# ${title}
+
+  `.trim()
+
+  await fs.writeFile(filePath, `${fileContent}\n`, "utf8")
+
+  await collection.load({ refresh: true })
+
+  return values
 }
 
 async function exists(path) {

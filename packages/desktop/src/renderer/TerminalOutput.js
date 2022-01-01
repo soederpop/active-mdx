@@ -63,7 +63,7 @@ export function OutputWrapper({
       style={{ height: "100vh", width: "100%" }}
     >
       <div className="text-white border-b-2 m-b-3">
-        amdx action {actionName} ${models.length ? models.join(",") : ""}
+        amdx action {actionName} {models.length ? models.join(",") : ""}
       </div>
       <pre>{stdout.join("")}</pre>
       {typeof stopped !== "undefined" && (

@@ -11,7 +11,10 @@ const METHODS = [
   "closeApp",
   "closeCurrentWindow",
   "showCurrentWindow",
-  "hideCurrentWindow"
+  "hideCurrentWindow",
+  "createNewDocument",
+  "deleteModel",
+  "validateModel"
 ]
 
 const baseApi = {
