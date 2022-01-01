@@ -15,22 +15,19 @@ export default function MarkdownEditor(props = {}) {
   const [value, setValue] = useState(props.value || "")
   const [saved, setSaved] = useState(false)
 
-  function handleKeyDown(e) {
-    if (e.key === "s" && e.metaKey) {
-      handleSave &&
-        Promise.resolve(handleSave(value)).then(() => setSaved(true))
-    }
-  }
-
-  console.log("Content Length", value.length)
-
   useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "s" && e.metaKey) {
+        Promise.resolve(handleSave(value)).then(() => setSaved(true))
+      }
+    }
+
     document.addEventListener("keydown", handleKeyDown)
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown)
     }
-  }, [])
+  }, [value])
 
   return (
     <>
@@ -40,7 +37,7 @@ export default function MarkdownEditor(props = {}) {
         defaultLanguage="markdown"
         height={height}
         width={width}
-        defaultValue={value}
+        value={value}
         options={{
           minimap: { enabled: enableMiniMap },
           wordWrap: "on",
