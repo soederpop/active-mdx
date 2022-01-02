@@ -4,6 +4,26 @@ import Story from "./Story.mjs"
 export default class Epic extends Model {
   static sections = ["stories"]
 
+  static get schema() {
+    const { joi } = this
+
+    return joi
+      .object({
+        title: joi.string().required(),
+        stories: joi
+          .array()
+          .items(
+            joi
+              .object({
+                title: joi.string().required().min(1)
+              })
+              .unknown(true)
+          )
+          .min(1)
+      })
+      .unknown(true)
+  }
+
   get defaults() {
     return {
       meta: {

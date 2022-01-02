@@ -1,8 +1,10 @@
 import runtime from "@skypager/node"
-import docs from "../docs/index.mjs"
+import docs from "../content/index.mjs"
 
 async function main() {
-  await docs.load()
+  await docs.load({
+    models: true
+  })
 
   const ctx = {}
 

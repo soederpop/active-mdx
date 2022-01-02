@@ -2,6 +2,25 @@ import { Model } from "@active-mdx/core"
 import Epic from "./Epic.mjs"
 
 export default class Story extends Model {
+  static get schema() {
+    const { joi } = this
+
+    return joi
+      .object({
+        title: joi.string().required(),
+        meta: joi
+          .object({
+            status: joi.string().required(),
+            estimates: joi.object({
+              high: joi.number().required(),
+              low: joi.number().required()
+            })
+          })
+          .unknown(true)
+      })
+      .unknown(true)
+  }
+
   get defaults() {
     return {
       meta: {
