@@ -3,6 +3,7 @@ import { getMDXComponent } from "mdx-bundler/client/index.js"
 import { renderToStaticMarkup } from "react-dom/server.js"
 import { createElement } from "react"
 import { compileToFile } from "../utils/compile-jsx.js"
+import fs from "fs/promises"
 
 export default async function render(argv = {}) {
   const html = await getHtml(argv)
