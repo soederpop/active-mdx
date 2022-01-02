@@ -90,6 +90,7 @@
     "publish": null
   },
   "dependencies": {
+    "electron-log": "^3.0.0",
     "@active-mdx/core": "^0.3.1",
     "@codesandbox/sandpack-react": "^0.10.10",
     "@headlessui/react": "^1.4.2",

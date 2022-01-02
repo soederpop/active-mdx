@@ -1,12 +1,13 @@
-import { app, protocol, ipcMain, globalShortcut, BrowserWindow } from "electron"
+import { app, ipcMain, globalShortcut, BrowserWindow } from "electron"
 import { is } from "electron-util"
-import fs from "fs/promises"
 import path from "path"
 import { format } from "url"
 import * as APIServer from "./api/server"
-import { compile } from "./javascript"
+import captureLogs from "./logger"
 
 let win = undefined
+
+captureLogs()
 
 export const getMainWindow = () => createMainWindow()
 

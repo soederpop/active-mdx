@@ -20,8 +20,16 @@ export async function start(options = {}, callback) {
 
   ipcMain.handle("spawn", (event, options) => {
     const { channel = "", args = [], service = "main" } = options
+    const childScript = path.join(__dirname, "child.js")
+    const childArgs = [service].concat(args)
 
-    const p = fork(path.join(__dirname, "child.js"), [service].concat(args), {
+    console.log(`Spawning Child Process`, {
+      args: childArgs,
+      script: childScript,
+      options
+    })
+
+    const p = fork(childScript, childArgs, {
       stdio: ["pipe", "pipe", "pipe", "ipc"]
     })
 
@@ -56,6 +64,12 @@ export async function start(options = {}, callback) {
     })
 
     p.on("close", (code) => {
+      console.log(`spawned app ${channel} closed`, {
+        code,
+        args: childArgs,
+        script: childScript
+      })
+
       if (channel.length) {
         event.sender.send(`spawn-${channel}`, {
           type: "close",

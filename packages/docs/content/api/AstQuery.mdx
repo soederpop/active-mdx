@@ -713,3 +713,106 @@ Passing false as a second argument will use a substring match.
 *   `{Boolean} exact` whether to use an exact match or a substring match
 
 Returns `{AstNode} the first heading with the given text`
+
+## API
+
+### Instance Methods
+
+#### findAllBefore
+
+Find all nodes in the document that come before the given node.  Passing an optional
+selector will filter the results.
+
+#### findAllAfter
+
+Find all nodes in the document that come after the given node. Passing an optional
+selector will filter the results.
+
+#### findBefore
+
+Find the first node before the given node which matches the selector
+
+*   `{AstNode} node` a node in the AST to start searching from
+*   `{String|Function} selector` a selector string from unist-util-select, or a function which will be passed the node and return true if it matches
+
+#### findAfter
+
+Find the next node after the given node which matches the given elector
+
+*   `{AstNode} node` a node in the AST to start searching from
+*   `{Function} selector` a function which returns true if the node matches
+
+Returns `{AstNode} the first node to match the selector`
+
+#### findBetween
+
+Find all the nodes between the given nodes
+
+*   `{AstNode} nodeOne` a node in the AST to start searching from
+*   `{AstNode} nodeTwo` a node in the AST to stop searching at
+
+#### select
+
+Find the first node which matches the selector.  See unist-util-select
+
+*   `{String|Function} selector` a string from unist-util-select or a function which should return true if the node matches
+
+Returns `{AstNode} the first node to match the selector`
+
+#### selectAll
+
+Find all nodes which match the selector.  See unist-util-select
+
+*   `{String|Function} selector` a string from unist-util-select or a function which should return true if the node matches
+
+Returns `{Array[AstNode]} all nodes to match the selector`
+
+#### visit
+
+Run the given visitor function for each node in the document.
+
+*   `{Function} visitor` a function which will be passed a node from the tree.
+
+#### atLine
+
+Get the node at a given line number.
+
+*   `{Number} lineNumber` the line number to find
+
+Returns `{AstNode} the node at the given line number`
+
+#### findNextSiblingHeadingTo
+
+Find the next heading node with the same depth as the given node.
+
+*   `{AstNode} headingNode` a heading node to start searching from
+
+Returns `{AstNode} the next heading node with the same depth as the given node`
+
+#### headingsAtDepth
+
+Get all headings at a given depth.
+
+*   `{Number} depth` the heading depth to find (1-6)
+
+Returns `{Array[AstNode]} all headings at the given depth`
+
+#### findAllHeadingsByText
+
+Finds all headings where the content matches the given string.  Not case sensitive.
+Passing false as a second argument will use a substring match.
+
+*   `{String} text` the text of the heading to match
+*   `{Boolean} exact` whether to use an exact match or a substring match
+
+Returns `{Array[AstNode]} all headings with the given text`
+
+#### findHeadingByText
+
+Find a heading where the content matches the given string.  Not case sensitive.
+Passing false as a second argument will use a substring match.
+
+*   `{String} text` the text of the heading to match
+*   `{Boolean} exact` whether to use an exact match or a substring match
+
+Returns `{AstNode} the first heading with the given text`

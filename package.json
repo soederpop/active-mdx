@@ -9,7 +9,9 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "build:desktop": "./scripts/build-desktop.sh",
+    "release": "lerna publish patch --yes"
   },
   "devDependencies": {
     "lerna": "^4.0.0"

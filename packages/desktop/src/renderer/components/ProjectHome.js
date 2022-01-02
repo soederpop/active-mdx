@@ -31,7 +31,7 @@ export default function ProjectHome({
     return <div />
   }
 
-  console.log("APP Context", context)
+  // console.log("APP Context", context)
 
   const { screen = "main" } = context
 

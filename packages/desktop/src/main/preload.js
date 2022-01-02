@@ -52,7 +52,10 @@ contextBridge.exposeInMainWorld(
       ...memo,
       [actionName]: (options = {}) => {
         try {
-          return ipcRenderer.invoke(actionName, options)
+          console.log(`Invoking ${actionName}`, options)
+          const result = ipcRenderer.invoke(actionName, options)
+          console.log(`Result of ${actionName}`, { result })
+          return result
         } catch (error) {
           console.error("Error invoking action", actionName, error)
         }
@@ -67,10 +70,14 @@ let ipcChannel = 0
 async function renderMdxDocument({ cwd, pathId, ...options }) {
   const { channel = `render-mdx-document-${ipcChannel++}` } = options
 
+  console.log(`Invoking renderMdxDocument`, { arguments })
+
   return new Promise((resolve) => {
     const output = []
 
     ipcRenderer.on(`spawn-${channel}`, (event, data = {}) => {
+      console.log(`renderMdxDocument spawn-${channel}`, data)
+
       if (data.type === "stdout") {
         output.push(data.value)
       } else if (data.type === "close") {
@@ -95,6 +102,14 @@ async function runActiveMdxAction({
 } = {}) {
   const { channel = `active-mdx-action-${ipcChannel++}` } = options
 
+  console.log(`Invoking runActiveMdxAction`, {
+    cwd,
+    actionName,
+    models,
+    channel,
+    ...options
+  })
+
   const args = [
     actionName,
     ...models,
@@ -103,6 +118,7 @@ async function runActiveMdxAction({
   ]
 
   ipcRenderer.on(`spawn-${channel}`, (event, data = {}) => {
+    console.log(`runActiveMdxAction spawn-${channel}`, data)
     //console.log(`spawn-${channel}`, data)
     if (typeof onEvent === "function") {
       onEvent(data)
