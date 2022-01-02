@@ -1,6 +1,8 @@
 {
   "name": "@active-mdx/desktop",
   "version": "0.3.0",
+  "author": "Jon Soeder <jon@chicago.com>",
+  "description": "A desktop app for working with @active-mdx projects",
   "private": true,
   "scripts": {
     "dev": "electron-esbuild dev",
@@ -89,7 +91,7 @@
   },
   "dependencies": {
     "@active-mdx/core": "^0.3.0",
-    "@monaco-editor/react": "^0.17.0",
+    "@monaco-editor/react": "^4.3.1",
     "@codesandbox/sandpack-react": "^0.10.10",
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
