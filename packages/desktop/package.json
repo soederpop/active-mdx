@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/desktop",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "Jon Soeder <jon@chicago.com>",
   "description": "A desktop app for working with @active-mdx projects",
   "private": true,
@@ -90,11 +90,11 @@
     "publish": null
   },
   "dependencies": {
-    "@active-mdx/core": "^0.3.0",
-    "@monaco-editor/react": "^4.3.1",
+    "@active-mdx/core": "^0.3.1",
     "@codesandbox/sandpack-react": "^0.10.10",
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
+    "@monaco-editor/react": "^4.3.1",
     "@tailwindcss/forms": "^0.4.0",
     "copy-webpack-plugin": "^10.2.0",
     "electron-store": "^8.0.1",
