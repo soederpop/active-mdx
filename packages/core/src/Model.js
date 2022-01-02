@@ -79,13 +79,22 @@ export default class Model {
    * Provides different variations of the model name, plural, singular, class name style, as well as the actual name of the class.
    */
   static get inflections() {
-    const name = this.name.toLowerCase()
+    const name = this.name
+
+    const base = {
+      modelName: name,
+      singular: inflections.singularize(name).toLowerCase(),
+      plural: inflections.pluralize(name).toLowerCase(),
+      className: upperFirst(camelCase(kebabCase(name))),
+      title: inflections.titleize(kebabCase(name)),
+      slug: kebabCase(name).toLowerCase()
+    }
 
     return {
-      modelName: name,
-      singular: inflections.singularize(name),
-      plural: inflections.pluralize(name),
-      className: upperFirst(camelCase(kebabCase(name)))
+      ...base,
+      titleLower: base.title.toLowerCase(),
+      titlePlural: inflections.pluralize(base.title),
+      titleLowerPlural: inflections.pluralize(base.title).toLowerCase()
     }
   }
 

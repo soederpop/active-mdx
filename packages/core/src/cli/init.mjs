@@ -13,7 +13,7 @@ export default async function init(options = {}) {
   const { template = "basic" } = options
   const [targetDir = "new-active-mdx-project"] = options._
 
-  const destination = path.resolve(targetDir)
+  const destination = path.resolve(targetDir || "new-active-mdx-project")
   const source = path.resolve(templatesRoot, template)
 
   console.log(`Initializing ${template} template in ${destination}`)

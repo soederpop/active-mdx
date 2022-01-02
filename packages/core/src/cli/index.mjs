@@ -3,6 +3,8 @@ import runAction from "./run-action.mjs"
 import render from "./render.mjs"
 import exportCollection from "./export-collection.mjs"
 import init from "./init.mjs"
+import validate from "./validate.mjs"
+import create from "./create.mjs"
 import { Collection } from "../../index.js"
 import path from "path"
 import fs from "fs/promises"
@@ -31,10 +33,25 @@ export default async function main() {
         exportCollection({ ...argv, collection })
       )
       break
+    case "create":
+    case "new":
+      await loadCollection(argv).then((collection) =>
+        create({ ...argv, collection })
+      )
+      break
+
     case "render":
       await loadCollection(argv).then((collection) =>
         render({ ...argv, collection })
       )
+      break
+
+    case "validate":
+      await loadCollection(argv).then((collection) =>
+        validate({ ...argv, collection })
+      )
+      break
+
     case "action":
     case "run":
       await loadCollection(argv).then((collection) =>
@@ -50,12 +67,9 @@ async function displayHelp() {
   console.log("HELP TODO")
 }
 
-async function loadCollection({
-  modulePath,
-  rootPath = process.cwd(),
-  ...argv
-} = {}) {
+async function loadCollection({ modulePath, rootPath, ...argv } = {}) {
   if (!rootPath) {
+    //console.log("Calculating Root Path")
     const cwd = process.cwd()
     const packageJsonPath = await findUp("package.json")
     const manifest = await fs
@@ -63,9 +77,12 @@ async function loadCollection({
       .then((buf) => JSON.parse(String(buf)))
 
     if (manifest.activeMdx?.rootPath) {
+      //console.log("Using package.json manifest", manifest.activeMdx)
       rootPath = path.resolve(cwd, manifest.activeMdx.rootPath)
     }
   }
+
+  //console.log("Loading Collection at ", rootPath)
 
   if (typeof modulePath !== "string") {
     const indexExists = await exists(path.resolve(rootPath, "index.js"))
