@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 
 export default function MdxPreview({ pathId, cwd }) {
-  const [output, setOutput] = useState([])
+  const [output, setOutput] = useState("")
 
   useEffect(() => {
     API.renderMdxDocument({
@@ -16,6 +16,6 @@ export default function MdxPreview({ pathId, cwd }) {
   if (!output.length) {
     return <div />
   } else {
-    return <div dangerouslySetInnerHTML={{ __html: output.join("") }} />
+    return <div dangerouslySetInnerHTML={{ __html: output }} />
   }
 }

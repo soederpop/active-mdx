@@ -6,9 +6,10 @@ import { Collection } from "@active-mdx/core"
 import { compile } from "../javascript.js"
 import storage from "../storage"
 import { kebabCase } from "lodash-es"
-import { mkdir } from "fs"
 
 const homePath = app.getPath("home")
+const appDataPath = app.getPath("appData")
+const userDataPath = app.getPath("userData")
 
 const collections = new Map()
 
@@ -180,6 +181,19 @@ export async function untrackProject(project = {}) {
   storage.set("projects", projects)
 
   return listProjects()
+}
+
+export async function getPaths() {
+  const envHomePath = resolve(homePath, ".active-mdx")
+  const cachePath = resolve(envHomePath, "cache")
+
+  return {
+    home: homePath,
+    appData: appDataPath,
+    userData: userDataPath,
+    cachePath,
+    envHomePath
+  }
 }
 
 export async function deleteModel({ model, project }) {

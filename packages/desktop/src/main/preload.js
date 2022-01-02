@@ -1,6 +1,9 @@
 import { ipcRenderer, contextBridge } from "electron"
 import minimist from "minimist"
 import { omit, kebabCase, camelCase, mapKeys } from "lodash"
+import hashObject from "hash-object"
+import { resolve } from "path"
+import { readFile } from "fs/promises"
 
 const METHODS = [
   "openWithNative",
@@ -70,27 +73,35 @@ let ipcChannel = 0
 async function renderMdxDocument({ cwd, pathId, ...options }) {
   const { channel = `render-mdx-document-${ipcChannel++}` } = options
 
-  console.log(`Invoking renderMdxDocument`, { arguments })
+  const paths = await ipcRenderer.invoke("getPaths")
 
-  return new Promise((resolve) => {
-    const output = []
+  const outputFileName = `${hashObject({ cwd, pathId })}.html`
+  const outputFile = resolve(paths.cachePath, "render", outputFileName)
 
+  await new Promise((resolve) => {
     ipcRenderer.on(`spawn-${channel}`, (event, data = {}) => {
-      console.log(`renderMdxDocument spawn-${channel}`, data)
-
-      if (data.type === "stdout") {
-        output.push(data.value)
-      } else if (data.type === "close") {
-        resolve(output)
+      if (data.type === "close") {
+        resolve(outputFile)
       }
     })
 
     ipcRenderer.invoke("spawn", {
       service: "renderMdxDocument",
       channel,
-      args: [pathId, `--active-mdx-cwd=${cwd}`, `--styles=true`]
+      args: [
+        pathId,
+        `--active-mdx-cwd`,
+        cwd,
+        `--styles=true`,
+        "--output-file",
+        outputFile
+      ]
     })
   })
+
+  const content = await readFile(outputFile, "utf8").then((buf) => String(buf))
+
+  return content
 }
 
 async function runActiveMdxAction({

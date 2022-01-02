@@ -1,7 +1,8 @@
 import minimist from "minimist"
 import { mapKeys, kebabCase, camelCase } from "lodash-es"
 import { spawn } from "child_process"
-import { execa } from "execa"
+import { parse } from "path"
+import { mkdir } from "fs/promises"
 
 const service = process.argv[2]
 const options = mapKeys(minimist(process.argv.slice(3)), (v, k) =>
@@ -32,9 +33,20 @@ async function renderMdxDocument({ pathId, activeMdxCwd, ...options }) {
 
   const args = ["render", pathId, ...flags]
 
+  console.log("Rendering AMDX", {
+    args,
+    cwd: activeMdxCwd,
+    outputFile: options.outputFile
+  })
+
+  if (options.outputFile) {
+    await mkdir(parse(options.outputFile).dir, { recursive: true })
+  }
+
   //console.log("Spawning AMDX", { args, cwd: activeMdxCwd })
 
   return new Promise((res, rej) => {
+    console.log("Spawning AMDX Command", { cwd: activeMdxCwd, args })
     const child = spawn("amdx", args, {
       cwd: activeMdxCwd,
       stdio: "inherit"
