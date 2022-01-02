@@ -7,3 +7,4 @@ packages/*/node_modules
 _next/
 packages/*/_next
 .DS_Store
+workspaces/
