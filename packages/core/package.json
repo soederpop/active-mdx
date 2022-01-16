@@ -29,6 +29,8 @@
     "inflect": "^0.5.0",
     "js-yaml": "^4.1.0",
     "lodash-es": "^4.17.21",
+    "mdast-util-from-markdown": "^1.2.0",
+    "mdast-util-to-markdown": "^1.2.6",
     "mdast-util-to-string": "^3.1.0",
     "mdx-stringify": "^0.0.5",
     "minimist": "^1.2.5",
