@@ -6,3 +6,6 @@ examples/sdlc/stories/*
 packages/*/node_modules
 _next/
 packages/*/_next
+packages/*/.next
+.DS_Store
+.next/
