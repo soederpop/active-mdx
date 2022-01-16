@@ -1,4 +1,4 @@
-import { Model } from "active-mdx"
+import { Model } from "@active-mdx/core"
 import Post from "./Post.js"
 
 export default class Author extends Model {
