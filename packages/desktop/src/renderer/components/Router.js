@@ -14,16 +14,11 @@ export default function Router(props = {}) {
 
   if (!activeProject) {
     return (
-      <>
-        <ListProjects
-          onSelectProject={(project) => {
-            setActiveProject(project)
-          }}
-        />
-        <div className="w-1/2 mx-auto">
-          <CreateNewProject />
-        </div>
-      </>
+      <ListProjects
+        onSelectProject={(project) => {
+          setActiveProject(project)
+        }}
+      />
     )
   } else {
     return <ProjectHome project={activeProject} />

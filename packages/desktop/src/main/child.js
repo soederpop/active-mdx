@@ -14,6 +14,9 @@ async function main() {
     case "renderMdxDocument":
       await renderMdxDocument({ pathId: options._[0], ...options })
       break
+    case "runActiveMdxCommand":
+      await runActiveMdxCommand(options)
+      break
     case "runActiveMdxAction":
       await runActiveMdxAction({
         actionName: options._[0],
@@ -24,6 +27,16 @@ async function main() {
     default:
       console.error("Unknown service", service)
   }
+}
+
+async function runActiveMdxCommand(params = {}) {
+  console.log("Run Acive Mdx Command", params)
+
+  const options = params
+
+  const flags = Object.entries(options).map(
+    ([k, v]) => `--${kebabCase(k)}=${v}`
+  )
 }
 
 async function renderMdxDocument({ pathId, activeMdxCwd, ...options }) {

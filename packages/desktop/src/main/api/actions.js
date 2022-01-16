@@ -1,11 +1,10 @@
-import { shell, screen, app } from "electron"
+import { dialog, shell, screen, app } from "electron"
 import fs from "fs/promises"
-import path from "path"
 import { resolve } from "path"
 import { Collection } from "@active-mdx/core"
 import { compile } from "../javascript.js"
 import storage from "../storage"
-import { kebabCase } from "lodash-es"
+import { spawnSync } from "child_process"
 
 const homePath = app.getPath("home")
 const appDataPath = app.getPath("appData")
@@ -37,6 +36,15 @@ export async function homeFolder(options = {}) {
   }
 }
 
+export async function openDirectory(options = {}) {
+  const { targetWindow } = options
+  const result = await dialog.showOpenDialog(targetWindow, {
+    properties: ["openDirectory"]
+  })
+
+  console.log("Opened Directory", result)
+  return result
+}
 export async function updateWindow(options = {}) {
   const { targetWindow } = options
   // Create a window that fills the screen's available work area.
@@ -204,6 +212,10 @@ export async function deleteModel({ model, project }) {
   return true
 }
 
+export async function readFile({ file }) {
+  return fs.readFile(file).then((buf) => String(buf))
+}
+
 export async function validateModel({ model, project }) {
   const collection = await getCollection(project)
   const modelInstance = collection.getModel(model.id)
@@ -233,31 +245,13 @@ export async function saveDocument({ id, content = "", project }) {
 export async function createNewDocument({ model, values, project }) {
   const { name } = model
   const { title = "", prefix = model.prefix } = values
-  const slug = kebabCase(title.toLowerCase())
-  const fileParts = [...prefix.split(path.sep), `${slug}.mdx`]
   const collection = await getCollection(project)
-  const filePath = collection.resolve(...fileParts)
-  const dir = path.parse(filePath).dir
 
-  await fs.mkdir(dir, { recursive: true })
+  const { packageRoot: cwd } = collection
 
-  console.log(`Creating new Document`, {
-    filePath,
-    slug,
-    prefix,
-    values
+  spawnSync("amdx", ["create", name, "--prefix", prefix, "--title", title], {
+    cwd
   })
-
-  const fileContent = `
----
-type: ${name}
----
-
-# ${title}
-
-  `.trim()
-
-  await fs.writeFile(filePath, `${fileContent}\n`, "utf8")
 
   await collection.load({ refresh: true })
 

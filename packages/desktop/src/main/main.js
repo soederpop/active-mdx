@@ -5,6 +5,8 @@ import { format } from "url"
 import * as APIServer from "./api/server"
 import captureLogs from "./logger"
 
+app.commandLine.appendSwitch('--js-flags="--experimental-vm-modules"')
+
 let win = undefined
 
 captureLogs()
