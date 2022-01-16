@@ -1,7 +1,7 @@
 {
   "name": "@active-mdx/monorepo",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.4.0",
   "type": "module",
   "license": "MIT",
   "description": "ActiveMDX - content modeling and markdown as a database",
