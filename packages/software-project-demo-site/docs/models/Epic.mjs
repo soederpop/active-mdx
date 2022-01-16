@@ -1,4 +1,4 @@
-import { Model } from "active-mdx"
+import { Model } from "@active-mdx/core"
 import Story from "./Story.mjs"
 
 export default class Epic extends Model {

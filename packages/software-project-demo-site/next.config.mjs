@@ -1,4 +1,4 @@
-import { removeFrontMatter } from "active-mdx/src/plugins/mdx.js"
+import { removeFrontMatter } from "@active-mdx/core/src/plugins/mdx.js"
 import nextMdx from "@next/mdx"
 import gfm from "remark-gfm"
 import { visit } from "unist-util-visit"
