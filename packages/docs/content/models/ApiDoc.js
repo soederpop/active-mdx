@@ -1,6 +1,6 @@
-import { Model } from "active-mdx"
+import { Model } from "@active-mdx/core"
 import fs from "fs"
-import parse from "active-mdx/src/utils/parse-js.js"
+import parse from "@active-mdx/core/src/utils/parse-js.js"
 import lodash from "lodash"
 import traverse from "@babel/traverse"
 import docBlockParser from "docblock-parser"

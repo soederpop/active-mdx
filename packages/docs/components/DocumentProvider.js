@@ -1,5 +1,5 @@
 import React, { useContext } from "react"
-import AstQuery from "active-mdx/src/AstQuery.js"
+import AstQuery from "@active-mdx/core/src/AstQuery.js"
 
 const Context = React.createContext()
 
