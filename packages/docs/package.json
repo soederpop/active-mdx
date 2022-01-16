@@ -1,0 +1,40 @@
+{
+  "name": "@active-mdx/docs-site",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "sync:content": "cp -r ../active-mdx/docs/* content/ && git checkout content/*.js content/**/*.js",
+    "console": "node scripts/console.mjs"
+  },
+  "dependencies": {
+    "@codesandbox/sandpack-react": "^0.9.8",
+    "@mdx-js/loader": "^1.6.22",
+    "@mdx-js/mdx": "^1.6.22",
+    "@monaco-editor/react": "^4.3.1",
+    "@next/mdx": "^12.0.4",
+    "@active-mdx/core": "^0.1.0",
+    "gray-matter": "^4.0.3",
+    "isomorphic-vm": "^0.0.1",
+    "lodash.debounce": "^4.0.8",
+    "next": "12.0.4",
+    "react": "17.0.2",
+    "react-code-blocks": "^0.0.9-0",
+    "react-dom": "17.0.2",
+    "react-json-inspector": "^7.1.1",
+    "react-syntax-highlighter": "^15.4.5",
+    "rehype-slug": "^5.0.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.4",
+    "stringify-object": "^4.0.0"
+  },
+  "devDependencies": {
+    "@skypager/cli": "^1.4.2",
+    "@skypager/node": "^1.4.2",
+    "eslint": "7.32.0",
+    "eslint-config-next": "12.0.4"
+  }
+}

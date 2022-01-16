@@ -1,0 +1,42 @@
+---
+type: ApiDoc
+path: src/HasManyRelationship.js
+---
+# HasManyRelationship extends [Relationship](./Relationship.mdx)
+
+A `HasManyRelationship` instance is returned when you run \`modelInstance.hasMany("Children").
+
+```javascript
+import { Model } from "active-mdx"
+
+class Author extends Model {
+  posts() {
+    // assumes a model class Post has been registered with the collection
+    return this.hasMany("Post", {
+      heading: "posts"
+    })
+  }
+}
+```
+
+## API
+
+### Instance Methods
+
+
+#### id
+
+#### nodes
+
+#### fetch
+
+#### fetchAll
+
+
+
+### Instance Properties
+
+
+#### type
+
+

@@ -1,0 +1,106 @@
+# AMDX CLI Usage
+
+The active-mdx package provides you with an executable `amdx` which can be used to interact with an ActiveMDX Collection.
+
+## Initializing a new ActiveMDX Project
+
+The following will initialize a new ActiveMDX Collection inside of the `./content` folder.
+
+```shell
+$ amdx init ./content
+```
+
+## Running actions on models
+
+A Model Class can define actions that can be run on instances of the model.
+
+```javascript
+class MyModel extends Model {}
+
+MyModel.action("myAction", async function (model) {
+  console.log(`Running my action on ${model.title}`)
+})
+```
+
+An action can do anything using the model instance and any data it provides.
+
+Running the following command in your shell will run the `myAction` function we registered on each instance of the models whose ids are passed to the command:
+
+```shell
+$ amdx action myAction some/document/id some-other/document/id another-document/id
+```
+
+This will result in
+
+```
+Running my action on Some Document ID
+Running my action on Some Other Document ID
+Running my action on Another Document ID
+```
+
+## Expanding Documents
+
+By default, every model supports an "expand" action.
+
+This will look at the model class's relationships and will generate new documents for each relationship if they don't exist.
+
+To support the expand action, a class needs to define a static sections property which is an array of strings. The values of this array should be the instance method names on the class which return relationships.
+
+Below is an example of an `Epic` class from the [SDLC Example](https://github.com/soederpop/active-mdx/tree/master/examples/sdlc)
+
+```javascript
+export default class Epic extends Model {
+  static sections = ["stories"]
+
+  get defaults() {
+    return {
+      meta: {
+        status: "created"
+      }
+    }
+  }
+
+  get isComplete() {
+    return this.stories()
+      .fetchAll()
+      .every((story) => story.isComplete)
+  }
+
+  stories() {
+    return this.hasMany(Story, {
+      heading: "stories",
+      meta: () => ({ epic: this.title.toLowerCase() })
+    })
+  }
+
+  static is(document) {
+    return document.id.startsWith("epic")
+  }
+}
+```
+
+We can expand an epic document
+
+```shell
+$ amdx action expand epics/authentication
+```
+
+This will look at the stories subheading
+
+```markdown
+## Stories
+
+### A User should be able to register
+
+As a User I would like to register so that I can use the application.
+
+### A User should be able to login
+
+As a User I would like to login so that I can use the application.
+
+### A User should be able to logout
+
+As a User I would like to logout so that I can use the application.
+```
+
+And for each item under it, it will attempt to look for a related story document, e.g `stories/authentication/a-user-should-be-able-to-register.mdx` and if it does not exist, will create it for us.

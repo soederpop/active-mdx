@@ -1,0 +1,26 @@
+---
+type: ApiDoc
+path: src/CollectionQuery.js
+---
+# Collection Query Class
+
+You'll never need to create an instance of CollectionQuery yourself. It is the object returned from the Model's query method.
+
+```javascript
+const collectionQuery = Model.query((queryBuilder) => {
+  queryBuilder.where("status", "published")
+})
+
+collectionQuery.fetchAll().then((results) => {
+  console.log(`${results.length} results`)
+})
+```
+
+## API
+
+### Instance Methods
+
+
+#### fetchAll
+
+
