@@ -159,7 +159,9 @@ export default class Collection {
    * Returns an array containing all of the classes registered as models witht his collection.
    */
   get modelClasses() {
-    return Array.from(this.models.values()).map(({ ModelClass }) => ModelClass)
+    return Array.from(this.models.values())
+      .map(({ ModelClass }) => ModelClass)
+      .filter((ModelClass) => ModelClass !== Model)
   }
 
   /**
@@ -169,6 +171,10 @@ export default class Collection {
   get modelAliases() {
     return Array.from(this.models.entries()).reduce(
       (memo, [name, { ModelClass }]) => {
+        if (ModelClass === Model) {
+          return memo
+        }
+
         memo[name] = name
         Object.values(ModelClass.inflections).forEach((inflection) => {
           memo[inflection] = name
@@ -262,12 +268,17 @@ export default class Collection {
    * @param {Boolean} [options.content=false] whether to include the content of the items in the collection
    */
   toJSON(options = {}) {
-    const models = Array.from(this.models.values()).map(({ ModelClass }) => {
+    const models = this.modelClasses.map((ModelClass) => {
       const inflections = ModelClass.inflections
 
       return {
         name: ModelClass.name,
         prefix: ModelClass.prefix,
+        availableActions: ModelClass.availableActions,
+        availableQueries: ModelClass.availableQueries,
+        matchingPaths: this.available.filter((pathId) =>
+          pathId.startsWith(ModelClass.prefix)
+        ),
         inflections
       }
     })
@@ -286,6 +297,32 @@ export default class Collection {
       modelAliases: this.modelAliases,
       itemIds: Array.from(this.items.keys()),
       ...optional
+    }
+  }
+
+  async export(options = {}) {
+    const json = this.toJSON(options)
+    const modelClasses = this.modelClasses.filter(
+      (modelClass) => modelClass !== Model
+    )
+
+    const models = {}
+
+    await Promise.all(
+      modelClasses.map((ModelClass) =>
+        ModelClass.query()
+          .fetchAll()
+          .then((results) => {
+            models[ModelClass.name] = results.map((model) =>
+              model.toJSON(options[ModelClass.name] || {})
+            )
+          })
+      )
+    )
+
+    return {
+      modelData: models,
+      ...json
     }
   }
 
@@ -410,16 +447,28 @@ export default class Collection {
         return fs
           .readFile(path, "utf8")
           .then((buf) => String(buf))
-          .then((raw) => {
+          .then((raw) => fs.stat(path).then((stat) => ({ raw, stat })))
+          .then(({ raw, stat }) => {
             const { data, content } = matter(raw)
-            this.updateItem(pathId, { raw, content, meta: data, path })
+            this.updateItem(pathId, {
+              raw,
+              content,
+              meta: data,
+              path,
+              createdAt: stat.ctime,
+              updatedAt: stat.mtime
+            })
             return content
           })
       })
     )
 
     if (options.models) {
-      const modelsFolder = this.resolve(options.modelsFolder || "models")
+      const modelsFolder = this.resolve(
+        this.rootPath,
+        options.modelsFolder || "models"
+      )
+
       const modelPaths = await readDirectory(modelsFolder, /\.m?js$/, false)
 
       for (let modelPath of modelPaths) {
