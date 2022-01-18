@@ -1,13 +1,15 @@
 import minimist from "minimist"
-import lodash from "lodash"
 import runAction from "./run-action.mjs"
+import render from "./render.mjs"
 import exportCollection from "./export-collection.mjs"
 import init from "./init.mjs"
+import validate from "./validate.mjs"
+import create from "./create.mjs"
 import { Collection } from "../../index.js"
 import path from "path"
 import fs from "fs/promises"
-
-const { mapKeys, omit, kebabCase, camelCase } = lodash
+import { findUp } from "find-up"
+import { mapKeys, omit, kebabCase, camelCase } from "lodash-es"
 
 let processArgv = minimist(process.argv.slice(2))
 
@@ -31,6 +33,25 @@ export default async function main() {
         exportCollection({ ...argv, collection })
       )
       break
+    case "create":
+    case "new":
+      await loadCollection(argv).then((collection) =>
+        create({ ...argv, collection })
+      )
+      break
+
+    case "render":
+      await loadCollection(argv).then((collection) =>
+        render({ ...argv, collection })
+      )
+      break
+
+    case "validate":
+      await loadCollection(argv).then((collection) =>
+        validate({ ...argv, collection })
+      )
+      break
+
     case "action":
     case "run":
       await loadCollection(argv).then((collection) =>
@@ -46,8 +67,22 @@ async function displayHelp() {
   console.log("HELP TODO")
 }
 
-async function loadCollection(argv) {
-  let { modulePath, rootPath = Collection.resolve() } = argv
+async function loadCollection({ modulePath, rootPath, ...argv } = {}) {
+  if (!rootPath) {
+    //console.log("Calculating Root Path")
+    const cwd = process.cwd()
+    const packageJsonPath = await findUp("package.json")
+    const manifest = await fs
+      .readFile(packageJsonPath, "utf8")
+      .then((buf) => JSON.parse(String(buf)))
+
+    if (manifest.activeMdx?.rootPath) {
+      //console.log("Using package.json manifest", manifest.activeMdx)
+      rootPath = path.resolve(cwd, manifest.activeMdx.rootPath)
+    }
+  }
+
+  //console.log("Loading Collection at ", rootPath)
 
   if (typeof modulePath !== "string") {
     const indexExists = await exists(path.resolve(rootPath, "index.js"))

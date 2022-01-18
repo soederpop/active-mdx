@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/core",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "models for markdown documents",
   "main": "./index.js",
   "type": "module",
@@ -55,7 +55,8 @@
     "unist-util-find-all-before": "^4.0.0",
     "unist-util-find-before": "^3.0.0",
     "unist-util-select": "^4.0.1",
-    "unist-util-visit": "^4.1.0"
+    "unist-util-visit": "^4.1.0",
+    "mdx-bundler": "^8.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",

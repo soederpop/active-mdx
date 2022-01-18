@@ -1,5 +1,6 @@
 import fs from "fs/promises"
 import path from "path"
+import { spawnSync } from "child_process"
 
 const templatesRoot = path.resolve(
   path.parse(import.meta.url).dir.replace("file://", ""),
@@ -10,9 +11,9 @@ const templatesRoot = path.resolve(
 
 export default async function init(options = {}) {
   const { template = "basic" } = options
-  const [targetDir] = options._
+  const [targetDir = "new-active-mdx-project"] = options._
 
-  const destination = path.resolve(targetDir)
+  const destination = path.resolve(targetDir || "new-active-mdx-project")
   const source = path.resolve(templatesRoot, template)
 
   console.log(`Initializing ${template} template in ${destination}`)
@@ -28,6 +29,10 @@ export default async function init(options = {}) {
     await fs.mkdir(path.parse(destinationPath).dir, { recursive: true })
     await fs.copyFile(file, destinationPath)
   }
+
+  spawnSync("npm", ["install"], {
+    cwd: destination
+  })
 }
 
 async function readDirectory(dirPath, match = /.*/i, recursive = true) {

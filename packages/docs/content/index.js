@@ -1,4 +1,4 @@
-import { Collection } from "active-mdx"
+import { Collection } from "@active-mdx/core"
 import ApiDoc from "./models/ApiDoc.js"
 
 import path from "path"

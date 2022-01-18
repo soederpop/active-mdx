@@ -1,4 +1,4 @@
-import { Model, Collection } from "active-mdx"
+import { Model, Collection } from "@active-mdx/core"
 
 export class Epic extends Model {
   static sections = ["stories"]

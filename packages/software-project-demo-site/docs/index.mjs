@@ -1,4 +1,4 @@
-import { Collection } from "active-mdx"
+import { Collection } from "@active-mdx/core"
 
 import Epic from "./models/Epic.mjs"
 import Story from "./models/Story.mjs"
