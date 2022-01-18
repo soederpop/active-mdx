@@ -1,14 +1,8 @@
-import { Collection } from "../index.js"
+import { collection } from "../examples/sdlc/index.js"
 
 describe("Model Querying", function () {
-  let collection
-
   beforeEach(async function () {
-    collection = new Collection({
-      rootPath: Collection.resolve("examples", "sdlc")
-    })
-
-    await collection.load({ models: true })
+    await collection.load()
   })
 
   it("lets me query", async function () {

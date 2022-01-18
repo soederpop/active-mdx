@@ -464,6 +464,10 @@ export default class Collection {
     )
 
     if (options.models) {
+      console.warn(
+        `Got rid of option to autoload models, since it causes problems with webpack and next.js`
+      )
+      /*
       const modelsFolder = this.resolve(
         this.rootPath,
         options.modelsFolder || "models"
@@ -475,6 +479,7 @@ export default class Collection {
         const ModelClass = await import(modelPath).then((mod) => mod.default)
         this.model(ModelClass.name, ModelClass, { throwErrors: false })
       }
+      */
     }
 
     privates.get(this).loaded = true

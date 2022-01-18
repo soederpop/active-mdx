@@ -12,3 +12,5 @@ collection.model("Epic", Epic)
 collection.model("Story", Story)
 
 export { Epic, Story }
+
+export default collection
