@@ -20,6 +20,12 @@ async function getHtml(argv = {}) {
   const { collection, components: componentsFile } = argv
   const pathId = argv._[1]
 
+  if (!collection.items.has(pathId)) {
+    console.error(`Could not find a model with the id: ${pathId}`)
+    console.error(collection.available)
+    throw new Error(`Could not find a model with the id: ${pathId}`)
+  }
+
   const { code } = await bundleMDX({
     file: collection.items.get(pathId).path,
     cwd: collection.packageRoot

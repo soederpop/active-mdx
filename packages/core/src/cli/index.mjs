@@ -8,7 +8,7 @@ import create from "./create.mjs"
 import { Collection } from "../../index.js"
 import path from "path"
 import fs from "fs/promises"
-import { findUp } from "find-up"
+import findUp from "find-up"
 import { mapKeys, omit, kebabCase, camelCase } from "lodash-es"
 
 let processArgv = minimist(process.argv.slice(2))
@@ -79,10 +79,10 @@ async function loadCollection({ modulePath, rootPath, ...argv } = {}) {
     if (manifest.activeMdx?.rootPath) {
       //console.log("Using package.json manifest", manifest.activeMdx)
       rootPath = path.resolve(cwd, manifest.activeMdx.rootPath)
+    } else {
+      rootPath = cwd
     }
   }
-
-  //console.log("Loading Collection at ", rootPath)
 
   if (typeof modulePath !== "string") {
     const indexExists = await exists(path.resolve(rootPath, "index.js"))

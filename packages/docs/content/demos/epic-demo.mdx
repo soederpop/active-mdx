@@ -1,6 +1,3 @@
-import SideBySide from "./SideBySide.js"
-import ModelAndData from "./ModelAndData.js"
-
 # ActiveMDX
 
 With ActiveMDX, you can extract meaningful information from the content of your writing. Structured writing can become structured data. Combine this with the power of React and MDX, and ActiveMDX can be used to build applications that are powered by your writing.
@@ -9,30 +6,12 @@ With ActiveMDX, you can extract meaningful information from the content of your 
 
 Traditional markdown renders static HTML. MDX renders as React components and gives you the ability to control how each standard markdown html element gets rendered. By itself, this is a very powerful way to display your writing and gives you a lot of creative power. People have used it to build interactive code demos which you can live edit and see the results rendered in real time, and much more.
 
-## MDX for displaying your writing
-
-Below, you can see the markdown code on the left, and the rendered React component after that.
-
-<SideBySide />
-
-With ActiveMDX, we can use the same markdown code which displays on the web, and turn it into structured data which can power other applications, or be used to build a rich presentation about the things and concepts you are writing about.
-
-The above example is a real world example of software requirements documentation. A single `Epic` with two `Stories` defined. In the real world, we'd write dozens of epics and each epic would have at least a dozen stories. Those stories would get put into software like Jira or Github issues, and get worked on by developers.
-
-ActiveMDX provides you with a [Model](/api/Model) system that lets you define the structure of your [Document](/api/Document), and [tools](/api/AstQuery) for turning the different sections of your document into objects.
-
-## ActiveMDX for using your writing
-
-On the left, we have ActiveMDX Model code which lets us define the structure of our document types and how they relate to other documents.
-
-<ModelAndData />
-
 ## Collections of structured documents
 
 ActiveMDX provides a [Collection](/api/Collection) class that turns a folder of MDX documents into a queryable database. Each different type of document is a Model, or a table in a database. Each document of those types are the rows in that database.
 
 ```javascript
-import { Collection } from "active-mdx"
+import { Collection } from "@active-mdx/core"
 
 import Epic from "./models/Epic"
 import Story from "./models/Story"
