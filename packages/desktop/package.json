@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/desktop",
-  "version": "0.3.2",
+  "version": "0.5.0",
   "author": "Jon Soeder <jon@chicago.com>",
   "description": "A desktop app for working with @active-mdx projects",
   "private": true,
