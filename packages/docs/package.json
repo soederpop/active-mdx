@@ -2,6 +2,9 @@
   "name": "@active-mdx/docs-site",
   "version": "0.1.0",
   "private": true,
+  "activeMdx": {
+    "rootPath": "./content"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

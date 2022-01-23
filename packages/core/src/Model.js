@@ -2,6 +2,7 @@ import * as inflections from "inflect"
 import CollectionQuery from "./CollectionQuery.js"
 import HasManyRelationship from "./HasManyRelationship.js"
 import BelongsToRelationship from "./BelongsToRelationship.js"
+import Validator from "./Validator.js"
 import expandAction from "./actions/expand.js"
 
 import {
@@ -23,8 +24,16 @@ const privates = new WeakMap()
  */
 export default class Model {
   constructor(document, options = {}) {
-    privates.set(this, { document, relationships: new Map() })
-    // so it is visible in a REPL
+    const errorTracker = new Map()
+
+    errorTracker.toJSON = () => Object.fromEntries(errorTracker.entries())
+
+    privates.set(this, {
+      document,
+      relationships: new Map(),
+      errors: errorTracker
+    })
+
     this._label = document.id
   }
 
@@ -443,6 +452,26 @@ export default class Model {
    */
   belongsTo(modelNameOrModelClass, options = {}) {
     return new BelongsToRelationship(this, modelNameOrModelClass, options)
+  }
+
+  get errorMessages() {
+    return this.errors.toJSON()
+  }
+
+  get errors() {
+    return privates.get(this).errors
+  }
+
+  get hasErrors() {
+    return privates.get(this).errors.size > 0
+  }
+
+  get validator() {
+    return new Validator({ model: this })
+  }
+
+  async validate(options = {}) {
+    return this.validator.validate(options)
   }
 }
 

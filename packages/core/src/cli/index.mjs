@@ -8,7 +8,7 @@ import create from "./create.mjs"
 import { Collection } from "../../index.js"
 import path from "path"
 import fs from "fs/promises"
-import { findUp } from "find-up"
+import findUp from "find-up"
 import { mapKeys, omit, kebabCase, camelCase } from "lodash-es"
 
 let processArgv = minimist(process.argv.slice(2))
@@ -72,6 +72,7 @@ async function loadCollection({ modulePath, rootPath, ...argv } = {}) {
     //console.log("Calculating Root Path")
     const cwd = process.cwd()
     const packageJsonPath = await findUp("package.json")
+
     const manifest = await fs
       .readFile(packageJsonPath, "utf8")
       .then((buf) => JSON.parse(String(buf)))
@@ -79,6 +80,8 @@ async function loadCollection({ modulePath, rootPath, ...argv } = {}) {
     if (manifest.activeMdx?.rootPath) {
       //console.log("Using package.json manifest", manifest.activeMdx)
       rootPath = path.resolve(cwd, manifest.activeMdx.rootPath)
+    } else {
+      rootPath = cwd
     }
   }
 
