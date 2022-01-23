@@ -10,6 +10,9 @@
     "sync:content": "cp -r ../active-mdx/docs/* content/ && git checkout content/*.js content/**/*.js",
     "console": "node scripts/console.mjs"
   },
+  "activeMdx": {
+    "rootPath": "docs"
+  },
   "dependencies": {
     "@codesandbox/sandpack-react": "^0.9.8",
     "@mdx-js/loader": "^1.6.22",
