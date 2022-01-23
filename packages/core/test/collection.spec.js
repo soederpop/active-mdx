@@ -20,19 +20,6 @@ describe("The Collection Class", function () {
     doc.should.have.property("title", "SDLC Demo")
   })
 
-  it("can autoload model classes if theyre in a models folder", async function () {
-    const docs = new Collection({
-      rootPath: Collection.resolve("docs")
-    })
-
-    docs.modelClasses.should.have.property("length", 0)
-
-    await docs.load({ models: true })
-
-    docs.modelClasses.should.not.be.empty
-    docs.models.has("ApiDoc").should.equal(true)
-  })
-
   describe("Collection Actions", function () {
     it("can register action functions to be run on the collection", async function () {
       const docs = new Collection({

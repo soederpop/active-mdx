@@ -1,16 +1,6 @@
-import { Collection } from "../index.js"
+import { collection } from "../examples/sdlc/index.js"
 
 describe("Model Querying", function () {
-  let collection
-
-  beforeEach(async function () {
-    collection = new Collection({
-      rootPath: Collection.resolve("examples", "sdlc")
-    })
-
-    await collection.load({ models: true })
-  })
-
   it("lets me query", async function () {
     const epics = await collection.query("Epic").fetchAll()
     epics.length.should.equal(2)
