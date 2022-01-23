@@ -11,11 +11,12 @@ import stringify from "mdx-stringify"
 import yaml from "js-yaml"
 import gfm from "remark-gfm"
 import { kebabCase, camelCase, isEmpty, omit, minBy } from "lodash-es"
-import * as acorn from "acorn"
-import { fromMarkdown } from "mdast-util-from-markdown"
+//import * as acorn from "acorn"
+//import { fromMarkdown } from "mdast-util-from-markdown"
 import { toMarkdown } from "mdast-util-to-markdown"
-import { mdxjsEsm } from "micromark-extension-mdxjs-esm"
-import { mdxjsEsmFromMarkdown, mdxjsEsmToMarkdown } from "mdast-util-mdxjs-esm"
+//import { mdxjsEsm } from "micromark-extension-mdxjs-esm"
+//import { mdxjsEsmFromMarkdown, mdxjsEsmToMarkdown } from "mdast-util-mdxjs-esm"
+import { mdxjsEsmToMarkdown } from "mdast-util-mdxjs-esm"
 
 const privates = new WeakMap()
 
@@ -59,6 +60,18 @@ export default class Document {
     }
 
     await collection.saveItem(this.id, { content: this.rawContent, ...options })
+
+    return this
+  }
+
+  /**
+   * Reloads this document's content from the collection
+   */
+  async reload() {
+    const { content, meta } = await this.collection.readItem(this.id)
+    privates.get(this).content = content
+    privates.get(this).meta = meta
+    this.rerenderAST()
 
     return this
   }
