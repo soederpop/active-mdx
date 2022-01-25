@@ -61,6 +61,22 @@ export default class Model {
     return new this(document, options)
   }
 
+  static get joi() {
+    return joi
+  }
+
+  /**
+   * You should override this method to provide your own joi schema
+   */
+  static get schema() {
+    return this.joi
+      .object({
+        id: this.joi.string().required(),
+        title: this.joi.string().required().min(1)
+      })
+      .unknown(true)
+  }
+
   /**
    * When defining your own Model class, you can override this method with your own prefix.  By default
    * it will use the lowercase, pluralized name of the model.  E.g. Book -> books
