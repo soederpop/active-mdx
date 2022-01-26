@@ -1,11 +1,9 @@
-node_modules/
 .swp
 *.log
 dist/
 examples/sdlc/stories/*
+node_modules/
 packages/*/node_modules
-_next/
-packages/*/_next
+.next/
 packages/*/.next
 .DS_Store
-.next/

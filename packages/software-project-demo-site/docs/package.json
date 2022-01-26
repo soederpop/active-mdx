@@ -1,8 +1,8 @@
 {
   "name": "@active-mdx/software-project-demo-content",
   "type": "module",
-  "license": "MIT",
+  "version": "1.0.0",
   "author": "Jon Soeder <jon@chicago.com>",
-  "version": "0.5.0",
-  "main": "index.js"
+  "main": "index.mjs",
+  "license": "MIT"
 }

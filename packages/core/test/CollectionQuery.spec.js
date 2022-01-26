@@ -1,10 +1,6 @@
 import { collection } from "../examples/sdlc/index.js"
 
 describe("Model Querying", function () {
-  beforeEach(async function () {
-    await collection.load()
-  })
-
   it("lets me query", async function () {
     const epics = await collection.query("Epic").fetchAll()
     epics.length.should.equal(2)

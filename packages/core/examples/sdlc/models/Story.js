@@ -3,6 +3,17 @@ import { Model } from "../../../index.js"
 import Epic from "./Epic.js"
 
 export default class Story extends Model {
+  static get schema() {
+    const { joi } = this
+
+    return joi
+      .object({
+        title: joi.string().required().min(1),
+        acceptanceCriteria: joi.items(joi.string()).min(1)
+      })
+      .unknown(true)
+  }
+
   get defaults() {
     return {
       meta: {

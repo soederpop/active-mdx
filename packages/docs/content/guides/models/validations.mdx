@@ -1,0 +1,61 @@
+# Model Validations
+
+ActiveMDX lets you define a validation schema for your models. This schema represents what a model will turn an mdx document into when you call `toJSON` on it.
+
+This validation schema can be used to ensure your documents provide the data you expect them to. Think of it like a linting tool.
+
+You can validate a model individually using the `amdx` CLI.
+
+```shell
+$ amdx validate epics/authentication
+```
+
+This will either tell you it is ok, or give you a list of problems you need to fix.
+
+You can also validate the entire collection:
+
+```shell
+$ amdx validate all
+```
+
+You can use the validation commands to help you as you author the documents, or you can use it as part of a continuous integration or build process, as the process will exit with an error code if any of the validations fail.
+
+## joi library validations
+
+The ActiveMDX Model class provides access to the joi library, for defining a schema for your models.
+
+```js
+import { Model } from "@active-mdx/core"
+
+export default class Post extends Model {
+  static get schema() {
+    const { joi } = this
+
+    return {
+      title: joi.string().required(),
+      body: joi.string().required()
+    }
+  }
+}
+```
+
+See [their website for the documentation.](https://joi.dev/api/?v=17.5.0)
+
+## API
+
+You can access the validation system programmatically using the `validate` method on the model class.
+
+```js
+const post = collection.getModel("posts/intro")
+
+await post.validate()
+
+post.hasErrors === true
+
+post.errorMessages ===
+  {
+    title: {
+      message: '"title" is required'
+    }
+  }
+```

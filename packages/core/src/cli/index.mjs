@@ -64,7 +64,22 @@ export default async function main() {
 }
 
 async function displayHelp() {
-  console.log("HELP TODO")
+  console.log(
+    `
+
+ActiveMDX 
+
+Available Commands:
+
+  - create              Create a new document for a given model
+  - export-collection   Export the collection as JSON
+  - init                Create a new ActiveMDX project from a template
+  - render              Render an ActiveMDX document as HTML
+  - action              Run an action on a model / document, or the entire collection 
+  - validate            Validate documents adhere to the model schema
+
+  `.trim() + "\n\n"
+  )
 }
 
 async function loadCollection({ modulePath, rootPath, ...argv } = {}) {
@@ -72,6 +87,7 @@ async function loadCollection({ modulePath, rootPath, ...argv } = {}) {
     //console.log("Calculating Root Path")
     const cwd = process.cwd()
     const packageJsonPath = await findUp("package.json")
+
     const manifest = await fs
       .readFile(packageJsonPath, "utf8")
       .then((buf) => JSON.parse(String(buf)))

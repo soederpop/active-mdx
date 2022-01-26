@@ -4,8 +4,9 @@ import matter from "gray-matter"
 import Document from "./Document.js"
 import Model from "./Model.js"
 import * as inflections from "inflect"
-import { isEmpty } from "lodash-es"
-import { statSync } from "fs"
+import { filter, isEmpty } from "lodash-es"
+import { readFileSync, statSync } from "fs"
+import findUp from "find-up"
 
 const privates = new WeakMap()
 
@@ -13,10 +14,16 @@ const privates = new WeakMap()
  * A Collection is a collection of raw files, documents backed by those raw files, and models backed by the documents.
  */
 export default class Collection {
+  /**
+   * @param {Object} options
+   * @param {String} [options.rootPath=process.cwd()] the root path to look for files in
+   * @param {Array[String]} [options.extensions=["mdx", "md"]] the file extensions to look for
+   * @param {String} [options.name=rootPath] a name for this collection
+   */
   constructor(
     { rootPath = process.cwd(), extensions = ["mdx", "md"] },
     models = [],
-    name = path.parse(rootPath).base
+    name = rootPath
   ) {
     if (!Model.defaultCollection) {
       Model.collections.set("default", this)
@@ -40,6 +47,7 @@ export default class Collection {
     privates.set(this, p)
 
     this.rootPath = rootPath
+    this.name = name
 
     models.forEach((ModelClass) => {
       this.model(ModelClass.name, ModelClass)
@@ -51,7 +59,7 @@ export default class Collection {
    * @type {Boolean}
    */
   get loaded() {
-    return privates.get(this).loaded
+    return !!privates.get(this).loaded
   }
 
   /**
@@ -187,6 +195,32 @@ export default class Collection {
   }
 
   /**
+   * Returns the directory of the nearest package.json to this collection.
+   * @type {String}
+   */
+  get packageRoot() {
+    if (privates.get(this).packageRoot) {
+      return privates.get(this).packageRoot
+    }
+
+    const packageRoot = path.parse(
+      findUp.sync("package.json", { cwd: this.rootPath })
+    ).dir
+
+    return (privates.get(this).packageRoot = packageRoot)
+  }
+
+  /**
+   * Returns the nearest package.json as an object.
+   * @type {Object}
+   */
+  get packageManifest() {
+    return JSON.parse(
+      readFileSync(path.resolve(this.packageRoot, "package.json")).toString()
+    )
+  }
+
+  /**
    * Returns an array of all of the ids for items in the collection.
    *
    * @type {Array[String]}
@@ -242,7 +276,7 @@ export default class Collection {
 
     const data = this.items.get(pathId)
 
-    const { content, meta, path } = data
+    const { content, meta } = data
     doc = this.createDocument({ id: pathId, content, meta })
 
     this.documents.set(pathId, doc)
@@ -258,6 +292,25 @@ export default class Collection {
    */
   createDocument(attributes = {}) {
     return new Document({ ...attributes, collection: this })
+  }
+
+  /**
+   * Returns a list of items sorted by their last modified date.
+   *
+   * The list will include the id, the time it was updated, and the model class that represents the document.
+   *
+   * @type {Array[]}
+   */
+  get itemsByModifiedDate() {
+    return Array.from(this.items.entries())
+      .sort((a, b) => {
+        return a[1].updatedAt - b[1].updatedAt
+      })
+      .map((entry) => [
+        entry[0],
+        entry[1].updatedAt,
+        this.getModel(entry[0]).constructor.name
+      ])
   }
 
   /**
@@ -294,13 +347,27 @@ export default class Collection {
 
     return {
       models,
+      recent: this.itemsByModifiedDate
+        .reverse()
+        .slice(0, options.recentCount || 5),
       modelAliases: this.modelAliases,
       itemIds: Array.from(this.items.keys()),
       ...optional
     }
   }
 
+  /**
+   * Generate a JSON export of the collection.  This export will contain a lot of valuable
+   * metadata about the collection, including all of the models serialized as JSON grouped
+   * by the model class.
+   *
+   * @param {Object} options options will be passed to the toJSON method
+   */
   async export(options = {}) {
+    if (!this.loaded) {
+      await this.load({ models: true })
+    }
+
     const json = this.toJSON(options)
     const modelClasses = this.modelClasses.filter(
       (modelClass) => modelClass !== Model
@@ -308,24 +375,46 @@ export default class Collection {
 
     const models = {}
 
+    const failedExports = []
+
     await Promise.all(
-      modelClasses.map((ModelClass) =>
-        ModelClass.query()
-          .fetchAll()
-          .then((results) => {
-            models[ModelClass.name] = results.map((model) =>
-              model.toJSON(options[ModelClass.name] || {})
-            )
-          })
-      )
+      modelClasses.map((ModelClass) => {
+        const query = ModelClass.query({ collection: this.name })
+
+        return query.fetchAll().then((results) => {
+          console.log(`${ModelClass.name} has ${results.length} items`)
+          models[ModelClass.name] = results
+            .map((model) => {
+              try {
+                return model.toJSON(options[ModelClass.name] || {})
+              } catch (error) {
+                failedExports.push(model.id)
+                console.log("Error exporting model", model.id)
+                return false
+              }
+            })
+            .filter(Boolean)
+        })
+      })
     )
 
     return {
       modelData: models,
+      failedExports,
+      availableActions: this.availableActions,
+      packageRoot: this.packageRoot,
+      rootPath: this.rootPath,
+      name: this.name,
       ...json
     }
   }
 
+  /**
+   * Runs an action by name on this collection.  Any additional arguments are passed to the action.
+   *
+   * @param {String} name the name of the action to run
+   * @param {...*} args any additional arguments to pass to the action
+   */
   async runAction(name, ...args) {
     if (!this.actions.has(name)) {
       throw new Error(`Action ${name} does not exist on this collection.`)
@@ -338,15 +427,44 @@ export default class Collection {
     return results
   }
 
+  /**
+   * Register an action with this collection
+   *
+   * @param {String} name the name of the action
+   * @param {Function} actionFn a function to run when this action is called.
+   */
   action(name, actionFn) {
     this.actions.set(name, actionFn)
     return this
   }
 
+  /**
+   * Returns an array of all of the metadata for each item in the collection,
+   * the meta object will at least contain the id of the item.
+   */
+  get itemMeta() {
+    const results = Array.from(this.items.entries()).map(([pathId, item]) => ({
+      id: pathId,
+      ...item.meta
+    }))
+
+    results.filter = (...args) => filter(results, ...args)
+
+    return results
+  }
+
+  /**
+   * Returns a map containing all of the actions registered with the collection.
+   */
   get actions() {
     return privates.get(this).actions
   }
 
+  /**
+   * Returns a list of all available action names for this collection.
+   *
+   * @type {String[]}
+   */
   get availableActions() {
     return Array.from(this.actions.keys())
   }
@@ -388,8 +506,75 @@ export default class Collection {
     return this.items.get(pathId)
   }
 
+  /**
+   * Deletes the item on disk and removes it from the collection.
+   *
+   * @param {String} pathId
+   */
+  async deleteItem(pathId) {
+    if (!this.items.has(pathId)) {
+      return this
+    }
+
+    const { path: filePath } = this.items.get(pathId)
+
+    await fs.rm(filePath).catch((e) => e)
+
+    this.items.delete(pathId)
+    this.documents.delete(pathId)
+
+    return this
+  }
+
+  /**
+   * Read the item from disk and update the collection with the new content.
+   *
+   * @param {String} pathId
+   * @param {String} [extension='mdx'] the extension to use if the pathId does not exist in the collection
+   */
+  async readItem(pathId, extension = "mdx") {
+    let path
+
+    if (!this.items.has(pathId)) {
+      path = this.resolve(`${pathId}.${extension}`)
+    } else {
+      path = this.items.get(pathId).path
+    }
+
+    return await fs
+      .readFile(path, "utf8")
+      .then((buf) => String(buf))
+      .then((raw) => fs.stat(path).then((stat) => ({ raw, stat })))
+      .then(({ raw, stat }) => {
+        const { data, content } = matter(raw)
+        const payload = {
+          raw,
+          content,
+          meta: data,
+          path,
+          createdAt: stat.ctime,
+          updatedAt: stat.mtime
+        }
+
+        this.updateItem(pathId, payload)
+
+        return payload
+      })
+  }
+
+  /**
+   * Synchronously Check if the item in the collection actually exists on disk.
+   *
+   * @returns {Boolean}
+   */
   pathExistsSync(pathId, { extension = "mdx" } = {}) {
-    const filePath = this.resolve(`${pathId}.${extension}`)
+    let filePath
+
+    if (this.items.has(pathId)) {
+      filePath = this.items.get(pathId).path
+    } else {
+      filePath = this.resolve(`${pathId}.${extension}`)
+    }
 
     try {
       statSync(filePath)
@@ -399,8 +584,18 @@ export default class Collection {
     }
   }
 
+  /**
+   * Asynchronously check if an item in the collection actually exists on disk.
+   */
   async pathExists(pathId, { extension = "mdx" } = {}) {
-    const filePath = this.resolve(`${pathId}.${extension}`)
+    let filePath
+
+    if (this.items.has(pathId)) {
+      filePath = this.items.get(pathId).path
+    } else {
+      filePath = this.resolve(`${pathId}.${extension}`)
+    }
+
     return fs
       .stat(filePath)
       .then(() => true)
@@ -438,6 +633,10 @@ export default class Collection {
       return this
     }
 
+    if (this.loaded && refresh) {
+      this.items.clear()
+    }
+
     const { paths = await readDirectory(this.rootPath) } = options
 
     await Promise.all(
@@ -462,6 +661,12 @@ export default class Collection {
           })
       })
     )
+
+    if (this.loaded && refresh) {
+      await Promise.all(
+        Array.from(this.documents.values()).map((doc) => doc.reload())
+      )
+    }
 
     if (options.models) {
       console.warn(
@@ -496,9 +701,7 @@ export default class Collection {
   getPathId(absolutePath) {
     const relativePath = path.relative(this.rootPath, absolutePath)
 
-    return this.extensions.reduce((memo, ext) => {
-      return memo.replace(`.${ext}`, "")
-    }, relativePath)
+    return relativePath.replace(/\.[a-z]+$/i, "")
   }
 
   static readDirectory = readDirectory
