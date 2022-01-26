@@ -52,29 +52,12 @@ Below is an example of an `Epic` class from the [SDLC Example](https://github.co
 export default class Epic extends Model {
   static sections = ["stories"]
 
-  get defaults() {
-    return {
-      meta: {
-        status: "created"
-      }
-    }
-  }
-
-  get isComplete() {
-    return this.stories()
-      .fetchAll()
-      .every((story) => story.isComplete)
-  }
-
+  // this is one of our sections which will be expanded into separate story documents
   stories() {
     return this.hasMany(Story, {
       heading: "stories",
       meta: () => ({ epic: this.title.toLowerCase() })
     })
-  }
-
-  static is(document) {
-    return document.id.startsWith("epic")
   }
 }
 ```
@@ -104,3 +87,23 @@ As a User I would like to logout so that I can use the application.
 ```
 
 And for each item under it, it will attempt to look for a related story document, e.g `stories/authentication/a-user-should-be-able-to-register.mdx` and if it does not exist, will create it for us.
+
+## Running actions on the collection
+
+Just as you can run an action on one model in a collection, you can run an action on the collection itself.
+
+```js
+collection.action("publish-to-github", async (collection) => {
+  const stories = await collection.model("Story").fetchAll()
+
+  for (let stories of story) {
+    await story.publishToGithub()
+  }
+})
+```
+
+To do this from the CLI
+
+```
+$ amdx action publish-to-github
+```

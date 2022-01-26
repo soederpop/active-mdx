@@ -60,7 +60,7 @@ const storyJSON = `
 `
 
 const modelCode = `
-import { Model } from 'active-mdx'
+import { Model } from '@active-mdx/core'
 
 class Epic extends Model {
   stories() {

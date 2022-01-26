@@ -4,7 +4,7 @@ The ActiveMDX library provides a [Collection Class](../../api/Collection.mdx) wh
 
 ```javascript
 // content/index.js
-import { Collection } from 'active-mdx'
+import { Collection } from '@active-mdx/core'
 
 export default new Collection({
   rootPath: Collection.resolve("content")
