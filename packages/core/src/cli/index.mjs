@@ -5,6 +5,7 @@ import exportCollection from "./export-collection.mjs"
 import init from "./init.mjs"
 import validate from "./validate.mjs"
 import create from "./create.mjs"
+import inspect from "./inspect.mjs"
 import { Collection } from "../../index.js"
 import path from "path"
 import fs from "fs/promises"
@@ -28,6 +29,12 @@ export default async function main() {
         _: argv._.slice(1)
       })
       break
+    case "inspect":
+      await loadCollection(argv).then((collection) =>
+        inspect({ ...argv, collection })
+      )
+      break
+
     case "export-collection":
       await loadCollection(argv).then((collection) =>
         exportCollection({ ...argv, collection })
@@ -73,11 +80,16 @@ Available Commands:
 
   - create              Create a new document for a given model
   - export-collection   Export the collection as JSON
+  - inspect             View information about the collection
   - init                Create a new ActiveMDX project from a template
   - render              Render an ActiveMDX document as HTML
   - action              Run an action on a model / document, or the entire collection 
   - validate            Validate documents adhere to the model schema
 
+Global Options:
+
+  --root-path           The root path of the collection.  Will attempt to import index.js or index.mjs if present. 
+  --module-path         The path to the collection module.  Will import this module and use the default or collection named export. 
   `.trim() + "\n\n"
   )
 }

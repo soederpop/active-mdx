@@ -1,11 +1,12 @@
 import { kebabCase } from "lodash-es"
 import fs from "fs/promises"
+import path from "path"
 
 export default async function create({ collection, ...argv }) {
   const modelName = argv._.slice(1).join(" ")
   let ModelClass
 
-  await collection.load({ models: true })
+  await collection.load()
 
   try {
     ModelClass = collection.model(modelName)
@@ -51,6 +52,8 @@ export default async function create({ collection, ...argv }) {
   }
 
   console.log(`Creating ${destinationPath}`)
+
+  await fs.mkdir(path.parse(destinationPath).dir, { recursive: true })
 
   await fs.writeFile(destinationPath, content, "utf8")
 
