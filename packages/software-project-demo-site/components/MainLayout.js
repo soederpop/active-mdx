@@ -26,7 +26,12 @@ export default function MainLayout(props = {}) {
         <Row only="mobile tablet">
           <Column width={16}>
             <Sidebar.Pushable
-              style={{ borderRadius: "0px", margin: 0, padding: 0 }}
+              style={{
+                borderRadius: "0px",
+                margin: 0,
+                padding: 0,
+                marginRight: "24px"
+              }}
             >
               <Sidebar
                 as={Menu}
@@ -51,7 +56,7 @@ export default function MainLayout(props = {}) {
           </Column>
         </Row>
         <Row only="computer">
-          <Column width={2}>
+          <Column width={3}>
             <Menu
               vertical
               inverted
@@ -64,7 +69,12 @@ export default function MainLayout(props = {}) {
               {navigation}
             </Menu>
           </Column>
-          <Column width={14}>{content}</Column>
+          <Column
+            width={13}
+            style={{ paddingLeft: "12px", paddingRight: "24px" }}
+          >
+            {content}
+          </Column>
         </Row>
       </Grid>
     </LayoutProvider>
