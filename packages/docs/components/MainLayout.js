@@ -23,7 +23,7 @@ export default function MainLayout(props = {}) {
   return (
     <LayoutProvider sidebarVisible={visible} toggleSidebar={toggleSidebar}>
       <Grid fluid style={{ height: "100%", minHeight: "100vh" }}>
-        <Row only="mobile">
+        <Row only="mobile tablet">
           <Column width={16}>
             <Sidebar.Pushable
               style={{ borderRadius: "0px", margin: 0, padding: 0 }}
@@ -50,7 +50,7 @@ export default function MainLayout(props = {}) {
             </Sidebar.Pushable>
           </Column>
         </Row>
-        <Row only="tablet computer">
+        <Row only="computer">
           <Column width={2}>
             <Menu
               vertical
