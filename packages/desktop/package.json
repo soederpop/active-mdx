@@ -99,6 +99,7 @@
     "copy-webpack-plugin": "^10.2.0",
     "electron-log": "^3.0.0",
     "electron-store": "^8.0.1",
+    "find-up": "^6.2.0",
     "esbuild": "0.x",
     "execa": "^6.0.0",
     "hash-object": "^0.1.7",

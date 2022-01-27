@@ -1,6 +1,6 @@
 import { transformSync, buildSync } from "esbuild"
 import path from "path"
-import findUp from "find-up"
+import { findUp } from "find-up"
 import { stat, readFile, mkdir } from "fs/promises"
 import md5 from "md5"
 

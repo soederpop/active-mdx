@@ -24,7 +24,8 @@ const METHODS = [
   "validateModel",
   "untrackProject",
   "saveDocument",
-  "openDirectory"
+  "openDirectory",
+  "importProjectFolders"
 ]
 
 const entryPoint = getEntryPoint() || "App"

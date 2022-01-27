@@ -5,7 +5,7 @@ import { Collection } from "@active-mdx/core"
 import { compile } from "../javascript.js"
 import storage from "../storage"
 import { spawnSync } from "child_process"
-
+import { findUp } from "find-up"
 const homePath = app.getPath("home")
 const appDataPath = app.getPath("appData")
 const userDataPath = app.getPath("userData")
@@ -36,15 +36,63 @@ export async function homeFolder(options = {}) {
   }
 }
 
+export async function importProjectFolders({
+  filePaths,
+  name = "ActiveMDX Project"
+}) {
+  const projects = await storage.get("projects")
+
+  for (let folder of filePaths) {
+    if (projects[folder]) {
+      console.log(`Project ${folder} already exists`)
+    } else {
+      const folderExists = await exists(folder)
+
+      if (!folderExists) {
+        throw new Error(`Folder ${folder} does not exist`)
+      }
+
+      const manifestPath = await findUp("package.json", { cwd: folder })
+
+      if (manifestPath) {
+        const manifest = await fs
+          .readFile(manifestPath)
+          .then((buf) => JSON.parse(String(buf)))
+        name = manifest.activeMdx?.name || manifest.name || name
+      }
+
+      const indexJsExists = await exists(resolve(folder, "index.js"))
+      const indexMjsExists = await exists(resolve(folder, "index.mjs"))
+      const modulePath = indexMjsExists
+        ? "index.mjs"
+        : indexJsExists
+        ? "index.js"
+        : undefined
+
+      projects[folder] = {
+        path: folder,
+        name: name,
+        ...(modulePath && { modulePath })
+      }
+
+      await storage.set("projects", projects)
+    }
+  }
+}
+
 export async function openDirectory(options = {}) {
   const { targetWindow } = options
   const result = await dialog.showOpenDialog(targetWindow, {
     properties: ["openDirectory"]
   })
 
-  console.log("Opened Directory", result)
-  return result
+  return ({ canceled, filePaths = [] } = result)
+
+  if (canceled) {
+    return
+  }
 }
+
 export async function updateWindow(options = {}) {
   const { targetWindow } = options
   // Create a window that fills the screen's available work area.

@@ -122,9 +122,11 @@ function toInitials(name) {
 }
 
 export function ImportExistingProject() {
-  function handleNewProject() {
-    return API.openDirectory().then((result) => {
-      console.log("Result", result)
+  function handleImportProject() {
+    return API.openDirectory().then(({ canceled = false, filePaths = [] }) => {
+      if (!canceled) {
+        return API.importProjectFolders({ filePaths })
+      }
     })
   }
 
@@ -132,7 +134,7 @@ export function ImportExistingProject() {
     <button
       type="button"
       className="relative block w-full border-2 border-slate-300 border-dashed rounded-lg p-12 text-center hover:border-slate-400 focus:outline-none"
-      onClick={handleNewProject}
+      onClick={handleImportProject}
     >
       <svg
         className="mx-auto h-12 w-12 text-gray-400"
