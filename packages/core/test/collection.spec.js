@@ -1,4 +1,5 @@
 import { Collection } from "../index.js"
+import docs from "../../docs/content/index.js"
 
 describe("The Collection Class", function () {
   let collection
@@ -18,6 +19,23 @@ describe("The Collection Class", function () {
   it("creates documents", async function () {
     const doc = collection.document("index")
     doc.should.have.property("title", "SDLC Demo")
+  })
+
+  it("has a package root", function () {
+    collection.packageRoot.should.not.equal(collection.rootPath)
+  })
+
+  describe("Collection with a manifest", function () {
+    it("finds the closest manifest", function () {
+      docs.packageRoot.should.equal(docs.rootPath)
+    })
+
+    it("exposes the manifest", function () {
+      docs.should.have
+        .property("packageManifest")
+        .that.is.an("object")
+        .with.property("version")
+    })
   })
 
   describe("Collection Actions", function () {

@@ -6,7 +6,7 @@ import Model from "./Model.js"
 import * as inflections from "inflect"
 import { filter, isEmpty } from "lodash-es"
 import { readFileSync, statSync } from "fs"
-import { findUp } from "find-up"
+import { findUpSync } from "find-up"
 
 const privates = new WeakMap()
 
@@ -204,7 +204,7 @@ export default class Collection {
     }
 
     const packageRoot = path.parse(
-      findUp.sync("package.json", { cwd: this.rootPath })
+      findUpSync("package.json", { cwd: this.rootPath })
     ).dir
 
     return (privates.get(this).packageRoot = packageRoot)

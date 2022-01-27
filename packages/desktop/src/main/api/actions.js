@@ -172,6 +172,8 @@ export async function getProjectData(options = {}) {
     throw new Error(`Could not find project`)
   }
 
+  console.log(`Getting Project Data`, { project })
+
   const collection = await getCollection({ ...project, refresh: true })
 
   const data = await collection.export(options)
@@ -205,12 +207,16 @@ export async function getCollection({
 
   if (modulePath) {
     const modulePathImport = resolve(path.replace("~", homePath), modulePath)
+    console.log(`Loading Collection From Module Path`, {
+      modulePath,
+      modulePathImport
+    })
 
     const collection = await import(modulePathImport).then(
       (mod) => mod.collection || mod.default
     )
 
-    await collection.load({ models: true, refresh })
+    await collection.load({ refresh })
 
     collections.set(name, collection)
 
