@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/desktop",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "author": "Jon Soeder <jon@chicago.com>",
   "description": "A desktop app for working with @active-mdx projects",
   "private": true,
@@ -90,7 +90,7 @@
     "publish": null
   },
   "dependencies": {
-    "@active-mdx/core": "^0.7.0",
+    "@active-mdx/core": "^0.7.1",
     "@codesandbox/sandpack-react": "^0.10.10",
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
@@ -99,9 +99,9 @@
     "copy-webpack-plugin": "^10.2.0",
     "electron-log": "^3.0.0",
     "electron-store": "^8.0.1",
-    "find-up": "^6.2.0",
     "esbuild": "0.x",
     "execa": "^6.0.0",
+    "find-up": "^6.2.0",
     "hash-object": "^0.1.7",
     "lodash-es": "^4.17.21",
     "react": "^17.0.2",
