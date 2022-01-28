@@ -9,6 +9,15 @@ const collection = new Collection({
   rootPath: Collection.resolve("docs")
 })
 
+collection.githubRepo = () => {
+  const { repository = "" } = collection.packageManifest
+
+  return {
+    owner: repository.split(":")[1].split("/")[0],
+    repo: repository.split(":")[1].split("/")[1]
+  }
+}
+
 export { Epic, Story, Standup }
 
 export default collection
@@ -16,8 +25,7 @@ export default collection
   .model("Story", Story)
   .model("Standup", Standup)
 
-collection.action("setup:github", async function (collection, options = {}) {
-  console.log("What up man")
+collection.action("github:setup", async function (collection, options = {}) {
   const { repository = "" } = collection.packageManifest
   if (!options.owner || !options.repo) {
     options.owner = options.owner || repository.split(":")[1].split("/")[0]
@@ -34,4 +42,53 @@ collection.action("setup:github", async function (collection, options = {}) {
 
   console.log(`Setting up Github integration with ${owner}/${repo}`)
   const octokit = await github()
+
+  const statuses = await collection
+    .model("Story")
+    .fetchAll()
+    .then((stories) => stories.map((story) => story.meta.status))
+    .then((statuses) => [...new Set(statuses)])
+
+  console.log(`Ensuring Status Labels Exist`)
+
+  const { data: existingLabels } = await octokit.rest.issues.listLabelsForRepo({
+    owner,
+    repo
+  })
+
+  let idx = 0
+  for (let status of statuses) {
+    const label = existingLabels.find(
+      (label) => label.name === `story-${status}`
+    )
+
+    if (label) {
+      console.log(`label ${label.name} already exists.`)
+    } else {
+      console.log(`Creating label story-${status}`)
+      const { data: created } = await octokit.rest.issues.createLabel({
+        owner,
+        repo,
+        name: `story-${status}`,
+        color: randomHexColorCodes[idx++ % randomHexColorCodes.length],
+        description: `story is in ${status}`
+      })
+
+      console.log(`Created label ${created.name}`)
+    }
+  }
 })
+
+const randomHexColorCodes = [
+  "f44336",
+  "e91e63",
+  "9c27b0",
+  "673ab7",
+  "3f51b5",
+  "2196f3",
+  "03a9f4",
+  "00bcd4",
+  "009688",
+  "4caf50",
+  "8bc34a"
+]
