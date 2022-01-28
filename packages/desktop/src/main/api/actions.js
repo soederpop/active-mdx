@@ -5,7 +5,7 @@ import { Collection } from "@active-mdx/core"
 import { compile } from "../javascript.js"
 import storage from "../storage"
 import { spawnSync } from "child_process"
-import { findUp } from "find-up"
+import findUp from "find-up"
 const homePath = app.getPath("home")
 const appDataPath = app.getPath("appData")
 const userDataPath = app.getPath("userData")

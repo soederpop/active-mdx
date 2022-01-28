@@ -9,7 +9,7 @@ import inspect from "./inspect.mjs"
 import { Collection } from "../../index.js"
 import path from "path"
 import fs from "fs/promises"
-import { findUp } from "find-up"
+import findUp from "find-up"
 import { mapKeys, omit, kebabCase, camelCase } from "lodash-es"
 
 let processArgv = minimist(process.argv.slice(2))
