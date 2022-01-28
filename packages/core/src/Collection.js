@@ -382,7 +382,6 @@ export default class Collection {
         const query = ModelClass.query({ collection: this.name })
 
         return query.fetchAll().then((results) => {
-          console.log(`${ModelClass.name} has ${results.length} items`)
           models[ModelClass.name] = results
             .map((model) => {
               try {
