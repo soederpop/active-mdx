@@ -35,6 +35,73 @@ Epic.query("completedStories", (qb) => qb.where("status", "completed"))
 Epic.query("completedStories")
 ```
 
+## Models to represent a structured document
+
+An ActiveMDX Model takes a document which conforms to a common structure, and turns it into a JavaScript object that can be used in any way you can imagine.
+
+```javascript
+import { Model } from "@active-mdx/core"
+
+export default class Story extends Model {
+  // This lets you validate / lint your documents to make sure they
+  // have the data you expect
+  static get schema() {
+    const { joi } = this
+
+    return joi.object({
+      meta: joi.object({
+        status: joi
+          .string()
+          .required()
+          .allow("created", "todo", "in-progress", "qa", "completed")
+      })
+    })
+  }
+
+  // You can relate to other model instances based on what is in this document's content
+  epic() {
+    return this.belongsTo("Epic")
+  }
+
+  // When you create new documents, we can pre-fill the metadata
+  get defaults() {
+    return {
+      meta: {
+        status: "created",
+        estimates: {
+          low: 0,
+          high: 0
+        }
+      }
+    }
+  }
+
+  get isComplete() {
+    return this.meta.status === "complete"
+  }
+
+  // Get all of the links from the Mockups section of the document
+  get mockupLinks() {
+    const { toString } = this.document.utils
+    return Object.fromEntries(
+      this.document
+        .querySection("Mockups")
+        .selectAll("link")
+        .map((link) => [toString(link), link.url])
+    )
+  }
+
+  // Get a list of acceptance criteria items from the Acceptance Criteria section of the document
+  get acceptanceCriteria() {
+    const { toString } = this.document.utils
+    return this.document
+      .querySection("Acceptance Criteria")
+      .selectAll("listItem")
+      .map(toString)
+  }
+}
+```
+
 ## ActiveMDX provides an action system
 
 With the action system, you can run functions using your collection and different models. In the example I've written about here, you could do things like publish all the stories to Github or Jira using their API. To do that we just define the action `publish-to-github`
