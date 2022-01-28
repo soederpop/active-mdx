@@ -32,7 +32,8 @@
     "rehype-slug": "^5.0.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.4",
-    "stringify-object": "^4.0.0"
+    "stringify-object": "^4.0.0",
+    "octokit": "^1.7.1"
   },
   "devDependencies": {
     "@skypager/cli": "^1.4.2",

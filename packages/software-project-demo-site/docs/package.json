@@ -4,5 +4,6 @@
   "version": "1.0.0",
   "author": "Jon Soeder <jon@chicago.com>",
   "main": "index.mjs",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": "github:soederpop/active-mdx-software-project-test-repo"
 }
