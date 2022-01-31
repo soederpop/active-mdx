@@ -7,25 +7,40 @@ import {
   Header,
   Container,
   Segment,
-  Grid
+  Grid,
+  Message
 } from "semantic-ui-react"
 import Link from "next/link"
 
 export default function DecisionPage(props = {}) {
   const { id, decision } = props
-  const { options = [], prosAndCons = {}, description, title } = decision
+  const { prosAndCons = {}, description, title } = decision
+  const { status = "draft", result = {} } = decision.meta
+  const { approvedBy, option } = result
 
   return (
     <Container>
       <Header dividing as="h1">
         {title}
       </Header>
+      {status === "completed" && (
+        <Message success>
+          A decision was made to go with option: {option} by {approvedBy}
+        </Message>
+      )}
       <Segment raised>{description}</Segment>
       <Header as="h2" dividing>
         Options
       </Header>
       {Object.entries(prosAndCons).map(([title, { pros, cons }]) => (
-        <Option key={title} title={title} pros={pros} cons={cons} />
+        <Option
+          key={title}
+          title={title}
+          pros={pros}
+          cons={cons}
+          disabled={status === "completed" && title !== option}
+          selected={status === "completed" && title === option}
+        />
       ))}
       <Divider />
       <Link href={`/docs/${id}`}>View Full Document</Link>
@@ -33,12 +48,22 @@ export default function DecisionPage(props = {}) {
   )
 }
 
-function Option({ title, pros, cons }) {
+function Option({ title, pros, cons, disabled, selected }) {
   return (
     <>
-      <Segment raised as={Grid} padded>
+      <Segment
+        raised
+        as={Grid}
+        padded
+        disabled={disabled}
+        color={selected ? "green" : null}
+      >
         <Grid.Row columns="1">
-          <Header as="h3">{title}</Header>
+          <Header
+            as="h3"
+            content={title}
+            {...(selected ? { icon: <Icon name="check" color="green" /> } : {})}
+          />
         </Grid.Row>
         <Grid.Row columns="2" divided="vertically">
           <Grid.Column>
