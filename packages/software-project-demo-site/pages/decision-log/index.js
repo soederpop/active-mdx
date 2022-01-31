@@ -15,7 +15,14 @@ export default function DecisionsPage(props = {}) {
         {decisions.map((decision, index) => (
           <Segment raised key={index}>
             <Header as="h3">
-              <Link href={`${decision.id}`}>{decision.title}</Link>
+              <Link
+                href={`/decision-log/${decision.id.replace(
+                  /^decisions\//,
+                  ""
+                )}`}
+              >
+                {decision.title}
+              </Link>
             </Header>
             <p>{decision.description}</p>
           </Segment>
