@@ -140,8 +140,6 @@ export default class Story extends Model {
 
     return { owner, repo, issue }
   }
-
-  async getGithubIssue() {}
 }
 
 Story.action("github:publish", async (story, options = {}) => {

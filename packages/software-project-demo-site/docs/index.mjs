@@ -1,14 +1,13 @@
 import { Collection } from "@active-mdx/core"
-
+import path from "path"
 import Epic from "./models/Epic.mjs"
 import Story from "./models/Story.mjs"
 import Standup from "./models/Standup.mjs"
 import Decision from "./models/Decision.mjs"
-//import github from "./lib/github.js"
 
-const collection = new Collection({
-  rootPath: Collection.resolve("docs")
-})
+const rootPath = path.parse(import.meta.url.replace("file://", "")).dir
+
+const collection = new Collection({ rootPath })
 
 collection.githubRepo = () => {
   const { repository = "" } = collection.packageManifest
@@ -27,8 +26,24 @@ export default collection
   .model("Standup", Standup)
   .model("Decision", Decision)
 
-/*
+collection.action("github:publish-all", async function (collection, options) {
+  const stories = await collection.query("Story").fetchAll()
+
+  for (let story of stories) {
+    if (story.hasGithubIssue) {
+      console.log(
+        `Story ${story.id} has a github issue already: ${story.meta.github.issue}`
+      )
+    } else {
+      const { issue } = await story.publishToGithub()
+      console.log(`Created issue #${issue.number} for ${story.id}`)
+    }
+  }
+})
+
 collection.action("github:setup", async function (collection, options = {}) {
+  const github = await import("./lib/github.js").then((mod) => mod.default)
+
   const { repository = "" } = collection.packageManifest
   if (!options.owner || !options.repo) {
     options.owner = options.owner || repository.split(":")[1].split("/")[0]
@@ -95,4 +110,3 @@ const randomHexColorCodes = [
   "4caf50",
   "8bc34a"
 ]
-*/
