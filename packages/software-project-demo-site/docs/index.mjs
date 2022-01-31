@@ -3,7 +3,8 @@ import { Collection } from "@active-mdx/core"
 import Epic from "./models/Epic.mjs"
 import Story from "./models/Story.mjs"
 import Standup from "./models/Standup.mjs"
-import github from "./lib/github.js"
+import Decision from "./models/Decision.mjs"
+//import github from "./lib/github.js"
 
 const collection = new Collection({
   rootPath: Collection.resolve("docs")
@@ -24,7 +25,9 @@ export default collection
   .model("Epic", Epic)
   .model("Story", Story)
   .model("Standup", Standup)
+  .model("Decision", Decision)
 
+/*
 collection.action("github:setup", async function (collection, options = {}) {
   const { repository = "" } = collection.packageManifest
   if (!options.owner || !options.repo) {
@@ -92,3 +95,4 @@ const randomHexColorCodes = [
   "4caf50",
   "8bc34a"
 ]
+*/
