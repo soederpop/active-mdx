@@ -107,8 +107,11 @@ export default class Document {
     return privates.get(this).extension || "mdx"
   }
 
-  get path() {}
-
+  /**
+   * Returns the Model class that is assigned to represent this document.  The model class will be determined
+   * by a type field in the meta frontmatter. If no type is found, then it will use the subfolder name of the collection
+   * that matches the model prefix.  e.g. Story class will look in the stories folder for its models.
+   */
   get modelClass() {
     let ModelClass
 
@@ -171,6 +174,9 @@ export default class Document {
     return kebabCase(this.title.toLowerCase())
   }
 
+  /**
+   * Returns the underlying path for the document.
+   */
   get path() {
     return this.collection.resolve(this.id) + `.${this.extension}`
   }
@@ -192,7 +198,12 @@ export default class Document {
   toJSON() {
     const { meta, ast, content, id } = this
 
-    return { meta, ast, content, id }
+    return {
+      meta,
+      ast,
+      content,
+      id
+    }
   }
 
   /**
