@@ -84,15 +84,17 @@ collection.action("github:setup", async function (collection, options = {}) {
       console.log(`label ${label.name} already exists.`)
     } else {
       console.log(`Creating label story-${status}`)
-      const { data: created } = await octokit.rest.issues.createLabel({
-        owner,
-        repo,
-        name: `story-${status}`,
-        color: randomHexColorCodes[idx++ % randomHexColorCodes.length],
-        description: `story is in ${status}`
-      })
-
-      console.log(`Created label ${created.name}`)
+      octokit.rest.issues
+        .createLabel({
+          owner,
+          repo,
+          name: `story-${status}`,
+          color: randomHexColorCodes[idx++ % randomHexColorCodes.length],
+          description: `story is in ${status}`
+        })
+        .then((created) => {
+          console.log(`Created label ${created.name}`)
+        })
     }
   }
 })

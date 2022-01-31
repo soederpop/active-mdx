@@ -50,7 +50,7 @@ export default function MainLayout(props = {}) {
               </Sidebar>
               <Sidebar.Pusher dimmed={visible}>
                 <Icon name="bars" onClick={() => setVisible(true)} />
-                <Container>{content}</Container>
+                <Container style={{ paddingTop: "24px" }}>{content}</Container>
               </Sidebar.Pusher>
             </Sidebar.Pushable>
           </Column>
@@ -71,7 +71,11 @@ export default function MainLayout(props = {}) {
           </Column>
           <Column
             width={13}
-            style={{ paddingLeft: "12px", paddingRight: "24px" }}
+            style={{
+              paddingLeft: "12px",
+              paddingRight: "24px",
+              paddingTop: "24px"
+            }}
           >
             {content}
           </Column>

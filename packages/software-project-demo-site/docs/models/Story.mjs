@@ -1,6 +1,5 @@
 import { Model } from "@active-mdx/core"
 import Epic from "./Epic.mjs"
-import github from "../lib/github.js"
 
 export default class Story extends Model {
   get defaults() {
@@ -70,6 +69,7 @@ export default class Story extends Model {
   }
 
   async getGithubIssue(options = {}) {
+    const github = await import("../lib/github.js").then((mod) => mod.default)
     if (!this.hasGithubIssue) {
       throw new Error(
         `This story does not have meta.github.issue set.  Call publishToGithub first or edit the documents meta data`
@@ -107,6 +107,7 @@ export default class Story extends Model {
       return this.getGithubIssue()
     }
 
+    const github = await import("../lib/github.js").then((mod) => mod.default)
     const { title, content: body } = this.document
     const { repository = "" } = this.collection.packageManifest
 

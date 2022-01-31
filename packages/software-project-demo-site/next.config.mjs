@@ -26,7 +26,7 @@ export default withMDX({
     // Fixes npm packages (mdx) that depend on `fs` module
     if (!isServer) {
       config.resolve.fallback.fs = false
-      config.externals.push("active-mdx", "active-mdx/src/Collection.js")
+      config.externals.push("@active-mdx/core", "octokit")
     }
 
     return config
