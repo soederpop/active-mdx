@@ -11,7 +11,13 @@ export default class Story extends Model {
       .object({
         meta: joi
           .object({
-            status: joi.string().required().allow(statuses),
+            status: joi
+              .string()
+              .required()
+              .pattern(
+                new RegExp(`^(${this.statuses.join("|")})$`),
+                "valid statuses"
+              ),
             estimates: joi
               .object({
                 high: joi.number().required(),
@@ -23,6 +29,7 @@ export default class Story extends Model {
               issue: joi.number()
             })
           })
+          .required()
           .unknown(true)
       })
       .unknown(true)
