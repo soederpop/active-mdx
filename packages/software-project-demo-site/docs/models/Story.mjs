@@ -2,6 +2,32 @@ import { Model } from "@active-mdx/core"
 import Epic from "./Epic.mjs"
 
 export default class Story extends Model {
+  static statuses = ["created", "in-progress", "qa", "approved", "complete"]
+
+  static get schema() {
+    const { joi } = this
+
+    return joi
+      .object({
+        meta: joi
+          .object({
+            status: joi.string().required().allow(statuses),
+            estimates: joi
+              .object({
+                high: joi.number().required(),
+                low: joi.number().required()
+              })
+              .unknown(true)
+              .required(),
+            github: joi.object({
+              issue: joi.number()
+            })
+          })
+          .unknown(true)
+      })
+      .unknown(true)
+  }
+
   get defaults() {
     return {
       meta: {
@@ -93,13 +119,31 @@ export default class Story extends Model {
 
     const octokit = await github()
 
-    const { data: issue } = await octokit.issues.get({
+    const { data: issue } = await octokit.rest.issues.get({
       owner,
       repo,
-      number
+      issue_number: number
     })
 
     return { issue, owner, repo }
+  }
+
+  async syncWithGithub(options = {}) {
+    const { meta } = this
+    const { issue } = await this.getGithubIssue(options)
+    // const github = await import("../lib/github.js").then((mod) => mod.default)
+
+    const labelNames = issue.labels.map(({ name }) => name)
+    const storyLabel = labelNames.find((name) => name.startsWith(`story-`))
+
+    if (storyLabel) {
+      const issueStatus = storyLabel.split("-").slice(1).join("-")
+      if (meta.status !== issueStatus) {
+        this.meta.status = issueStatus
+      }
+    }
+
+    await this.save()
   }
 
   async publishToGithub(options = {}) {
@@ -136,6 +180,13 @@ export default class Story extends Model {
     this.meta.github = {
       issue: issue.number
     }
+
+    await octokit.rest.issues.addLabels({
+      owner,
+      repo,
+      issue_number: issue.number,
+      labels: ["story-created", `epic-${this.meta.epic}`]
+    })
 
     await this.save()
 

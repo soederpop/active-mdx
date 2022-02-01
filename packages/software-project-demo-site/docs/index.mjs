@@ -27,6 +27,8 @@ export default collection
   .model("Decision", Decision)
 
 collection.action("github:publish-all", async function (collection, options) {
+  await collection.runAction("github:setup")
+
   const stories = await collection.query("Story").fetchAll()
 
   for (let story of stories) {
@@ -67,6 +69,8 @@ collection.action("github:setup", async function (collection, options = {}) {
     .then((stories) => stories.map((story) => story.meta.status))
     .then((statuses) => [...new Set(statuses)])
 
+  const epics = await collection.model("Epic").fetchAll()
+
   console.log(`Ensuring Status Labels Exist`)
 
   const { data: existingLabels } = await octokit.rest.issues.listLabelsForRepo({
@@ -91,6 +95,29 @@ collection.action("github:setup", async function (collection, options = {}) {
           name: `story-${status}`,
           color: randomHexColorCodes[idx++ % randomHexColorCodes.length],
           description: `story is in ${status}`
+        })
+        .then((created) => {
+          console.log(`Created label ${created.name}`)
+        })
+    }
+  }
+
+  for (let epic of epics) {
+    const label = existingLabels.find(
+      (label) => label.name === `epic-${epic.slug}`
+    )
+
+    if (label) {
+      console.log(`label ${label.name} already exists.`)
+    } else {
+      console.log(`Creating label epic-${epic.slug}`)
+      octokit.rest.issues
+        .createLabel({
+          owner,
+          repo,
+          name: `epic-${epic.slug}`,
+          color: randomHexColorCodes[idx++ % randomHexColorCodes.length],
+          description: `story belongs to the epic ${epic.title}`
         })
         .then((created) => {
           console.log(`Created label ${created.name}`)
