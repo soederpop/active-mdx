@@ -33,9 +33,16 @@ collection.action("github:publish-all", async function (collection, options) {
 
   for (let story of stories) {
     if (story.hasGithubIssue) {
-      console.log(
-        `Story ${story.id} has a github issue already: ${story.meta.github.issue}`
-      )
+      if (options.sync !== false) {
+        console.log(
+          `Syncing issue#${story.meta.github.issue} with story: ${story.title}`
+        )
+        await story.syncWithGithub()
+      } else {
+        console.log(
+          `Story ${story.id} has a github issue already: ${story.meta.github.issue}`
+        )
+      }
     } else {
       const { issue } = await story.publishToGithub()
       console.log(`Created issue #${issue.number} for ${story.id}`)
@@ -85,7 +92,6 @@ collection.action("github:setup", async function (collection, options = {}) {
     )
 
     if (label) {
-      console.log(`label ${label.name} already exists.`)
     } else {
       console.log(`Creating label story-${status}`)
       octokit.rest.issues
