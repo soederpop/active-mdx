@@ -20,6 +20,14 @@ export default class CollectionQuery {
     this.collection = collection
   }
 
+  async first() {
+    return this.fetchAll().then((r) => r[0])
+  }
+
+  async last() {
+    return this.fetchAll().then((r) => r.at(-1))
+  }
+
   async fetchAll() {
     const { collection } = this
     await (collection.available.length || collection.load())
