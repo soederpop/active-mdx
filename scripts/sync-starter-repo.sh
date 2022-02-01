@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ROOT = $CWD
+export ROOT = $CWD
 mkdir -p $ROOT/workspaces
 if [ ! -f $ROOT/workspaces/active-mdx-software-project-starter ]
 then
