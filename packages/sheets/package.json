@@ -1,0 +1,17 @@
+{
+  "name": "@active-mdx/sheets",
+  "version": "0.8.0",
+  "description": "google sheets integration for active-mdx",
+  "main": "./index.js",
+  "type": "module",
+  "scripts": {
+    "console": "node scripts/console.mjs",
+    "test": "mocha --require test/test.js test/*.spec.js"
+  },
+  "author": "Jon Soeder <jon@chicago.com>",
+  "license": "MIT",
+  "dependencies": {
+    "google-spreadsheet": "^3.2.0",
+    "lodash-es": "^4.17.15"
+  }
+}
