@@ -54,6 +54,12 @@ export default class Collection {
     })
   }
 
+  use(plugin, options) {
+    plugin(this, options)
+
+    return this
+  }
+
   /**
    * Returns true if the collection has been loaded.
    * @type {Boolean}
@@ -432,8 +438,15 @@ export default class Collection {
    * @param {String} name the name of the action
    * @param {Function} actionFn a function to run when this action is called.
    */
-  action(name, actionFn) {
+  action(name, actionFn, replace = false) {
+    if (typeof actionFn !== "function") {
+      throw new Error(
+        `Expected a function! collection.action("my-action", async (collection, options) => {})`
+      )
+    }
+
     this.actions.set(name, actionFn)
+
     return this
   }
 
