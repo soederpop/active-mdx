@@ -29,7 +29,8 @@ async function main() {
               epic: "meta.epic",
               "low estimate": "meta.estimates.low",
               "high estimate": "meta.estimates.high",
-              "github issue": "meta.github.issue"
+              "github issue": "meta.github.issue",
+              priority: "meta.priority"
             }
           }
         }

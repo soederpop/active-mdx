@@ -1,4 +1,4 @@
-import { set } from "lodash-es"
+import { isInteger, set } from "lodash-es"
 
 export default async function sheetsSyncAction(collection, argv = {}) {
   const { sheets } = collection
@@ -59,8 +59,17 @@ export default async function sheetsSyncAction(collection, argv = {}) {
 
         try {
           if (sourcePath.startsWith("meta")) {
-            instance.meta[sourcePath.replace("meta.", "")] =
-              sheetRow[headerColumn]
+            let nextValue = sheetRow[headerColumn]
+
+            if (isInteger(parseInt(nextValue, 10))) {
+              nextValue = parseInt(nextValue, 10)
+            }
+
+            set(
+              instance.meta,
+              sourcePath.replace("meta.", "").split("."),
+              nextValue
+            )
           }
         } catch (error) {
           console.error(
