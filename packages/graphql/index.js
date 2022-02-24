@@ -4,9 +4,12 @@ import { gql, ApolloServer } from "apollo-server"
 export default function plugin(collection, options = {}) {
   const Model = collection.models.get("Model").ModelClass
 
-  collection.createGraphqlServer = (options) => {
-    return new ApolloServer({
-      typeDefs: gql(collection.toGraphqlSchema()),
+  collection.createGraphqlServer = (
+    options = {},
+    ServerProvider = ApolloServer
+  ) => {
+    return new ServerProvider({
+      typeDefs: collection.toGraphqlSchema(),
       resolvers: collection.toGraphqlResolvers()
     })
   }
@@ -30,7 +33,8 @@ export default function plugin(collection, options = {}) {
       ...modelQueries.map((line) => `  ${line}`),
       `}`
     ].join("\n")
-    return [typeDefs, queryTypeDef].join("\n")
+
+    return gql([typeDefs, queryTypeDef].join("\n"))
   }
 
   Model.toGraphqlType = function (options = {}) {

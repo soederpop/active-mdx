@@ -18,6 +18,7 @@ export default class Story extends Model {
         }),
         meta: joi
           .object({
+            epic: joi.string().required(),
             status: joi
               .string()
               .required()
