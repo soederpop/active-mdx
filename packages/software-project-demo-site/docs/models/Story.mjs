@@ -9,6 +9,13 @@ export default class Story extends Model {
 
     return joi
       .object({
+        title: joi.string().required(),
+        description: joi.string().required(),
+        id: joi.string().required(),
+        totalEstimates: joi.object({
+          high: joi.number().required(),
+          low: joi.number().required()
+        }),
         meta: joi
           .object({
             status: joi
