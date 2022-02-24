@@ -3,11 +3,13 @@
   "version": "0.9.1",
   "private": true,
   "scripts": {
+    "generate:components": "node scripts/generate-doc-importers.mjs",
+    "predev": "npm run generate:components",
     "dev": "next dev",
     "build": "next build",
+    "prebuild": "npm run generate:components",
     "start": "next start",
     "lint": "next lint",
-    "sync:content": "cp -r ../active-mdx/docs/* content/ && git checkout content/*.js content/**/*.js",
     "console": "node scripts/console.mjs"
   },
   "activeMdx": {

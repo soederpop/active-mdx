@@ -26,7 +26,13 @@ export default withMDX({
     // Fixes npm packages (mdx) that depend on `fs` module
     if (!isServer) {
       config.resolve.fallback.fs = false
-      config.externals.push("@active-mdx/core", "octokit")
+      config.externals.push({
+        ["@active-mdx/core"]: {
+          root: "@active-mdx/core"
+        }
+      })
+
+      config.externals.push("octokit", "google-spreadsheet")
     }
 
     return config

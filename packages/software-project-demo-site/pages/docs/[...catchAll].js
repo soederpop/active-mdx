@@ -1,33 +1,10 @@
 import content from "docs"
 import dynamic from "next/dynamic"
-import DocumentProvider from "components/DocumentProvider"
-import { Button, Grid, Container } from "semantic-ui-react"
-import Link from "next/link"
 
-export default function CatchAllPage({
-  documentId,
-  doc,
-  model,
-  extension = "mdx"
-} = {}) {
-  const Component = dynamic(() =>
-    import(`../../docs/${documentId}.${extension}`)
-  )
+export default function CatchAllPage({ documentId, doc, model } = {}) {
+  const Component = dynamic(() => import(`../../components/docs/${documentId}`))
 
-  return (
-    <DocumentProvider
-      doc={doc}
-      model={model}
-      extension={extension}
-      documentId={documentId}
-    >
-      <>
-        <Container fluid style={{ paddingRight: "1rem" }}>
-          <Component />
-        </Container>
-      </>
-    </DocumentProvider>
-  )
+  return <Component doc={doc} model={model} documentId={documentId} />
 }
 
 export async function getStaticPaths() {
