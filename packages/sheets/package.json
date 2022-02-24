@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/sheets",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "google sheets integration for active-mdx",
   "main": "./index.js",
   "type": "module",
