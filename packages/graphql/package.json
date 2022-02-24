@@ -14,5 +14,6 @@
     "apollo-server": "^3.6.3",
     "graphql": "^16.3.0",
     "lodash-es": "^4.17.15"
-  }
+  },
+  "gitHead": "32ebe410e088513ee33542ca2e20ef80b9d6098d"
 }
