@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "files": [
-    {
-      "input": "../../docs",
-      "output": "docs"
-    }
-  ]
-}

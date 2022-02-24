@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/graphql.js": {
-      includeFiles: ["docs/**"]
+      "includeFiles": ["docs/**"]
     }
   }
 }
