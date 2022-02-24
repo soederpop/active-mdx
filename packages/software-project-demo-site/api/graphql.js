@@ -1,6 +1,6 @@
 import Cors from "cors"
 import { ApolloServer } from "apollo-server-micro"
-import docs from "docs"
+import docs from "../docs"
 import gqlPlugin from "@active-mdx/graphql"
 const apolloServer = docs.use(gqlPlugin).createGraphqlServer({}, ApolloServer)
 
