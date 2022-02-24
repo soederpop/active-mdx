@@ -1,6 +1,6 @@
 {
   "functions": {
-    "pages/api/graphql.js": {
+    "graphql.js": {
       "includeFiles": "docs/**"
     }
   }
