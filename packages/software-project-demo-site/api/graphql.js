@@ -29,13 +29,12 @@ let started
 let apolloServer
 
 export default async function handler(req, res) {
-  const docs = await import("../docs/index.mjs").then((mod) => mod.default)
-  const gqlPlugin = await import("@active-mdx/graphql").then(
-    (mod) => mod.default
-  )
-
   if (!apolloServer) {
-    apolloServer = docs.use(gqlPlugin).createGraphqlServer({}, ApolloServer)
+    const createServer = await import("@active-mdx/graphql/server.js").then(
+      (mod) => mod.default
+    )
+    const exportFile = await import("../docs/collection-export.cjs")
+    apolloServer = createServer(exportFile, ApolloServer)
   }
 
   await runMiddleware(req, res, cors)
