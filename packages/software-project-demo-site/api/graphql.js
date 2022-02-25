@@ -2,7 +2,7 @@ import Cors from "cors"
 import { ApolloServer } from "apollo-server-micro"
 import lodash from "lodash"
 
-const { mapValues, keyBy, upperFirst } = lodash
+const { mapValues, keyBy, upperFirst, defaultsDeep } = lodash
 
 // Initializing the cors middleware
 const cors = Cors({
