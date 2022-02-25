@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/desktop",
-  "version": "0.9.0",
+  "version": "0.9.2",
   "author": "Jon Soeder <jon@chicago.com>",
   "description": "A desktop app for working with @active-mdx projects",
   "private": true,
@@ -90,7 +90,7 @@
     "publish": null
   },
   "dependencies": {
-    "@active-mdx/core": "^0.9.0",
+    "@active-mdx/core": "^0.9.2",
     "@codesandbox/sandpack-react": "^0.10.10",
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",

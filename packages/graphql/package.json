@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/graphql",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "graphql integration for active-mdx",
   "main": "./index.js",
   "type": "module",
