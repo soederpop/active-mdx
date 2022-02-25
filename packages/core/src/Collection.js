@@ -333,6 +333,7 @@ export default class Collection {
       return {
         name: ModelClass.name,
         prefix: ModelClass.prefix,
+        schema: ModelClass.schema?.describe(),
         availableActions: ModelClass.availableActions,
         availableQueries: ModelClass.availableQueries,
         matchingPaths: this.available.filter((pathId) =>
@@ -371,7 +372,7 @@ export default class Collection {
    */
   async export(options = {}) {
     if (!this.loaded) {
-      await this.load({ models: true })
+      await this.load()
     }
 
     const json = this.toJSON(options)

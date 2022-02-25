@@ -78,6 +78,11 @@ export default class Model {
       .unknown(true)
   }
 
+  static toGraphQLType(options = {}) {
+    const schema = this.schema.describe()
+    return createGQLType(this.name, schema)
+  }
+
   /**
    * When defining your own Model class, you can override this method with your own prefix.  By default
    * it will use the lowercase, pluralized name of the model.  E.g. Book -> books
@@ -505,3 +510,60 @@ const classPrivates = new WeakMap([
 
 export const Actions = classPrivates.get(Model).actions
 export const Queries = classPrivates.get(Model).queries
+
+function joiObjectToGQLType(typeName = "", joiSchema = {}) {
+  const subTypes = []
+
+  const attributes = Object.entries(joiSchema.keys || {}).reduce(
+    (memo, entry) => {
+      const [name, config] = entry
+      const { flags = {} } = config
+
+      if (config.type === "string" && name !== "id") {
+        if (flags?.presence === "required") {
+          memo.push(`${name}: String!`)
+        } else {
+          memo.push(`${name}: String`)
+        }
+      }
+
+      if (config.type === "number") {
+        if (flags?.presence === "required") {
+          memo.push(`${name}: Int!`)
+        } else {
+          memo.push(`${name}: Int`)
+        }
+      }
+
+      if (config.type === "object") {
+        subTypes.push(
+          joiObjectToGQLType(`${typeName}${upperFirst(name)}`, config)
+        )
+        memo.push(`${name}: ${typeName}${upperFirst(name)}`)
+      }
+
+      return memo
+    },
+    []
+  )
+
+  const modelAttributes = attributes.map((attr) => {
+    if (typeof attr === "string") {
+      return attr
+    }
+  })
+
+  return [
+    ...subTypes,
+    `type ${typeName} {`,
+    `  id: String!`,
+    ...modelAttributes.map((line) => `  ${line}`),
+    `}`
+  ].join("\n")
+}
+
+function createGQLType(name, schemaData) {
+  const modelTypeDef = joiObjectToGQLType(name, schemaData)
+
+  return modelTypeDef
+}
