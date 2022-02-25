@@ -1,15 +1,21 @@
 import { mapValues, keyBy, upperFirst } from "lodash-es"
 import { ApolloServer, gql } from "apollo-server"
 
-export default function createServerFromCollectionExport(
+export function createServer(
   exportFile = {},
   ServerProvider = ApolloServer,
   options = {}
 ) {
+  const resolvers = defaultsDeep(
+    {},
+    createResolvers(exportFile),
+    options.resolvers || {}
+  )
+
   return new ServerProvider({
     ...options,
     typeDefs: createTypeDefs(exportFile),
-    resolvers: createResolvers(exportFile)
+    resolvers
   })
 }
 
@@ -106,8 +112,14 @@ function joiObjectToGQLType(typeName = "", joiSchema = {}) {
   ].join("\n")
 }
 
-function createGQLType(modelClass, schemaData) {
+export function createGQLType(modelClass, schemaData) {
+  if (typeof modelClass === "string") {
+    modelClass = { name: modelClass }
+  }
+
   const modelTypeDef = joiObjectToGQLType(modelClass.name, schemaData)
 
   return modelTypeDef
 }
+
+export default createServer

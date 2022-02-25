@@ -1,6 +1,5 @@
 import Cors from "cors"
 import { ApolloServer } from "apollo-server-micro"
-import createServer from "@active-mdx/graphql"
 
 // Initializing the cors middleware
 const cors = Cors({
@@ -32,6 +31,9 @@ let apolloServer
 export default async function handler(req, res) {
   if (!apolloServer) {
     const exportFile = await import("../docs/collection-export.cjs")
+    const createServer = await import(
+      "@active-mdx/graphql/dist/server.cjs"
+    ).then((mod) => mod.createServer)
     apolloServer = createServer(exportFile, ApolloServer)
   }
 

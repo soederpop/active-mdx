@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "console": "node scripts/console.mjs",
-    "test": "mocha --require test/test.js test/*.spec.js"
+    "build:node": "esbuild server.js --bundle --format=cjs --outfile=dist/server.cjs --platform=node --target=node14",
+    "test": "mocha --require test/test.js test/*.spec.js",
+    "prepack": "npm run build:node"
   },
   "author": "Jon Soeder <jon@chicago.com>",
   "license": "MIT",
