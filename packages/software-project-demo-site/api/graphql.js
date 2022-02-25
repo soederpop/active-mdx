@@ -113,7 +113,11 @@ function createTypeDefs({ models = [] }) {
     `}`
   ].join("\n")
 
-  return gql([typeDefs, queryTypeDef].join("\n"))
+  const code = [typeDefs, queryTypeDef].join("\n")
+
+  console.log("gql", code)
+
+  return gql(code)
 }
 
 function joiObjectToGQLType(typeName = "", joiSchema = {}) {
