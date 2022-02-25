@@ -5,10 +5,10 @@
   "scripts": {
     "generate:components": "node scripts/generate-doc-importers.mjs",
     "export:collection": "amdx export-collection --format cjs > docs/collection-export.cjs",
-    "predev": "npm run generate:components",
+    "predev": "npm run generate:components && npm run export:collection",
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "npm run generate:components",
+    "prebuild": "npm run predev",
     "start": "next start",
     "lint": "next lint",
     "console": "node scripts/console.mjs"
