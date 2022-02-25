@@ -8,7 +8,6 @@
     "predev": "npm run generate:components && npm run export:collection",
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "npm run predev",
     "start": "next start",
     "lint": "next lint",
     "console": "node scripts/console.mjs"
