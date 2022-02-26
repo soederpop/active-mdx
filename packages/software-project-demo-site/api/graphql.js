@@ -67,6 +67,8 @@ export function createServer(
     options.resolvers || {}
   )
 
+  console.log("Export File", Object.keys(exportFile))
+
   return new ServerProvider({
     ...options,
     typeDefs: createTypeDefs(exportFile),
@@ -94,6 +96,8 @@ function createResolvers({ modelData = {}, models = [] }) {
 }
 
 function createTypeDefs({ models = [] }) {
+  console.log(`Creating Type Defs`, models.length)
+
   const typeDefs = models
     .map((modelClass) => createGQLType(modelClass, modelClass.schema))
     .join("\n")
