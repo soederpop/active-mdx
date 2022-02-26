@@ -34,7 +34,9 @@ let apolloServer
 
 export default async function handler(req, res) {
   if (!apolloServer) {
-    const exportFile = await import("../docs/collection-export.cjs")
+    const exportFile = await import("../docs/collection-export.cjs").then(
+      (mod) => mod.default
+    )
     apolloServer = createServer(exportFile, ApolloServer)
   }
 
