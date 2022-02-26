@@ -37,7 +37,9 @@ export default async function handler(req, res) {
     const exportFile = await import("../docs/collection-export.cjs").then(
       (mod) => mod.default
     )
-    apolloServer = createServer(exportFile, ApolloServer)
+    apolloServer = createServer(exportFile, ApolloServer, {
+      introspection: true
+    })
   }
 
   await runMiddleware(req, res, cors)
@@ -67,6 +69,7 @@ export function createServer(
   console.log("Export File", Object.keys(exportFile))
 
   return new ServerProvider({
+    introspection: true,
     ...options,
     typeDefs: createTypeDefs(exportFile),
     resolvers
