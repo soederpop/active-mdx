@@ -48,6 +48,36 @@ export default class Epic extends Model {
     return leadingElementsAfterTitle.map(document.utils.toString).join("")
   }
 
+  static get schema() {
+    const { joi } = this
+
+    return joi.object({
+      id: joi.string().required(),
+      title: joi.string().required(),
+      slug: joi.string().required(),
+      description: joi.string().required(),
+      totalEstimates: joi.object({
+        high: joi.number(),
+        low: joi.number()
+      }),
+      isComplete: joi.boolean(),
+      stories: joi.array().items(
+        joi.object({
+          id: joi.string(),
+          title: joi.string(),
+          description: joi.string(),
+          meta: joi.object({
+            status: joi.string(),
+            estimates: {
+              high: joi.number(),
+              low: joi.number()
+            }
+          })
+        })
+      )
+    })
+  }
+
   toJSON({ related = [], attributes = [], ...options } = {}) {
     return super.toJSON({
       related: ["stories", ...related],

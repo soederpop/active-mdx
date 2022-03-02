@@ -5,6 +5,37 @@ export default class Decision extends Model {
     return this.document.querySection("Options").selectAll("heading[depth=3]")
   }
 
+  static get schema() {
+    const { joi } = this
+
+    return joi.object({
+      id: joi.string().required(),
+      title: joi.string().required(),
+      description: joi.string().required(),
+      options: joi.array().items(joi.string()).required().min(1),
+      prosAndCons: joi.array().items(
+        joi.object({
+          title: joi.string().required(),
+          pros: joi.array().items(joi.string()),
+          cons: joi.array().items(joi.string())
+        })
+      ),
+      meta: joi
+        .object({
+          status: joi.string().required(),
+          dueBy: joi.string().required(),
+          result: joi
+            .object({
+              option: joi.string(),
+              madeAt: joi.string(),
+              approvedBy: joi.string()
+            })
+            .unknown(true)
+        })
+        .unknown(true)
+    })
+  }
+
   toJSON(options) {
     return {
       ...super.toJSON(options),
@@ -59,12 +90,13 @@ export default class Decision extends Model {
         .selectAll("listItem")
         .map(toString)
 
-      memo[title] = {
+      memo.push({
+        title,
         pros,
         cons
-      }
+      })
 
       return memo
-    }, {})
+    }, [])
   }
 }

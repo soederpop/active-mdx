@@ -778,8 +778,9 @@ module.exports = {
           'BigCommerce',
           'Option Two'
         ],
-        prosAndCons: {
-          BigCommerce: {
+        prosAndCons: [
+          {
+            title: 'BigCommerce',
             pros: [
               'Scaling, Availability, and PCI Compliance is guaranteed by BigCommerce',
               'Plug and play integration with most major third party providers'
@@ -790,7 +791,8 @@ module.exports = {
               'Monthly subscription costs and transaction fees'
             ]
           },
-          'Option Two': {
+          {
+            title: 'Option Two',
             pros: [
               'Can be heavily customized',
               'Free'
@@ -800,7 +802,7 @@ module.exports = {
               'Customizations will cost developer time and money'
             ]
           }
-        },
+        ],
         description: 'We need to make a decision about which e-commerce platform to use. The two main options are BigCommerce or Saleor.\nBigcommerce is a hosted platform that we would pay monthly to use.Saleor is a self-hosted open source platform that we would need to host and maintain ourselves.'
       },
       {
@@ -814,8 +816,9 @@ module.exports = {
           'Headless Storefront',
           'Native Stencil Theme'
         ],
-        prosAndCons: {
-          'Headless Storefront': {
+        prosAndCons: [
+          {
+            title: 'Headless Storefront',
             pros: [
               'Complete customization',
               'Best possible cache performance for frontend'
@@ -824,7 +827,8 @@ module.exports = {
               'Requires development / effort'
             ]
           },
-          'Native Stencil Theme': {
+          {
+            title: 'Native Stencil Theme',
             pros: [
               'Can leverage existing themes and templates',
               'Leverages BigCommerce for hosting the frontend'
@@ -834,7 +838,7 @@ module.exports = {
               'Slower performance compared to headless static HTML behind a CDN'
             ]
           }
-        },
+        ],
         description: 'We need to decide whether to use a headless frontend, or to use BigCommerce\'s native stencil theme.'
       }
     ]
@@ -1013,13 +1017,13 @@ module.exports = {
         'stories/authentication/a-user-should-be-able-to-login',
         'stories/authentication/a-user-should-be-able-to-register',
         'stories/content-management/a-content-moderator-should-be-able-to-manage-blog-posts',
-        'stories/content-management/a-content-moderator-should-be-able-to-manage-the-product-catalog',
         'stories/order-lifecycle-management/a-customer-should-be-able-to-cancel-an-order',
+        'stories/content-management/a-content-moderator-should-be-able-to-manage-the-product-catalog',
         'stories/order-lifecycle-management/a-customer-should-be-able-to-place-an-order',
         'stories/order-lifecycle-management/a-customer-should-be-able-to-view-their-order-history',
         'stories/order-lifecycle-management/a-customer-should-receive-an-email-when-an-order-is-placed',
-        'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-credit-card',
         'stories/order-lifecycle-management/a-store-administrator-should-be-able-to-cancel-an-order',
+        'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-credit-card',
         'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-gift-card',
         'stories/payment-processing/a-customer-should-be-able-to-pay-with-paypal',
         'stories/product-search-and-browsing/a-user-should-be-able-to-search-for-products-by-brand',
@@ -1081,9 +1085,6 @@ module.exports = {
       prefix: 'decisions',
       schema: {
         type: 'object',
-        flags: {
-          unknown: true
-        },
         keys: {
           id: {
             type: 'string',
@@ -1095,6 +1096,18 @@ module.exports = {
             type: 'string',
             flags: {
               presence: 'required'
+            }
+          },
+          description: {
+            type: 'string',
+            flags: {
+              presence: 'required'
+            }
+          },
+          options: {
+            type: 'array',
+            flags: {
+              presence: 'required'
             },
             rules: [
               {
@@ -1103,7 +1116,49 @@ module.exports = {
                   limit: 1
                 }
               }
+            ],
+            items: [
+              {
+                type: 'string'
+              }
             ]
+          },
+          meta: {
+            type: 'object',
+            flags: {
+              unknown: true
+            },
+            keys: {
+              status: {
+                type: 'string',
+                flags: {
+                  presence: 'required'
+                }
+              },
+              dueBy: {
+                type: 'string',
+                flags: {
+                  presence: 'required'
+                }
+              },
+              result: {
+                type: 'object',
+                flags: {
+                  unknown: true
+                },
+                keys: {
+                  option: {
+                    type: 'string'
+                  },
+                  madeAt: {
+                    type: 'string'
+                  },
+                  approvedBy: {
+                    type: 'string'
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -1112,8 +1167,8 @@ module.exports = {
       ],
       availableQueries: [],
       matchingPaths: [
-        'decisions/big-commerce-or-saleor',
-        'decisions/headless-or-native-storefront'
+        'decisions/headless-or-native-storefront',
+        'decisions/big-commerce-or-saleor'
       ],
       inflections: {
         modelName: 'decision',
@@ -1166,11 +1221,11 @@ module.exports = {
   },
   itemIds: [
     'architecture/api-documentation',
-    'architecture/data-modeling',
     'architecture/hosting',
+    'architecture/data-modeling',
     'architecture/software-stack',
-    'decisions/big-commerce-or-saleor',
     'decisions/headless-or-native-storefront',
+    'decisions/big-commerce-or-saleor',
     'design/asset-library',
     'design/style-guide',
     'epics/authentication',
@@ -1183,13 +1238,13 @@ module.exports = {
     'stories/authentication/a-user-should-be-able-to-login',
     'stories/authentication/a-user-should-be-able-to-register',
     'stories/content-management/a-content-moderator-should-be-able-to-manage-blog-posts',
-    'stories/content-management/a-content-moderator-should-be-able-to-manage-the-product-catalog',
     'stories/order-lifecycle-management/a-customer-should-be-able-to-cancel-an-order',
+    'stories/content-management/a-content-moderator-should-be-able-to-manage-the-product-catalog',
     'stories/order-lifecycle-management/a-customer-should-be-able-to-place-an-order',
     'stories/order-lifecycle-management/a-customer-should-be-able-to-view-their-order-history',
     'stories/order-lifecycle-management/a-customer-should-receive-an-email-when-an-order-is-placed',
-    'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-credit-card',
     'stories/order-lifecycle-management/a-store-administrator-should-be-able-to-cancel-an-order',
+    'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-credit-card',
     'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-gift-card',
     'stories/payment-processing/a-customer-should-be-able-to-pay-with-paypal',
     'stories/product-search-and-browsing/a-user-should-be-able-to-search-for-products-by-brand',
@@ -1197,8 +1252,8 @@ module.exports = {
     'stories/product-search-and-browsing/a-user-should-be-able-to-search-for-products-by-name',
     'table-of-contents',
     'templates/Decision',
-    'templates/Standup',
     'templates/Epic',
+    'templates/Standup',
     'templates/Story'
   ]
 }     

@@ -32,7 +32,7 @@ export default function DecisionPage(props = {}) {
       <Header as="h2" dividing>
         Options
       </Header>
-      {Object.entries(prosAndCons).map(([title, { pros, cons }]) => (
+      {prosAndCons.map(({ title, pros, cons }) => (
         <Option
           key={title}
           title={title}

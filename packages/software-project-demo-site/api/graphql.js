@@ -70,6 +70,7 @@ export function createServer(
 
   return new ServerProvider({
     introspection: true,
+    playground: true,
     ...options,
     typeDefs: createTypeDefs(exportFile),
     resolvers
@@ -140,6 +141,21 @@ function joiObjectToGQLType(typeName = "", joiSchema = {}) {
         }
       }
 
+      if (config.type === "array") {
+        const { items = [] } = config
+
+        if (items[0]?.type === "string") {
+          memo.push(`${name}: [String]`)
+        }
+
+        if (items[0]?.type === "object") {
+          subTypes.push(
+            joiObjectToGQLType(`${typeName}${upperFirst(name)}`, items[0])
+          )
+          memo.push(`${name}: [${typeName}${upperFirst(name)}]`)
+        }
+      }
+
       if (config.type === "number") {
         if (flags?.presence === "required") {
           memo.push(`${name}: Int!`)
@@ -152,6 +168,7 @@ function joiObjectToGQLType(typeName = "", joiSchema = {}) {
         subTypes.push(
           joiObjectToGQLType(`${typeName}${upperFirst(name)}`, config)
         )
+
         memo.push(`${name}: ${typeName}${upperFirst(name)}`)
       }
 
