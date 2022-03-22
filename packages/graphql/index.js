@@ -9,6 +9,9 @@ export default function plugin(collection, options = {}) {
     ServerProvider = ApolloServer
   ) => {
     return new ServerProvider({
+      introspection: true,
+      playground: true,
+      ...options,
       typeDefs: collection.toGraphqlSchema(),
       resolvers: collection.toGraphqlResolvers()
     })
@@ -89,6 +92,21 @@ function joiObjectToGQLType(typeName = "", joiSchema = {}) {
         }
       }
 
+      if (config.type === "array") {
+        const { items = [] } = config
+
+        if (items[0]?.type === "string") {
+          memo.push(`${name}: [String]`)
+        }
+
+        if (items[0]?.type === "object") {
+          subTypes.push(
+            joiObjectToGQLType(`${typeName}${upperFirst(name)}`, items[0])
+          )
+          memo.push(`${name}: [${typeName}${upperFirst(name)}]`)
+        }
+      }
+
       if (config.type === "number") {
         if (flags?.presence === "required") {
           memo.push(`${name}: Int!`)
@@ -101,6 +119,7 @@ function joiObjectToGQLType(typeName = "", joiSchema = {}) {
         subTypes.push(
           joiObjectToGQLType(`${typeName}${upperFirst(name)}`, config)
         )
+
         memo.push(`${name}: ${typeName}${upperFirst(name)}`)
       }
 
