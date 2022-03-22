@@ -1,12 +1,27 @@
 import { kebabCase } from "lodash-es"
 import fs from "fs/promises"
 import path from "path"
+import inquirer from "inquirer"
 
 export default async function create({ collection, ...argv }) {
-  const modelName = argv._.slice(1).join(" ")
-  let ModelClass
-
   await collection.load()
+
+  const wordArgs = argv._.slice(1)
+  let modelName = wordArgs.join(" ")
+
+  if (!wordArgs.length) {
+    const answers = await inquirer.prompt([
+      {
+        type: "list",
+        name: "modelName",
+        choices: collection.modelClasses.map((c) => c.name)
+      }
+    ])
+
+    modelName = answers.modelName
+  }
+
+  let ModelClass
 
   try {
     ModelClass = collection.model(modelName)
@@ -22,7 +37,19 @@ export default async function create({ collection, ...argv }) {
     process.exit(1)
   }
 
-  const { prefix = ModelClass.prefix, title = "" } = argv
+  let { prefix = ModelClass.prefix, title = "" } = argv
+
+  if (!title.length) {
+    await inquirer
+      .prompt([
+        {
+          name: "title",
+          message: `Enter a title for the ${ModelClass.name}`,
+          type: "input"
+        }
+      ])
+      .then((answers) => (title = answers.title))
+  }
 
   if (!title?.length) {
     console.log('Must supply a title via the --title="whatever you want" flag')
