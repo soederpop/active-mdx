@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/software-project-demo-site",
-  "version": "0.9.4",
+  "version": "0.9.6",
   "private": true,
   "scripts": {
     "generate:components": "node scripts/generate-doc-importers.mjs",
@@ -17,8 +17,8 @@
     "test": true
   },
   "dependencies": {
-    "@active-mdx/core": "^0.9.4",
-    "@active-mdx/graphql": "^0.9.4",
+    "@active-mdx/core": "^0.9.6",
+    "@active-mdx/graphql": "^0.9.6",
     "@codesandbox/sandpack-react": "^0.9.8",
     "@mdx-js/loader": "^1.6.22",
     "@mdx-js/mdx": "^1.6.22",
