@@ -1,12 +1,17 @@
 import { Model } from "@active-mdx/core"
 import fs from "fs"
 import parse from "@active-mdx/core/src/utils/parse-js.js"
-import lodash from "lodash"
 import traverse from "@babel/traverse"
 import docBlockParser from "docblock-parser"
-
-const { flatten, isEmpty, isNull, get, mapValues, isFunction, castArray } =
-  lodash
+import {
+  flatten,
+  isEmpty,
+  isNull,
+  get,
+  mapValues,
+  isFunction,
+  castArray
+} from "lodash-es"
 
 const privates = new WeakMap()
 

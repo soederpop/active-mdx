@@ -1,9 +1,7 @@
 import Cors from "cors"
 import { ApolloServer } from "apollo-server-micro"
 import { gql } from "apollo-server"
-import lodash from "lodash"
-
-const { mapValues, keyBy, upperFirst, defaultsDeep } = lodash
+import { mapValues, keyBy, upperFirst, defaultsDeep } from "lodash-es"
 
 // Initializing the cors middleware
 const cors = Cors({

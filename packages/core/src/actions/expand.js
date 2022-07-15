@@ -1,4 +1,4 @@
-import lodash from "lodash"
+import { isEmpty } from "lodash-es"
 
 const { isEmpty } = lodash
 

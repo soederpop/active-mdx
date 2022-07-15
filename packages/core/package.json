@@ -42,6 +42,8 @@
     "mdx-stringify": "^0.0.5",
     "micromark-extension-mdxjs-esm": "^1.0.2",
     "minimist": "^1.2.5",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "rehype-stringify": "^9.0.2",
     "remark": "^14.0.2",
     "remark-frontmatter": "^4.0.1",
