@@ -1,6 +1,6 @@
 {
   "name": "@active-mdx/software-project-demo-site",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "private": true,
   "scripts": {
     "generate:components": "node scripts/generate-doc-importers.mjs",
@@ -17,8 +17,8 @@
     "test": true
   },
   "dependencies": {
-    "@active-mdx/core": "^0.9.2",
-    "@active-mdx/graphql": "^0.9.3",
+    "@active-mdx/core": "^0.9.4",
+    "@active-mdx/graphql": "^0.9.4",
     "@codesandbox/sandpack-react": "^0.9.8",
     "@mdx-js/loader": "^1.6.22",
     "@mdx-js/mdx": "^1.6.22",
@@ -28,6 +28,7 @@
     "cors": "^2.8.5",
     "gray-matter": "^4.0.3",
     "isomorphic-vm": "^0.0.1",
+    "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "micro": "^9.3.4",
     "next": "12.0.4",
@@ -40,8 +41,7 @@
     "rehype-slug": "^5.0.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.4",
-    "stringify-object": "^4.0.0",
-    "lodash": "^4.17.21"
+    "stringify-object": "^4.0.0"
   },
   "devDependencies": {
     "@skypager/cli": "^1.4.2",
