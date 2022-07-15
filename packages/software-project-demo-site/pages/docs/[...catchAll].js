@@ -1,10 +1,27 @@
 import content from "docs"
 import dynamic from "next/dynamic"
+import { Grid } from "semantic-ui-react"
+import AstTree from "components/AstTree"
 
 export default function CatchAllPage({ documentId, doc, model } = {}) {
-  const Component = dynamic(() => import(`../../components/docs/${documentId}`))
+  const Component = dynamic(() =>
+    import(`../../components/docs/${documentId}`).catch((e) => {
+      const ErrorDisplay = () => <div></div>
 
-  return <Component doc={doc} model={model} documentId={documentId} />
+      return <ErrorDisplay>{e.message}</ErrorDisplay>
+    })
+  )
+
+  return (
+    <Grid columns="2">
+      <Grid.Column>
+        <Component doc={doc} model={model} documentId={documentId} />
+      </Grid.Column>
+      <Grid.Column>
+        <AstTree ast={doc.ast} />
+      </Grid.Column>
+    </Grid>
+  )
 }
 
 export async function getStaticPaths() {

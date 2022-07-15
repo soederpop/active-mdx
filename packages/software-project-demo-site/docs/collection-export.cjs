@@ -80,75 +80,6 @@ module.exports = {
         }
       },
       {
-        id: 'epics/content-management',
-        meta: {
-          priority: 'high',
-          status: 'gathering-requirements',
-          timeline: {
-            startAt: 32
-          }
-        },
-        title: 'Content Management',
-        stories: [
-          {
-            id: 'stories/content-management/a-content-moderator-should-be-able-to-manage-blog-posts',
-            meta: {
-              epic: 'content-management',
-              estimates: {
-                low: 12,
-                high: 32
-              },
-              status: 'created',
-              github: {
-                issue: 61
-              },
-              priority: 'high'
-            },
-            title: 'A Content Moderator should be able to manage blog posts',
-            description: 'As a Content Moderator I want to be able to manage blog posts so I can engage with our customers.',
-            isComplete: false,
-            slug: 'a-content-moderator-should-be-able-to-manage-blog-posts',
-            acceptanceCriteria: [
-              'A Content Moderator should be able to create a blog post',
-              'A Content Moderator should be able to update a blog post'
-            ],
-            mockupLinks: {}
-          },
-          {
-            id: 'stories/content-management/a-content-moderator-should-be-able-to-manage-the-product-catalog',
-            meta: {
-              epic: 'content-management',
-              estimates: {
-                low: 8,
-                high: 16
-              },
-              status: 'created',
-              github: {
-                issue: 62
-              },
-              priority: 'medium'
-            },
-            title: 'A Content Moderator should be able to manage the product catalog',
-            description: 'As a Content Moderator I want to be able to manage the product catalog so I can sell our inventory.',
-            isComplete: false,
-            slug: 'a-content-moderator-should-be-able-to-manage-the-product-catalog',
-            acceptanceCriteria: [
-              'A Content Moderator should be able to create a product',
-              'A Content Moderator should be able to update a product',
-              'A Content Moderator should be able to delete a product'
-            ],
-            mockupLinks: {}
-          }
-        ],
-        description: 'This covers how the site\'s products are created, updated, etc.',
-        isComplete: false,
-        slug: 'content-management',
-        totalEstimates: {
-          high: 48,
-          low: 20
-        }
-      },
-      {
         id: 'epics/order-lifecycle-management',
         meta: {
           priority: 'high',
@@ -427,6 +358,225 @@ module.exports = {
         totalEstimates: {
           high: 48,
           low: 24
+        }
+      },
+      {
+        id: 'epics/new-epic',
+        meta: {
+          status: 'created'
+        },
+        title: 'New Epic',
+        stories: [
+          {
+            id: 'stories/new-epic/story-title-one',
+            meta: {
+              epic: 'new epic',
+              status: 'created',
+              estimates: {
+                low: 0,
+                high: 0
+              }
+            },
+            title: 'Story Title One',
+            description: 'As a USER_ROLE, I would like to DESCRIBE_ACTION, so that I can ACHIEVE_GOAL',
+            isComplete: false,
+            slug: 'story-title-one',
+            acceptanceCriteria: [],
+            mockupLinks: {}
+          },
+          {
+            id: 'stories/new-epic/story-title-two',
+            meta: {
+              epic: 'new epic',
+              status: 'created',
+              estimates: {
+                low: 0,
+                high: 0
+              }
+            },
+            title: 'Story Title Two',
+            description: 'As a USER_ROLE, I would like to DESCRIBE_ACTION, so that I can ACHIEVE_GOAL',
+            isComplete: false,
+            slug: 'story-title-two',
+            acceptanceCriteria: [],
+            mockupLinks: {}
+          }
+        ],
+        description: 'Describe the category of stories.',
+        isComplete: false,
+        slug: 'new-epic',
+        totalEstimates: {
+          high: 0,
+          low: 0
+        }
+      },
+      {
+        id: 'epics/content-management',
+        meta: {
+          priority: 'high',
+          status: 'gathering-requirements',
+          timeline: {
+            startAt: 32
+          }
+        },
+        title: 'Content Management',
+        stories: [
+          {
+            id: 'stories/content-management/a-content-moderator-should-be-able-to-manage-blog-posts',
+            meta: {
+              epic: 'content-management',
+              estimates: {
+                low: 12,
+                high: 32
+              },
+              status: 'created',
+              github: {
+                issue: 61
+              },
+              priority: 'high'
+            },
+            title: 'A Content Moderator should be able to manage blog posts',
+            description: 'As a Content Moderator I want to be able to manage blog posts so I can engage with our customers.',
+            isComplete: false,
+            slug: 'a-content-moderator-should-be-able-to-manage-blog-posts',
+            acceptanceCriteria: [
+              'A Content Moderator should be able to create a blog post',
+              'A Content Moderator should be able to update a blog post'
+            ],
+            mockupLinks: {}
+          },
+          {
+            id: 'stories/content-management/a-content-moderator-should-be-able-to-manage-the-product-catalog',
+            meta: {
+              epic: 'content-management',
+              estimates: {
+                low: 8,
+                high: 16
+              },
+              status: 'created',
+              github: {
+                issue: 62
+              },
+              priority: 'medium'
+            },
+            title: 'A Content Moderator should be able to manage the product catalog',
+            description: 'As a Content Moderator I want to be able to manage the product catalog so I can sell our inventory.',
+            isComplete: false,
+            slug: 'a-content-moderator-should-be-able-to-manage-the-product-catalog',
+            acceptanceCriteria: [
+              'A Content Moderator should be able to create a product',
+              'A Content Moderator should be able to update a product',
+              'A Content Moderator should be able to delete a product'
+            ],
+            mockupLinks: {}
+          }
+        ],
+        description: 'This covers how the site\'s products are created, updated, etc. Here\'s an update',
+        isComplete: false,
+        slug: 'content-management',
+        totalEstimates: {
+          high: 48,
+          low: 20
+        }
+      },
+      {
+        id: 'epics/awesome',
+        meta: {
+          status: 'created'
+        },
+        title: 'Awesome',
+        stories: [
+          {
+            id: 'stories/awesome/story-title-one',
+            meta: {
+              epic: 'awesome',
+              status: 'created',
+              estimates: {
+                low: 0,
+                high: 0
+              }
+            },
+            title: 'Story Title One',
+            description: 'As a USER_ROLE, I would like to DESCRIBE_ACTION, so that I can ACHIEVE_GOAL',
+            isComplete: false,
+            slug: 'story-title-one',
+            acceptanceCriteria: [],
+            mockupLinks: {}
+          },
+          {
+            id: 'stories/awesome/story-title-two',
+            meta: {
+              epic: 'awesome',
+              status: 'created',
+              estimates: {
+                low: 0,
+                high: 0
+              }
+            },
+            title: 'Story Title Two',
+            description: 'As a USER_ROLE, I would like to DESCRIBE_ACTION, so that I can ACHIEVE_GOAL',
+            isComplete: false,
+            slug: 'story-title-two',
+            acceptanceCriteria: [],
+            mockupLinks: {}
+          }
+        ],
+        description: 'Describe the category of stories.',
+        isComplete: false,
+        slug: 'awesome',
+        totalEstimates: {
+          high: 0,
+          low: 0
+        }
+      },
+      {
+        id: 'epics/yo',
+        meta: {
+          status: 'created'
+        },
+        title: 'Yo',
+        stories: [
+          {
+            id: 'stories/yo/story-title-one',
+            meta: {
+              epic: 'yo',
+              status: 'created',
+              estimates: {
+                low: 0,
+                high: 0
+              }
+            },
+            title: 'Story Title One',
+            description: 'As a USER_ROLE, I would like to DESCRIBE_ACTION, so that I can ACHIEVE_GOAL',
+            isComplete: false,
+            slug: 'story-title-one',
+            acceptanceCriteria: [],
+            mockupLinks: {}
+          },
+          {
+            id: 'stories/yo/story-title-two',
+            meta: {
+              epic: 'yo',
+              status: 'created',
+              estimates: {
+                low: 0,
+                high: 0
+              }
+            },
+            title: 'Story Title Two',
+            description: 'As a USER_ROLE, I would like to DESCRIBE_ACTION, so that I can ACHIEVE_GOAL',
+            isComplete: false,
+            slug: 'story-title-two',
+            acceptanceCriteria: [],
+            mockupLinks: {}
+          }
+        ],
+        description: 'Describe the category of stories.',
+        isComplete: false,
+        slug: 'yo',
+        totalEstimates: {
+          high: 0,
+          low: 0
         }
       }
     ],
@@ -760,51 +910,37 @@ module.exports = {
         mockupLinks: {}
       }
     ],
-    Standup: [],
-    Decision: [
+    Standup: [
       {
-        id: 'decisions/big-commerce-or-saleor',
+        id: 'standups/soederpop/2022-03-14',
         meta: {
-          status: 'completed',
-          dueBy: 'February 1st, 2022',
-          result: {
-            option: 'BigCommerce',
-            madeAt: 'January 15th, 2022',
-            approvedBy: 'Jack CEO'
-          }
+          date: new Date('2022-03-14T00:00:00.000Z')
         },
-        title: 'BigCommerce or Saleor',
-        options: [
-          'BigCommerce',
-          'Option Two'
-        ],
-        prosAndCons: [
-          {
-            title: 'BigCommerce',
-            pros: [
-              'Scaling, Availability, and PCI Compliance is guaranteed by BigCommerce',
-              'Plug and play integration with most major third party providers'
-            ],
-            cons: [
-              'May be limited by the feature set of the platform',
-              'Customized checkout experience has limitations',
-              'Monthly subscription costs and transaction fees'
-            ]
-          },
-          {
-            title: 'Option Two',
-            pros: [
-              'Can be heavily customized',
-              'Free'
-            ],
-            cons: [
-              'Scaling, Availability, PCI compliance is our responsibility',
-              'Customizations will cost developer time and money'
-            ]
-          }
-        ],
-        description: 'We need to make a decision about which e-commerce platform to use. The two main options are BigCommerce or Saleor.\nBigcommerce is a hosted platform that we would pay monthly to use.Saleor is a self-hosted open source platform that we would need to host and maintain ourselves.'
+        title: 'Daily Standup For @soederpop'
       },
+      {
+        id: 'standups/jonsoeder/2022-03-15',
+        meta: {
+          date: new Date('2022-03-15T00:00:00.000Z')
+        },
+        title: 'Daily Standup For @jonsoeder'
+      },
+      {
+        id: 'standups/jonsoeder/2022-03-14',
+        meta: {
+          date: new Date('2022-03-14T00:00:00.000Z')
+        },
+        title: 'Daily Standup For @jonsoeder'
+      },
+      {
+        id: 'standups/soederpop/2022-03-15',
+        meta: {
+          date: new Date('2022-03-15T00:00:00.000Z')
+        },
+        title: 'Daily Standup For @soederpop'
+      }
+    ],
+    Decision: [
       {
         id: 'decisions/headless-or-native-storefront',
         meta: {
@@ -840,6 +976,49 @@ module.exports = {
           }
         ],
         description: 'We need to decide whether to use a headless frontend, or to use BigCommerce\'s native stencil theme.'
+      },
+      {
+        id: 'decisions/big-commerce-or-saleor',
+        meta: {
+          status: 'completed',
+          dueBy: 'February 1st, 2022',
+          result: {
+            option: 'BigCommerce',
+            madeAt: 'January 15th, 2022',
+            approvedBy: 'Jack CEO'
+          }
+        },
+        title: 'BigCommerce or Saleor',
+        options: [
+          'BigCommerce',
+          'Saleor'
+        ],
+        prosAndCons: [
+          {
+            title: 'BigCommerce',
+            pros: [
+              'Scaling, Availability, and PCI Compliance is guaranteed by BigCommerce',
+              'Plug and play integration with most major third party providers'
+            ],
+            cons: [
+              'May be limited by the feature set of the platform',
+              'Customized checkout experience has limitations',
+              'Monthly subscription costs and transaction fees'
+            ]
+          },
+          {
+            title: 'Saleor',
+            pros: [
+              'Can be heavily customized',
+              'Free'
+            ],
+            cons: [
+              'Scaling, Availability, PCI compliance is our responsibility',
+              'Customizations will cost developer time and money'
+            ]
+          }
+        ],
+        description: 'We need to make a decision about which e-commerce platform to use. The two main options are BigCommerce or Saleor.\nBigcommerce is a hosted platform that we would pay monthly to use.Saleor is a self-hosted open source platform that we would need to host and maintain ourselves.'
       }
     ]
   },
@@ -857,9 +1036,6 @@ module.exports = {
       prefix: 'epics',
       schema: {
         type: 'object',
-        flags: {
-          unknown: true
-        },
         keys: {
           id: {
             type: 'string',
@@ -871,12 +1047,68 @@ module.exports = {
             type: 'string',
             flags: {
               presence: 'required'
-            },
-            rules: [
+            }
+          },
+          slug: {
+            type: 'string',
+            flags: {
+              presence: 'required'
+            }
+          },
+          description: {
+            type: 'string',
+            flags: {
+              presence: 'required'
+            }
+          },
+          totalEstimates: {
+            type: 'object',
+            keys: {
+              high: {
+                type: 'number'
+              },
+              low: {
+                type: 'number'
+              }
+            }
+          },
+          isComplete: {
+            type: 'boolean'
+          },
+          stories: {
+            type: 'array',
+            items: [
               {
-                name: 'min',
-                args: {
-                  limit: 1
+                type: 'object',
+                keys: {
+                  id: {
+                    type: 'string'
+                  },
+                  title: {
+                    type: 'string'
+                  },
+                  description: {
+                    type: 'string'
+                  },
+                  meta: {
+                    type: 'object',
+                    keys: {
+                      status: {
+                        type: 'string'
+                      },
+                      estimates: {
+                        type: 'object',
+                        keys: {
+                          high: {
+                            type: 'number'
+                          },
+                          low: {
+                            type: 'number'
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             ]
@@ -889,9 +1121,12 @@ module.exports = {
       availableQueries: [],
       matchingPaths: [
         'epics/authentication',
+        'epics/awesome',
         'epics/content-management',
+        'epics/new-epic',
         'epics/order-lifecycle-management',
         'epics/payment-processing',
+        'epics/yo',
         'epics/product-search-and-browsing'
       ],
       inflections: {
@@ -1017,16 +1252,16 @@ module.exports = {
         'stories/authentication/a-user-should-be-able-to-login',
         'stories/authentication/a-user-should-be-able-to-register',
         'stories/content-management/a-content-moderator-should-be-able-to-manage-blog-posts',
-        'stories/order-lifecycle-management/a-customer-should-be-able-to-cancel-an-order',
         'stories/content-management/a-content-moderator-should-be-able-to-manage-the-product-catalog',
+        'stories/order-lifecycle-management/a-customer-should-be-able-to-cancel-an-order',
         'stories/order-lifecycle-management/a-customer-should-be-able-to-place-an-order',
         'stories/order-lifecycle-management/a-customer-should-be-able-to-view-their-order-history',
         'stories/order-lifecycle-management/a-customer-should-receive-an-email-when-an-order-is-placed',
         'stories/order-lifecycle-management/a-store-administrator-should-be-able-to-cancel-an-order',
         'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-credit-card',
         'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-gift-card',
-        'stories/payment-processing/a-customer-should-be-able-to-pay-with-paypal',
         'stories/product-search-and-browsing/a-user-should-be-able-to-search-for-products-by-brand',
+        'stories/payment-processing/a-customer-should-be-able-to-pay-with-paypal',
         'stories/product-search-and-browsing/a-user-should-be-able-to-search-for-products-by-category',
         'stories/product-search-and-browsing/a-user-should-be-able-to-search-for-products-by-name'
       ],
@@ -1072,7 +1307,12 @@ module.exports = {
         'expand'
       ],
       availableQueries: [],
-      matchingPaths: [],
+      matchingPaths: [
+        'standups/jonsoeder/2022-03-15',
+        'standups/jonsoeder/2022-03-14',
+        'standups/soederpop/2022-03-14',
+        'standups/soederpop/2022-03-15'
+      ],
       inflections: {
         modelName: 'standup',
         singular: 'standup',
@@ -1123,6 +1363,38 @@ module.exports = {
               }
             ]
           },
+          prosAndCons: {
+            type: 'array',
+            items: [
+              {
+                type: 'object',
+                keys: {
+                  title: {
+                    type: 'string',
+                    flags: {
+                      presence: 'required'
+                    }
+                  },
+                  pros: {
+                    type: 'array',
+                    items: [
+                      {
+                        type: 'string'
+                      }
+                    ]
+                  },
+                  cons: {
+                    type: 'array',
+                    items: [
+                      {
+                        type: 'string'
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
           meta: {
             type: 'object',
             flags: {
@@ -1167,8 +1439,8 @@ module.exports = {
       ],
       availableQueries: [],
       matchingPaths: [
-        'decisions/headless-or-native-storefront',
-        'decisions/big-commerce-or-saleor'
+        'decisions/big-commerce-or-saleor',
+        'decisions/headless-or-native-storefront'
       ],
       inflections: {
         modelName: 'decision',
@@ -1180,29 +1452,29 @@ module.exports = {
   ],
   recent: [
     [
-      'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-credit-card',
-      new Date('2022-02-11T07:55:34.763Z'),
-      'Story'
+      'epics/yo',
+      new Date('2022-03-22T02:46:35.967Z'),
+      'Epic'
     ],
     [
-      'stories/order-lifecycle-management/a-customer-should-receive-an-email-when-an-order-is-placed',
-      new Date('2022-02-11T07:55:33.756Z'),
-      'Story'
+      'epics/awesome',
+      new Date('2022-03-22T02:38:34.445Z'),
+      'Epic'
     ],
     [
-      'stories/order-lifecycle-management/a-store-administrator-should-be-able-to-cancel-an-order',
-      new Date('2022-02-11T07:55:33.550Z'),
-      'Story'
+      'templates/Standup',
+      new Date('2022-03-22T02:29:14.642Z'),
+      'Model'
     ],
     [
-      'stories/order-lifecycle-management/a-customer-should-be-able-to-view-their-order-history',
-      new Date('2022-02-11T07:55:32.596Z'),
-      'Story'
+      'standups/soederpop/2022-03-15',
+      new Date('2022-03-22T02:28:44.740Z'),
+      'Standup'
     ],
     [
-      'stories/order-lifecycle-management/a-customer-should-be-able-to-place-an-order',
-      new Date('2022-02-11T07:55:32.417Z'),
-      'Story'
+      'standups/jonsoeder/2022-03-14',
+      new Date('2022-03-22T02:28:32.021Z'),
+      'Standup'
     ]
   ],
   modelAliases: {
@@ -1221,33 +1493,40 @@ module.exports = {
   },
   itemIds: [
     'architecture/api-documentation',
-    'architecture/hosting',
     'architecture/data-modeling',
+    'architecture/hosting',
     'architecture/software-stack',
-    'decisions/headless-or-native-storefront',
     'decisions/big-commerce-or-saleor',
     'design/asset-library',
+    'decisions/headless-or-native-storefront',
     'design/style-guide',
     'epics/authentication',
+    'epics/awesome',
     'epics/content-management',
+    'epics/new-epic',
     'epics/order-lifecycle-management',
     'epics/payment-processing',
+    'epics/yo',
     'epics/product-search-and-browsing',
     'quality/end-to-end-testing',
     'quality/launch-checklist',
+    'standups/jonsoeder/2022-03-15',
+    'standups/jonsoeder/2022-03-14',
+    'standups/soederpop/2022-03-14',
+    'standups/soederpop/2022-03-15',
     'stories/authentication/a-user-should-be-able-to-login',
     'stories/authentication/a-user-should-be-able-to-register',
     'stories/content-management/a-content-moderator-should-be-able-to-manage-blog-posts',
-    'stories/order-lifecycle-management/a-customer-should-be-able-to-cancel-an-order',
     'stories/content-management/a-content-moderator-should-be-able-to-manage-the-product-catalog',
+    'stories/order-lifecycle-management/a-customer-should-be-able-to-cancel-an-order',
     'stories/order-lifecycle-management/a-customer-should-be-able-to-place-an-order',
     'stories/order-lifecycle-management/a-customer-should-be-able-to-view-their-order-history',
     'stories/order-lifecycle-management/a-customer-should-receive-an-email-when-an-order-is-placed',
     'stories/order-lifecycle-management/a-store-administrator-should-be-able-to-cancel-an-order',
     'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-credit-card',
     'stories/payment-processing/a-customer-should-be-able-to-pay-with-a-gift-card',
-    'stories/payment-processing/a-customer-should-be-able-to-pay-with-paypal',
     'stories/product-search-and-browsing/a-user-should-be-able-to-search-for-products-by-brand',
+    'stories/payment-processing/a-customer-should-be-able-to-pay-with-paypal',
     'stories/product-search-and-browsing/a-user-should-be-able-to-search-for-products-by-category',
     'stories/product-search-and-browsing/a-user-should-be-able-to-search-for-products-by-name',
     'table-of-contents',
